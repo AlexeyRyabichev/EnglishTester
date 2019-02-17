@@ -23,3 +23,4 @@ type Student struct {
 
 	Password string `json:"password,omitempty"`
 }
+

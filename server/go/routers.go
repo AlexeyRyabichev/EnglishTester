@@ -112,6 +112,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"StudentDelete",
+		strings.ToUpper("Delete"),
+		"/student",
+		StudentDelete,
+	},
+
+	Route{
 		"StudentsGet",
 		strings.ToUpper("Get"),
 		"/students",

@@ -10,5 +10,22 @@ package swagger
 
 type Test struct {
 	Id int  `json:"id,omitempty"`
+	Questions []Question
 
 }
+type Question interface {
+	
+}
+
+type OneChoiceQuestion struct {
+	
+}
+
+type MultipleChoiceQuestion struct {
+	
+}
+
+type WriteAnswerQuestion struct {
+
+}
+

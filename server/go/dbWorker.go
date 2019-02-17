@@ -8,21 +8,20 @@ import (
 
 var db *pg.DB
 
-func InitDB()  {
+func InitDB() pg.DB {
 	db = pg.Connect(&pg.Options{
 		User:"postgres",
 		Password:"tigra",
 	})
-	err := createSchema(db)
+	err := createSchema()
 	if(err==nil){
-		fmt.Print("kk")
+		fmt.Print("")
 	}
-
-	
+	return *db
 }
 
-func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{(*Student)(nil), (*Test)(nil)} {
+func createSchema() error {
+	for _, model := range []interface{}{(*Student)(nil)} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
@@ -31,4 +30,11 @@ func createSchema(db *pg.DB) error {
 		}
 	}
 	return nil
+}
+
+
+func getAllStudents(db *pg.DB) (students []Student,err error) {
+	err = db.Model(&students).Select()
+	return students,err;
+
 }
