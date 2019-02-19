@@ -1,7 +1,7 @@
 package swagger
 
 type Audio struct {
-	Id int `json:"id,omitempty"`
-	Student Student `json:"student,omitempty"`
+	Id int64 `json:"id,omitempty"`
+	StudentId int64 `json:"student,omitempty"`
 	Path string `json:"path,omitempty"`
 }
