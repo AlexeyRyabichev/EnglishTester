@@ -41,6 +41,8 @@ func NewRouter() *mux.Router {
 	}
 
 	return router
+	// не надо лить ничего в мастер, только в девелоп
+	// так, сейчас тут будут финты ушами, не обращай внимание
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -51,91 +53,84 @@ var routes = Routes{
 	Route{
 		"Index",
 		"GET",
-		"/",
+		"/api/",
 		Index,
 	},
 
 	Route{
 		"AudioStudentIdGet",
 		strings.ToUpper("Get"),
-		"/audio/{studentId}",
+		"/api/audio/{studentId}",
 		AudioStudentIdGet,
 	},
 
 	Route{
 		"AudioStudentIdPost",
 		strings.ToUpper("Post"),
-		"/audio/{studentId}",
+		"/api/audio/{studentId}",
 		AudioStudentIdPost,
 	},
 
 	Route{
 		"ExampleGet",
 		strings.ToUpper("Get"),
-		"/example",
+		"/api/example",
 		ExampleGet,
 	},
 
 	Route{
 		"PingGet",
 		strings.ToUpper("Get"),
-		"/ping",
+		"/api/ping",
 		PingGet,
 	},
 
 	Route{
 		"StudentCreateWithArrayPost",
 		strings.ToUpper("Post"),
-		"/student/createWithArray",
+		"/api/student/createWithArray",
 		StudentCreateWithArrayPost,
 	},
 
 	Route{
 		"StudentPost",
 		strings.ToUpper("Post"),
-		"/student",
+		"/api/student",
 		StudentPost,
 	},
 
 	Route{
 		"StudentPut",
 		strings.ToUpper("Put"),
-		"/student",
+		"/api/student",
 		StudentPut,
 	},
 
 	Route{
 		"StudentsDelete",
 		strings.ToUpper("Delete"),
-		"/students",
+		"/api/students",
 		StudentsDelete,
-	},
-
-	Route{
-		"StudentDelete",
-		strings.ToUpper("Delete"),
-		"/student",
-		StudentDelete,
 	},
 
 	Route{
 		"StudentsGet",
 		strings.ToUpper("Get"),
-		"/students",
+		"/api/students",
 		StudentsGet,
 	},
 
 	Route{
 		"TestPost",
 		strings.ToUpper("Post"),
-		"/test",
+		"/api/test",
 		TestPost,
 	},
 
 	Route{
 		"TestPut",
 		strings.ToUpper("Put"),
-		"/test",
+		"/api/test",
 		TestPut,
 	},
 }
