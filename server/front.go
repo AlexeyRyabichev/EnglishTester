@@ -10,7 +10,6 @@ import (
 func main() {
 	log.Printf("Server started")
 
-	router := sw.NewRouter()
+	log.Fatal(http.ListenAndServe(":8000", http.FileServer(http.Dir("../web"))))
 
-	log.Fatal(http.ListenAndServe(":8080", router))
 }

@@ -1,5 +1,10 @@
+\.idea/
+
 
 web/\.idea/
 
 
-\.idea/
+
+server/\.idea/
+
+
