@@ -304,9 +304,9 @@ func CheckCredentialsTeacherPost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	if len(teachers) == 0 {
-		w.Write([]byte("NO Such Student"))
+		w.Write([]byte("no"))
 	} else {
-		w.Write([]byte("OK Found"))
+		w.Write([]byte("yes"))
 	}
 	w.WriteHeader(http.StatusOK)
 
@@ -328,9 +328,9 @@ func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	if len(student) == 0 {
-		w.Write([]byte("NO Such Student"))
+		w.Write([]byte("no"))
 	} else {
-		w.Write([]byte("OK Found"))
+		w.Write([]byte("yes"))
 	}
 	w.WriteHeader(http.StatusOK)
 
