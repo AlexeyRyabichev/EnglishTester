@@ -323,7 +323,7 @@ func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
 	res, _, _ = scanner.ReadLine()
 	pass := string(res)
 
-	err := db.Model(&student).Where("email = ? and password =", login, pass).Select()
+	err := db.Model(&student).Where("email = ? and password = ?", login, pass).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
