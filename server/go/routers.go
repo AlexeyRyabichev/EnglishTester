@@ -31,6 +31,7 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 		handler = route.HandlerFunc
 		handler = Logger(handler, route.Name)
+		//handler = Auther(handler,route.Name)
 
 		router.
 			Methods(route.Method).
@@ -151,5 +152,18 @@ var routes = Routes{
 		strings.ToUpper("Delete"),
 		"/api/teacher",
 		TeacherDelete,
+	},
+
+	Route{
+		"CheckCredentialsTeacherPost",
+		strings.ToUpper("Post"),
+		"/api/checkCredentialsTeacher",
+		CheckCredentialsTeacherPost,
+	},
+	Route{
+		"CheckCredentialsPost",
+		strings.ToUpper("Post"),
+		"/api/checkCredentials",
+		CheckCredentialsPost,
 	},
 }
