@@ -8,23 +8,23 @@
 <div align="center">
     <div class="container">
         <div class="row">
-            <form class="col s2 offset-s5">
+            <form class="col s2 offset-s5" action="students.html" method="post">
                 <img class="materialboxed" src="../res/HseLogo.png" width="100%" style="margin-top: 100%">
                 <div class="row">
                     <div class="input-field">
-                        <input placeholder="Login" id="login" type="text" class="validate">
+                        <input placeholder="Login" name="login" id="login" type="text" class="validate" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field">
-                        <input placeholder="Password" id="password" type="password" class="validate">
+                        <input placeholder="Password" name="password" id="password" type="password" class="validate" required>
                     </div>
                 </div>
-                <a class="waves-effect waves-light btn" id="loginButton">Login</a>
+                <!--<a class="waves-effect waves-light btn" id="loginButton">Login</a>-->
+                <button class="waves-effect waves-light btn" id="loginButton" type="submit">Login</button>
             </form>
         </div>
     </div>
-
 </div>
 
 
@@ -45,10 +45,11 @@
 
 <!-- Compiled and minified JavaScript -->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>-->
-<script type="text/javascript" src="../js/bin/materialize.min.js"></script>
+<!--<script type="text/javascript" src="../js/bin/materialize.min.js"></script>-->
 
 
-<script type="text/javascript" src="../js/mine.js"></script>
+<!--<script type="module" src="../importer.mjs"></script>-->
+<!--<script type="text/javascript" src="../support.js"></script>-->
 </body>
 
 </html>
