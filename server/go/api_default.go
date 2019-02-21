@@ -32,10 +32,14 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 		Select(&path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 	audiofile, err := ioutil.ReadFile(path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 	w.Write(audiofile)
 	w.WriteHeader(http.StatusOK)
@@ -148,7 +152,6 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var student Student
 	for {
-
 		if err := dec.Decode(&student); err == io.EOF {
 			break
 		} else if err != nil {

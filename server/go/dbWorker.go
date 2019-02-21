@@ -8,17 +8,15 @@ import (
 
 var db *pg.DB
 
-func InitDB()  {
+func InitDB() {
 	db = pg.Connect(&pg.Options{
-		User:"postgres",
-		Password:"tigra",
+		User:     "postgres",
+		Password: "tigra",
 	})
 	err := createSchema(db)
-	if(err==nil){
+	if err == nil {
 		fmt.Print("kk")
 	}
-
-	
 }
 
 func createSchema(db *pg.DB) error {
