@@ -4,8 +4,8 @@ import (
 	sw "./go"
 	"log"
 	"net/http"
-	sw "github.com/AlexeyRyabichev/EnglishTester/tree/master/server/go"
-	// sw "./go"
+	//sw "github.com/AlexeyRyabichev/EnglishTester"
+	sw "./go"
 )
 
 func main() {
@@ -13,5 +13,5 @@ func main() {
 	sw.InitDB()
 	router := sw.NewRouter()
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8000", router))
 }
