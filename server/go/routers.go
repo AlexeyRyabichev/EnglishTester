@@ -40,8 +40,7 @@ func NewRouter() *mux.Router {
 	}
 
 	return router
-	// не надо лить ничего в мастер, только в девелоп
-	// так, сейчас тут будут финты ушами, не обращай внимание
+
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -131,5 +130,26 @@ var routes = Routes{
 		strings.ToUpper("Put"),
 		"/api/test",
 		TestPut,
+	},
+
+	Route{
+		"TeachersGet",
+		strings.ToUpper("Get"),
+		"/api/teachers",
+		TeachersGet,
+	},
+
+	Route{
+		"TeacherPost",
+		strings.ToUpper("Post"),
+		"/api/teacher",
+		TeacherPost,
+	},
+
+	Route{
+		"TeacherDelete",
+		strings.ToUpper("Delete"),
+		"/api/teacher",
+		TeacherDelete,
 	},
 }
