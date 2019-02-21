@@ -10,8 +10,10 @@
 package swagger
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
 	"log"
@@ -19,13 +21,13 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 )
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "audio/mpeg")
-	studId, err := strconv.ParseInt(strings.TrimPrefix(r.URL.Path, "/api/audio/"), 10, 64)
+	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
 	var path string
+
 	err = db.Model((*Audio)(nil)).
 		Column("path").
 		Where("student_id = ?", studId).
@@ -48,7 +50,7 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	studId, err := strconv.ParseInt(strings.TrimPrefix(r.URL.Path, "/audio/"), 10, 64)
+	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
 
 	r.ParseMultipartForm(32 << 20)
 
@@ -285,4 +287,51 @@ func TeacherDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func CheckCredentialsTeacherPost(w http.ResponseWriter, r *http.Request) {
+	var teachers []Teacher
+	scanner := bufio.NewReader(r.Body)
+
+	res, _, _ := scanner.ReadLine()
+	login := string(res)
+
+	res, _, _ = scanner.ReadLine()
+	pass := string(res)
+
+	err := db.Model(&teachers).Where("login = ? and password = ?", login, pass).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	if len(teachers) == 0 {
+		w.Write([]byte("NO Such Student"))
+	} else {
+		w.Write([]byte("OK Found"))
+	}
+	w.WriteHeader(http.StatusOK)
+
+}
+
+func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
+	var student []Student
+
+	scanner := bufio.NewReader(r.Body)
+
+	res, _, _ := scanner.ReadLine()
+	login := string(res)
+
+	res, _, _ = scanner.ReadLine()
+	pass := string(res)
+
+	err := db.Model(&student).Where("email = ? and password =", login, pass).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	if len(student) == 0 {
+		w.Write([]byte("NO Such Student"))
+	} else {
+		w.Write([]byte("OK Found"))
+	}
+	w.WriteHeader(http.StatusOK)
+
 }
