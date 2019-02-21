@@ -130,13 +130,11 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	dec := json.NewDecoder(r.Body)
 	var student Student
-	for {
 
-		if err := dec.Decode(&student); err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
+	if err := dec.Decode(&student); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
 	}
 
 	_, err := db.Model(&student).Insert()
@@ -151,13 +149,12 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	dec := json.NewDecoder(r.Body)
 	var student Student
-	for {
-		if err := dec.Decode(&student); err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
+	if err := dec.Decode(&student); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
 	}
+
 	_, err := db.Model(&student).WherePK().Update()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -191,14 +188,13 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 
 	dec := json.NewDecoder(r.Body)
 	var student Student
-	for {
 
-		if err := dec.Decode(&student); err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
+	if err := dec.Decode(&student); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
 	}
+
 	_, err := db.Model(&student).WherePK().Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -229,5 +225,64 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 
 func TestPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+func TeachersGet(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	var teachers []Teacher
+	err := db.Model(&teachers).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	teachersJson, err := json.Marshal(teachers)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write(teachersJson)
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func TeacherPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	dec := json.NewDecoder(r.Body)
+	var teacher Teacher
+
+	if err := dec.Decode(&teacher); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&teacher).Insert()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func TeacherDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	dec := json.NewDecoder(r.Body)
+	var teacher Teacher
+
+	if err := dec.Decode(&teacher); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&teacher).WherePK().Delete()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
