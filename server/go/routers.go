@@ -166,4 +166,10 @@ var routes = Routes{
 		"/api/checkCredentials",
 		CheckCredentialsPost,
 	},
+	Route{
+		"LoginPost",
+		strings.ToUpper("Post"),
+		"/api/login",
+		LoginPost,
+	},
 }
