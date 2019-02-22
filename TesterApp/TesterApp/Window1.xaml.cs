@@ -22,9 +22,12 @@ namespace TesterApp
     public partial class Window1 : Window
     {
         public Question[] questions;
-        public Button[] numbers;
+        public Button[] q_buttons;
         public Button exit;
-        public Answers answers;
+        public TextBox textbox;
+        public CheckBox[] checkboxes;
+        public Answers[] answers;
+        public int actual_number;
 
         public Window1(Student student)
         {
@@ -34,47 +37,144 @@ namespace TesterApp
             this.WindowState = WindowState.Maximized;
             this.BorderThickness = new Thickness(0);
             questions = Server.GetQuestions();
-            answers = new Answers(questions.Length);
+            answers = new Answers[questions.Length];
             ShowQuestion(0);
+            textbox.BorderThickness = new Thickness(3);
         }
 
         public void ShowQuestion(int number)
         {
+            grid.Children.Clear();
+            dockpanel1.Children.Clear();
+            reading.Background = Brushes.White;
+            listening.Background = Brushes.White;
+            writing.Background = Brushes.White;
             int num = 0;
+            actual_number = number;
             Question question = questions[number];
+            if (answers[number] == null)
+            {
+                int count;
+                if (question.Type() == 0) count = 1;
+                else count = question.Type();
+                answers[number] = new Answers(count);
+            }
+            switch(question.Section())
+            {
+                case 1:
+                    listening.Background = Brushes.Aquamarine;
+                    break;
+                case 2:
+                    reading.Background = Brushes.Aquamarine;
+                    break;
+                case 3:
+                    writing.Background = Brushes.Aquamarine;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             foreach (Question q in questions)
                 if (q.Section() == question.Section()) num++;
-            numbers = new Button[num];
+            q_buttons = new Button[num];
             for (int i = 0; i < num; i++)
             {
-                numbers[i] = new Button();
+                q_buttons[i] = new Button();
                 //numbers[i].Height = 50;
-                numbers[i].Width = dockpanel1.Width / num;
-                numbers[i].Content = "  " + (i + 1) + "  ";
+                q_buttons[i].Width = dockpanel1.Width / num;
+                q_buttons[i].Content = "  " + (i + 1) + "  ";
                 //numbers[i].Margin = new Thickness(numbers[i].Width*i,
                 //this.Height - 50, 0, 0);
-                dockpanel1.Children.Add(numbers[i]);
+                dockpanel1.Children.Add(q_buttons[i]);
             }
 
-            if (question.Section() == 3) ShowWriting(number);
-            else if (question.Type() == 0) ShowType1(number);
-            else ShowType2(number);
+            if (question.Section() == 3) ShowWriting();
+            else if (question.Type() == 0) ShowType1();
+            else ShowType2();
         }
 
-        public void ShowWriting(int number)
+        public void ShowWriting()
         {
-
+            textblock.Text = questions[actual_number].Text();
+            textblock.Height = (this.Height - 70) / 3;
+            TextBox textbox = new TextBox();
+            textbox.Height = (this.Height - 70) / 3 * 2;
+            grid.Children.Add(textbox);
         }
 
-        public void ShowType1(int number)
+        public void ShowType1()
         {
-
+            textblock.Text = questions[actual_number].Text();
+            textblock.Text = questions[actual_number].Text();
+            textblock.Height = (this.Height - 70) / 2;
+            textbox = new TextBox();
+            textbox.Height = (this.Height - 70) / 2;
+            grid.Children.Add(textbox);
         }
 
-        public void ShowType2(int number)
+        public void ShowType2()
         {
+            textblock.Text = questions[actual_number].Text();
+            checkboxes = new CheckBox[questions[actual_number].Type()];
+            for (int i = 0; i < checkboxes.Length; i++)
+            {
+                //checkboxes[i].Content = (questions[actual_number].Answers())[i];
+            }
 
         }
 
+        private void TextBox_TextInput(object sender, KeyEventArgs e)
+        {
+            answers[actual_number].AddAnswer(textbox.Text);
+        }
+
+        private void checkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            answers[actual_number].AddAnswer((string)((CheckBox)sender).Content);
+        }
+
+        private void checkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            answers[actual_number].DeleteAnswer((string)((CheckBox)sender).Content);
+        }
+
+        private void reading_Click(object sender, RoutedEventArgs e)
+        {
+            int i;
+            for (i = 0; i < questions.Length; i++)
+                if (questions[i].Section() == 2)
+                {
+                    ShowQuestion(i);
+                    break;
+                }
+        }
+
+        private void listening_Click(object sender, RoutedEventArgs e)
+        {
+            int i;
+            for (i = 0; i < questions.Length; i++)
+                if (questions[i].Section() == 1)
+                {
+                    ShowQuestion(i);
+                    break;
+                }
+        }
+
+        private void writing_Click(object sender, RoutedEventArgs e)
+        {
+            int i;
+            for (i = 0; i < questions.Length; i++)
+                if (questions[i].Section() == 3) {
+                    ShowQuestion(i);
+                    break;
+                }
+        }
+
+        private void submit_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Answers answer in answers)
+            {
+                if (answer.isClear()) 
+            }
+        }
     }
 }
