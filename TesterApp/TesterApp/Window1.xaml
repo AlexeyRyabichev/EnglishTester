@@ -8,16 +8,17 @@
         Title="Testing..." Height="450" Width="800">
     <DockPanel  LastChildFill="True" MinWidth="400" MinHeight="300">
         <DockPanel x:Name="dockpanel1" LastChildFill="False" DockPanel.Dock="Bottom" 
-                   MinHeight="50" VerticalAlignment="Center">
+                   MinHeight="50" HorizontalAlignment="Center">
         </DockPanel>
-        <DockPanel x:Name="dockpanel2" LastChildFill="True" DockPanel.Dock="Right" MinWidth="100">
+        <UniformGrid Rows="4" DockPanel.Dock="Right" MinWidth="100">
             <Button x:Name="reading" DockPanel.Dock="Top" Content="Reading"></Button>
             <Button x:Name="listening" DockPanel.Dock="Top" Content="Listening"></Button>
             <Button x:Name="writing" DockPanel.Dock="Top" Content="Writing"></Button>
-            <Button x:Name="submit" DockPanel.Dock="Top" Content="Submit" ></Button>
-        </DockPanel>
-        <TextBox x:Name="textbox" DockPanel.Dock="Top" Margin="5,5,5.333,5" MinWidth="100"
-                 BorderBrush="LightBlue" BorderThickness="3" MinHeight="95">Какой то текст...</TextBox>
+            <Button x:Name="submit"  DockPanel.Dock="Top" Background="PaleVioletRed" Content="Submit" ></Button>
+        </UniformGrid>
+        
+        <TextBlock x:Name="textbox" DockPanel.Dock="Top" Margin="5,5,5.333,5" MinWidth="100"
+                  MinHeight="95">Какой то текст...</TextBlock>
         <Grid x:Name="grid" DockPanel.Dock="Top">
         </Grid>
     </DockPanel>

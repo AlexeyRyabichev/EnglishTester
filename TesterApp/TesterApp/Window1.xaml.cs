@@ -32,6 +32,7 @@ namespace TesterApp
             this.Height = SystemParameters.FullPrimaryScreenHeight;
             this.Width = SystemParameters.FullPrimaryScreenWidth;
             this.WindowState = WindowState.Maximized;
+            this.BorderThickness = new Thickness(0);
             questions = Server.GetQuestions();
             answers = new Answers(questions.Length);
             ShowQuestion(0);
@@ -49,7 +50,7 @@ namespace TesterApp
                 numbers[i] = new Button();
                 //numbers[i].Height = 50;
                 numbers[i].Width = dockpanel1.Width / num;
-                numbers[i].Content = "" + (i + 1);
+                numbers[i].Content = "  " + (i + 1) + "  ";
                 //numbers[i].Margin = new Thickness(numbers[i].Width*i,
                 //this.Height - 50, 0, 0);
                 dockpanel1.Children.Add(numbers[i]);
