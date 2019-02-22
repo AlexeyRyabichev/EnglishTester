@@ -1,0 +1,20 @@
+﻿<Window x:Class="TesterApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TesterApp"
+        mc:Ignorable="d"
+        Title="Login" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="button1" Content="Begin" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <Canvas>
+            <Label x:Name="label1" Content="Email: " Canvas.Top="150" Canvas.Left="510"></Label>
+            <TextBox x:Name="textbox1" Canvas.Top="155" Width="200" Canvas.Left="580"></TextBox>
+            <Label x:Name="label2" Content="Password:" Canvas.Top="180" Canvas.Left="490"></Label>
+            <TextBox x:Name="textbox2" Canvas.Top="185" Width="200" Canvas.Left="580"></TextBox>
+        </Canvas>
+
+    </Grid>
+
+</Window>

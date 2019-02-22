@@ -1,0 +1,9 @@
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\bin\Debug\ServerLib.dll
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\bin\Debug\ServerLib.pdb
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\bin\Debug\TesterLib.dll
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\bin\Debug\TesterLib.pdb
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\obj\Debug\ServerLib.csprojAssemblyReference.cache
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\obj\Debug\ServerLib.csproj.CoreCompileInputs.cache
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\obj\Debug\ServerLib.csproj.CopyComplete
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\obj\Debug\ServerLib.dll
+C:\Users\redhe\Documents\Групповая динамика\English Tester\ServerLib\obj\Debug\ServerLib.pdb
