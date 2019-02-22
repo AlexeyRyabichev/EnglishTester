@@ -4,8 +4,8 @@ import (
 	sw "./go"
 	"log"
 	"net/http"
-	//sw "github.com/AlexeyRyabichev/EnglishTester"
-	sw "./go"
+	//sw "github.com/AlexeyRyabichev/EnglishTester/tree/master/server/go"
+	// sw "./go"
 )
 
 func main() {
