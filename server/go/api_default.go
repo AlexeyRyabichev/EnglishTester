@@ -10,24 +10,88 @@
 package swagger
 
 import (
+	"bufio"
 	"bytes"
-	"github.com/go-pg/pg"
+	"encoding/json"
+	"github.com/gorilla/mux"
+	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
 )
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	db:= pg.Connect(&pg.Options{
-		User:"postgres",
-		Password:"tigra",
-	})
-	defer db.Close()
+	w.Header().Set("Content-Type", "audio/mpeg")
+	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
+	var path string
 
+	err = db.Model((*Audio)(nil)).
+		Column("path").
+		Where("student_id = ?", studId).
+		Select(&path)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	audiofile, err := ioutil.ReadFile(path)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(audiofile)
 	w.WriteHeader(http.StatusOK)
 }
 
 func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
+
+	r.ParseMultipartForm(32 << 20)
+
+	file, _, err := r.FormFile("file") //retrieve the file from form data
+	defer file.Close()                 //close the file when we finish
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	//this is path which  we want to store the file'
+	err = os.MkdirAll("./audios/", os.ModePerm)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	fp, err := filepath.Abs("./audios/" + strconv.FormatInt(studId, 10) + ".mp3")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	f, err := os.OpenFile(fp, os.O_RDWR|os.O_CREATE, 0666)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	log.Println(fp)
+	defer f.Close()
+	io.Copy(f, file)
+	var audio Audio = Audio{StudentId: studId,
+		Path: fp,
+	}
+	_, err = db.Model(&audio).Insert()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -39,32 +103,120 @@ func ExampleGet(w http.ResponseWriter, r *http.Request) {
 func PingGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write(bytes.NewBufferString("lelel").Bytes());
+	w.Write(bytes.NewBufferString("lelel").Bytes())
 }
 
 func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	dec := json.NewDecoder(r.Body)
+	var stArr []Student
+	for {
 
+		if err := dec.Decode(&stArr); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("%s\n", stArr)
+	}
+
+	_, err := db.Model(&stArr).Insert()
+	log.Printf("dsds")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
 func StudentPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	dec := json.NewDecoder(r.Body)
+	var student Student
+
+	if err := dec.Decode(&student); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&student).Insert()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
 func StudentPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	dec := json.NewDecoder(r.Body)
+	var student Student
+	if err := dec.Decode(&student); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&student).WherePK().Update()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
 func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	var students []Student
+	err := db.Model(&students).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	res, err := db.Model(&students).Delete()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	log.Println("deteted: ", res.RowsAffected())
+	count, err := db.Model((*Student)(nil)).Count()
+	if err != nil {
+		panic(err)
+	}
+	log.Println("left", count)
+	w.WriteHeader(http.StatusOK)
+}
+
+func StudentDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	dec := json.NewDecoder(r.Body)
+	var student Student
+
+	if err := dec.Decode(&student); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&student).WherePK().Delete()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
 func StudentsGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	var students []Student
+	err := db.Model(&students).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	StudentJson, err := json.Marshal(students)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	w.Write(StudentJson)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -76,4 +228,110 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 func TestPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+}
+
+func TeachersGet(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	var teachers []Teacher
+	err := db.Model(&teachers).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	teachersJson, err := json.Marshal(teachers)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write(teachersJson)
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func TeacherPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	dec := json.NewDecoder(r.Body)
+	var teacher Teacher
+
+	if err := dec.Decode(&teacher); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&teacher).Insert()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func TeacherDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	dec := json.NewDecoder(r.Body)
+	var teacher Teacher
+
+	if err := dec.Decode(&teacher); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&teacher).WherePK().Delete()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func CheckCredentialsTeacherPost(w http.ResponseWriter, r *http.Request) {
+	var teachers []Teacher
+	scanner := bufio.NewReader(r.Body)
+
+	res, _, _ := scanner.ReadLine()
+	login := string(res)
+
+	res, _, _ = scanner.ReadLine()
+	pass := string(res)
+
+	err := db.Model(&teachers).Where("login = ? and password = ?", login, pass).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	if len(teachers) == 0 {
+		w.Write([]byte("no"))
+	} else {
+		w.Write([]byte("yes"))
+	}
+	w.WriteHeader(http.StatusOK)
+
+}
+
+func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
+	var student []Student
+
+	scanner := bufio.NewReader(r.Body)
+
+	res, _, _ := scanner.ReadLine()
+	login := string(res)
+
+	res, _, _ = scanner.ReadLine()
+	pass := string(res)
+
+	err := db.Model(&student).Where("email = ? and password = ?", login, pass).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	if len(student) == 0 {
+		w.Write([]byte("no"))
+	} else {
+		w.Write([]byte("yes"))
+	}
+	w.WriteHeader(http.StatusOK)
+
 }

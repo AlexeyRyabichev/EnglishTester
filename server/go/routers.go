@@ -10,7 +10,6 @@
 package swagger
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -32,6 +31,7 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 		handler = route.HandlerFunc
 		handler = Logger(handler, route.Name)
+		//handler = Auther(handler,route.Name)
 
 		router.
 			Methods(route.Method).
@@ -41,94 +41,129 @@ func NewRouter() *mux.Router {
 	}
 
 	return router
+
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+	//fmt.Fprintf(w, "Hello World!")
 }
 
 var routes = Routes{
 	Route{
 		"Index",
 		"GET",
-		"/",
+		"/api/",
 		Index,
 	},
 
 	Route{
 		"AudioStudentIdGet",
 		strings.ToUpper("Get"),
-		"/audio/{studentId}",
+		"/api/audio/{studentId}",
 		AudioStudentIdGet,
 	},
 
 	Route{
 		"AudioStudentIdPost",
 		strings.ToUpper("Post"),
-		"/audio/{studentId}",
+		"/api/audio/{studentId}",
 		AudioStudentIdPost,
 	},
 
 	Route{
 		"ExampleGet",
 		strings.ToUpper("Get"),
-		"/example",
+		"/api/example",
 		ExampleGet,
 	},
 
 	Route{
 		"PingGet",
 		strings.ToUpper("Get"),
-		"/ping",
+		"/api/ping",
 		PingGet,
 	},
 
 	Route{
 		"StudentCreateWithArrayPost",
 		strings.ToUpper("Post"),
-		"/student/createWithArray",
+		"/api/student/createWithArray",
 		StudentCreateWithArrayPost,
 	},
 
 	Route{
 		"StudentPost",
 		strings.ToUpper("Post"),
-		"/student",
+		"/api/student",
 		StudentPost,
 	},
 
 	Route{
 		"StudentPut",
 		strings.ToUpper("Put"),
-		"/student",
+		"/api/student",
 		StudentPut,
 	},
 
 	Route{
 		"StudentsDelete",
 		strings.ToUpper("Delete"),
-		"/students",
+		"/api/students",
 		StudentsDelete,
 	},
 
 	Route{
 		"StudentsGet",
 		strings.ToUpper("Get"),
-		"/students",
+		"/api/students",
 		StudentsGet,
 	},
 
 	Route{
 		"TestPost",
 		strings.ToUpper("Post"),
-		"/test",
+		"/api/test",
 		TestPost,
 	},
 
 	Route{
 		"TestPut",
 		strings.ToUpper("Put"),
-		"/test",
+		"/api/test",
 		TestPut,
+	},
+
+	Route{
+		"TeachersGet",
+		strings.ToUpper("Get"),
+		"/api/teachers",
+		TeachersGet,
+	},
+
+	Route{
+		"TeacherPost",
+		strings.ToUpper("Post"),
+		"/api/teacher",
+		TeacherPost,
+	},
+
+	Route{
+		"TeacherDelete",
+		strings.ToUpper("Delete"),
+		"/api/teacher",
+		TeacherDelete,
+	},
+
+	Route{
+		"CheckCredentialsTeacherPost",
+		strings.ToUpper("Post"),
+		"/api/checkCredentialsTeacher",
+		CheckCredentialsTeacherPost,
+	},
+	Route{
+		"CheckCredentialsPost",
+		strings.ToUpper("Post"),
+		"/api/checkCredentials",
+		CheckCredentialsPost,
 	},
 }
