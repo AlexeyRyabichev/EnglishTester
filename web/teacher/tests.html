@@ -11,16 +11,26 @@
             <div class="nav-wrapper">
                 <a href="#" class="brand-logo" style="margin-left: 1%"><img src="../res/znak.png" width="19.5%" style="margin-top: 1%"></a>
                 <a href="#" class="brand-logo center">Ryabichev Alexey</a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
                     <li><a href="students.html">STUDENTS</a></li>
                     <li><a href="#">TESTS</a></li>
-                    <li><a href="#">RESULTS</a></li>
-                    <li><a href="#">SETTINGS</a></li>
+                    <li><a href="results.html">RESULTS</a></li>
+                    <li><a href="settings.html">SETTINGS</a></li>
                     <li><a href="index.html">LOGOUT</a></li>
                 </ul>
             </div>
         </nav>
     </div>
+
+
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="students.html">STUDENTS</a></li>
+        <li><a href="#">TESTS</a></li>
+        <li><a href="results.html">RESULTS</a></li>
+        <li><a href="settings.html">SETTINGS</a></li>
+        <li><a href="index.html">LOGOUT</a></li>
+    </ul>
 </nav>
 
 <div class="container">
@@ -63,6 +73,13 @@
 
 
 <!--<script type="text/javascript" src="js/mine.js"></script>-->
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems, {});
+    });
+</script>
 </body>
 
 </html>
