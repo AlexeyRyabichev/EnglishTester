@@ -1,0 +1,5 @@
+C:\Users\redhe\Documents\Групповая динамика\English Tester\TesterLib\bin\Debug\TesterLib.dll
+C:\Users\redhe\Documents\Групповая динамика\English Tester\TesterLib\bin\Debug\TesterLib.pdb
+C:\Users\redhe\Documents\Групповая динамика\English Tester\TesterLib\obj\Debug\TesterLib.csproj.CoreCompileInputs.cache
+C:\Users\redhe\Documents\Групповая динамика\English Tester\TesterLib\obj\Debug\TesterLib.dll
+C:\Users\redhe\Documents\Групповая динамика\English Tester\TesterLib\obj\Debug\TesterLib.pdb
