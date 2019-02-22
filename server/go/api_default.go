@@ -335,27 +335,3 @@ func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 }
-
-func LoginPost(w http.ResponseWriter, r *http.Request) {
-	email := r.FormValue("email")
-	pass := r.FormValue("password")
-
-	var student Student
-	student.Password = pass
-	student.Email = email
-	err := db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Wrong login or password"))
-		return
-	}
-	token, err := getToken(email)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Error generating JWT token: " + err.Error()))
-	}
-	w.Header().Set("Authorization", token)
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Token:" + token))
-
-}

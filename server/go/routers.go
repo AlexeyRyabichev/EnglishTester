@@ -30,8 +30,8 @@ func NewRouter() *mux.Router {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc
+		handler = authMiddleware(handler, route.Name)
 		handler = Logger(handler, route.Name)
-		//handler = Auther(handler,route.Name)
 
 		router.
 			Methods(route.Method).

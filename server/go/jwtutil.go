@@ -8,6 +8,7 @@ func getToken(email string) (string, error) {
 		"email": email,
 		"role":  "student",
 	})
+	//TODO: think about roles
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
 }
