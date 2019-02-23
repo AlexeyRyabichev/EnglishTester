@@ -2,11 +2,11 @@ package swagger
 
 import jwt "github.com/dgrijalva/jwt-go"
 
-func getToken(email string) (string, error) {
+func getToken(email, role string) (string, error) {
 	signingKey := []byte("EngTester")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": email,
-		"role":  "student",
+		"role":  role,
 	})
 	//TODO: think about roles
 	tokenString, err := token.SignedString(signingKey)

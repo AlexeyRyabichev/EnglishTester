@@ -11,7 +11,6 @@ package swagger
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"io"
@@ -25,6 +24,11 @@ import (
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "audio/mpeg")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
 	var path string
 
@@ -49,6 +53,11 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 
 func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
 
@@ -95,19 +104,13 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func ExampleGet(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusBadRequest)
-}
-
-func PingGet(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(bytes.NewBufferString("lelel").Bytes())
-}
-
 func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	dec := json.NewDecoder(r.Body)
 	var stArr []Student
 	for {
@@ -130,6 +133,11 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 
 func StudentPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	dec := json.NewDecoder(r.Body)
 	var student Student
 
@@ -149,6 +157,11 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 
 func StudentPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	dec := json.NewDecoder(r.Body)
 	var student Student
 	if err := dec.Decode(&student); err == io.EOF {
@@ -167,6 +180,11 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 
 func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	var students []Student
 	err := db.Model(&students).Select()
 	if err != nil {
@@ -232,7 +250,11 @@ func TestPut(w http.ResponseWriter, r *http.Request) {
 
 func TeachersGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	var teachers []Teacher
 	err := db.Model(&teachers).Select()
 	if err != nil {
@@ -251,7 +273,11 @@ func TeachersGet(w http.ResponseWriter, r *http.Request) {
 
 func TeacherPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	dec := json.NewDecoder(r.Body)
 	var teacher Teacher
 
@@ -271,6 +297,11 @@ func TeacherPost(w http.ResponseWriter, r *http.Request) {
 
 func TeacherDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 
 	dec := json.NewDecoder(r.Body)
 	var teacher Teacher

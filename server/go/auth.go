@@ -10,15 +10,20 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	pass := r.FormValue("password")
 
 	var student Student
-	student.Password = pass
-	student.Email = email
+	var teacher Teacher
 	err := db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
+	var role string = "student"
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Wrong login or password"))
-		return
+		err = db.Model(&teacher).Where("login = ? and password = ?", email, pass).Select()
+		role = "teacher"
+		if err != nil {
+
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("Wrong login or password"))
+			return
+		}
 	}
-	token, err := getToken(email)
+	token, err := getToken(email, role)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Error generating JWT token: " + err.Error()))
