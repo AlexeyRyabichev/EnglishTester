@@ -225,6 +225,11 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 
 func StudentsGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == "student" {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	var students []Student
 	err := db.Model(&students).Select()
 	if err != nil {
