@@ -2,11 +2,13 @@ package swagger
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"log"
 	"net/http"
 )
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
+	log.Print(r.Form)
 	email := r.FormValue("email")
 	pass := r.FormValue("password")
 	var student Student
