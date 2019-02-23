@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TesterLib;
+using ServerLib;
 
 namespace TesterApp
 {
@@ -19,9 +21,24 @@ namespace TesterApp
     /// </summary>
     public partial class Exit : Window
     {
-        public Exit()
+        Student student;
+        Window parent;
+        public Exit(Student student, Window parent)
         {
             InitializeComponent();
+            this.student = student;
+            this.parent = parent;
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            Server.SendData(student);
+            parent.Close();
+            this.Close();
         }
     }
 }

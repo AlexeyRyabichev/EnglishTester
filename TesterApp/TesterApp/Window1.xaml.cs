@@ -27,6 +27,7 @@ namespace TesterApp
         public TextBox textbox;
         public CheckBox[] checkboxes;
         public Answers[] answers;
+        public Student student;
         public int actual_number;
 
         public Window1(Student student)
@@ -38,6 +39,7 @@ namespace TesterApp
             this.BorderThickness = new Thickness(0);
             questions = Server.GetQuestions();
             answers = new Answers[questions.Length];
+            this.student = student;
             ShowQuestion(0);
             textbox.BorderThickness = new Thickness(3);
         }
@@ -55,11 +57,11 @@ namespace TesterApp
             if (answers[number] == null)
             {
                 int count;
-                if (question.Type() == 0) count = 1;
-                else count = question.Type();
+                if (question.Type == 0) count = 1;
+                else count = question.Type;
                 answers[number] = new Answers(count);
             }
-            switch(question.Section())
+            switch(question.Section)
             {
                 case 1:
                     listening.Background = Brushes.Aquamarine;
@@ -74,7 +76,7 @@ namespace TesterApp
                     throw new ArgumentOutOfRangeException();
             }
             foreach (Question q in questions)
-                if (q.Section() == question.Section()) num++;
+                if (q.Section == question.Section) num++;
             q_buttons = new Button[num];
             for (int i = 0; i < num; i++)
             {
@@ -87,14 +89,14 @@ namespace TesterApp
                 dockpanel1.Children.Add(q_buttons[i]);
             }
 
-            if (question.Section() == 3) ShowWriting();
-            else if (question.Type() == 0) ShowType1();
+            if (question.Section == 3) ShowWriting();
+            else if (question.Type == 0) ShowType1();
             else ShowType2();
         }
 
         public void ShowWriting()
         {
-            textblock.Text = questions[actual_number].Text();
+            textblock.Text = questions[actual_number].Text;
             textblock.Height = (this.Height - 70) / 3;
             TextBox textbox = new TextBox();
             textbox.Height = (this.Height - 70) / 3 * 2;
@@ -103,8 +105,8 @@ namespace TesterApp
 
         public void ShowType1()
         {
-            textblock.Text = questions[actual_number].Text();
-            textblock.Text = questions[actual_number].Text();
+            textblock.Text = questions[actual_number].Text;
+            textblock.Text = questions[actual_number].Text;
             textblock.Height = (this.Height - 70) / 2;
             textbox = new TextBox();
             textbox.Height = (this.Height - 70) / 2;
@@ -113,11 +115,13 @@ namespace TesterApp
 
         public void ShowType2()
         {
-            textblock.Text = questions[actual_number].Text();
-            checkboxes = new CheckBox[questions[actual_number].Type()];
+
+            textblock.Text = questions[actual_number].Text;
+            checkboxes = new CheckBox[questions[actual_number].Type];
+            Answers ans = questions[actual_number].Answers;
             for (int i = 0; i < checkboxes.Length; i++)
             {
-                //checkboxes[i].Content = (questions[actual_number].Answers())[i];
+                //checkboxes[i].Content = ans[i];
             }
 
         }
@@ -141,7 +145,7 @@ namespace TesterApp
         {
             int i;
             for (i = 0; i < questions.Length; i++)
-                if (questions[i].Section() == 2)
+                if (questions[i].Section == 2)
                 {
                     ShowQuestion(i);
                     break;
@@ -152,7 +156,7 @@ namespace TesterApp
         {
             int i;
             for (i = 0; i < questions.Length; i++)
-                if (questions[i].Section() == 1)
+                if (questions[i].Section == 1)
                 {
                     ShowQuestion(i);
                     break;
@@ -163,7 +167,7 @@ namespace TesterApp
         {
             int i;
             for (i = 0; i < questions.Length; i++)
-                if (questions[i].Section() == 3) {
+                if (questions[i].Section == 3) {
                     ShowQuestion(i);
                     break;
                 }
@@ -171,10 +175,8 @@ namespace TesterApp
 
         private void submit_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Answers answer in answers)
-            {
-                if (answer.isClear()) 
-            }
+            student.AddAnswers(answers);
+            Exit exit = new Exit(student, this);
         }
     }
 }

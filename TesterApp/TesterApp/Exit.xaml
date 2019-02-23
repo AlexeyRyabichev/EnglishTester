@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:TesterApp"
         mc:Ignorable="d"
         Title="Exit" Height="450" Width="800">
-    <UniformGrid Rows="2" Columns="2">
-        
-    </UniformGrid>
+    <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
+        <TextBlock Text=" Are you sure you want to exit?"  Margin="50"></TextBlock>
+        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="button1" Content="   Yes   " Margin="30" BorderBrush="Blue" Click="button1_Click"></Button>
+            <Button x:Name="button2" Content="   No   " Margin="30"></Button>
+        </WrapPanel>
+    </WrapPanel>
 </Window>
