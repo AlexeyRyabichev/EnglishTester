@@ -32,12 +32,12 @@ namespace TesterApp
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+            Server.SendData(student);
+            parent.Close();
             this.Close();
         }
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            Server.SendData(student);
-            parent.Close();
             this.Close();
         }
     }

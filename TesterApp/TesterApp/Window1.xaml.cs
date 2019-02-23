@@ -177,6 +177,7 @@ namespace TesterApp
         {
             student.AddAnswers(answers);
             Exit exit = new Exit(student, this);
+            exit.ShowDialog();
         }
     }
 }
