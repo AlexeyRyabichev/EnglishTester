@@ -2,15 +2,16 @@ package swagger
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"log"
 	"net/http"
 )
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	log.Print(r.Form)
+	//log.Print(r.Form)
+
 	email := r.FormValue("email")
 	pass := r.FormValue("password")
+
 	var student Student
 	var teacher Teacher
 	err := db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
@@ -32,7 +33,6 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Authorization", token)
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Token:" + token))
 
 }
 
