@@ -71,20 +71,6 @@ var routes = Routes{
 	},
 
 	Route{
-		"ExampleGet",
-		strings.ToUpper("Get"),
-		"/api/example",
-		ExampleGet,
-	},
-
-	Route{
-		"PingGet",
-		strings.ToUpper("Get"),
-		"/api/ping",
-		PingGet,
-	},
-
-	Route{
 		"StudentCreateWithArrayPost",
 		strings.ToUpper("Post"),
 		"/api/student/createWithArray",
