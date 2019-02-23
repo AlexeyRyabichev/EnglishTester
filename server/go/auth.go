@@ -6,9 +6,9 @@ import (
 )
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 	email := r.FormValue("email")
 	pass := r.FormValue("password")
-
 	var student Student
 	var teacher Teacher
 	err := db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
