@@ -1,4 +1,4 @@
-window.onload=function () {
+window.onload = function () {
     const loginButton = document.getElementById("loginButton");
     loginButton.addEventListener("click", loginFunc);
     console.log(window.location.pathname);

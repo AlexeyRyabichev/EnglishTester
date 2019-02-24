@@ -324,7 +324,7 @@ module.exports = {
         var date = new Date();
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         if (request.url === '/' || request.url === '/index.html') {
-            open(path.join(__dirname,'/teacher/index.html'), response);
+            open(path.join(__dirname, '/teacher/index.html'), response);
         } else if (request.url === '/res/HseLogo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
@@ -346,17 +346,17 @@ module.exports = {
                     response.writeHead(301, {
                         'Location': "/index.html"
                     });
-                    open(path.join(__dirname,'/teacher/index.html'), response);
+                    open(path.join(__dirname, '/teacher/index.html'), response);
                 }
             });
         } else {
             checkToken(request, (valid) => {
                 let pathToGo = request.url;
-                if (!valid){
+                if (!valid) {
                     response.writeHead(301, {
                         'Location': "/index.html"
                     });
-                    open(path.join(__dirname,'/teacher/index.html'), response);
+                    open(path.join(__dirname, '/teacher/index.html'), response);
                 }
                 switch (pathToGo) {
                     case "/":

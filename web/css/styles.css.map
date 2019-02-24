@@ -1,1 +1,9 @@
-{"version":3,"sources":["styles.less"],"names":[],"mappings":"AAMA;EACE,wCAAA","file":"styles.css"}
+{
+  "version": 3,
+  "sources": [
+    "styles.less"
+  ],
+  "names": [],
+  "mappings": "AAMA;EACE,wCAAA",
+  "file": "styles.css"
+}
