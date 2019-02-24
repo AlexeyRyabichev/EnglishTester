@@ -25,8 +25,7 @@ namespace TesterApp
         public Button[] q_buttons;
         public Button exit;
         public TextBox textbox;
-        public CheckBox[] checkboxes;
-        public Answers[] answers;
+        public string[] answers;
         public Student student;
         public int actual_number;
 
@@ -38,7 +37,7 @@ namespace TesterApp
             this.WindowState = WindowState.Maximized;
             this.BorderThickness = new Thickness(0);
             questions = Server.GetQuestions();
-            answers = new Answers[questions.Length];
+            answers = new string[questions.Length];
             this.student = student;
             ShowQuestion(0);
             textbox.BorderThickness = new Thickness(3);
@@ -54,23 +53,16 @@ namespace TesterApp
             int num = 0;
             actual_number = number;
             Question question = questions[number];
-            if (answers[number] == null)
-            {
-                int count;
-                if (question.Type == 0) count = 1;
-                else count = question.Type;
-                answers[number] = new Answers(count);
-            }
             switch(question.Section)
             {
                 case 1:
-                    listening.Background = Brushes.Aquamarine;
+                    listening.Background = Brushes.LightSteelBlue;
                     break;
                 case 2:
-                    reading.Background = Brushes.Aquamarine;
+                    reading.Background = Brushes.LightSteelBlue;
                     break;
                 case 3:
-                    writing.Background = Brushes.Aquamarine;
+                    writing.Background = Brushes.LightSteelBlue;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -90,8 +82,7 @@ namespace TesterApp
             }
 
             if (question.Section == 3) ShowWriting();
-            else if (question.Type == 0) ShowType1();
-            else ShowType2();
+            else ShowQuestion();
         }
 
         public void ShowWriting()
@@ -99,46 +90,28 @@ namespace TesterApp
             textblock.Text = questions[actual_number].Text;
             textblock.Height = (this.Height - 70) / 3;
             TextBox textbox = new TextBox();
+            textbox.TextWrapping = TextWrapping.Wrap;
+            textbox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+            textbox.AcceptsReturn = true;
             textbox.Height = (this.Height - 70) / 3 * 2;
+            textbox.Text = answers[actual_number];
             grid.Children.Add(textbox);
         }
 
-        public void ShowType1()
+        public void ShowQuestion()
         {
             textblock.Text = questions[actual_number].Text;
             textblock.Text = questions[actual_number].Text;
             textblock.Height = (this.Height - 70) / 2;
             textbox = new TextBox();
             textbox.Height = (this.Height - 70) / 2;
+            textbox.Text = answers[actual_number];
             grid.Children.Add(textbox);
         }
 
-        public void ShowType2()
+        private void textbox_TextInput(object sender, KeyEventArgs e)
         {
-
-            textblock.Text = questions[actual_number].Text;
-            checkboxes = new CheckBox[questions[actual_number].Type];
-            Answers ans = questions[actual_number].Answers;
-            for (int i = 0; i < checkboxes.Length; i++)
-            {
-                //checkboxes[i].Content = ans[i];
-            }
-
-        }
-
-        private void TextBox_TextInput(object sender, KeyEventArgs e)
-        {
-            answers[actual_number].AddAnswer(textbox.Text);
-        }
-
-        private void checkBox_Checked(object sender, RoutedEventArgs e)
-        {
-            answers[actual_number].AddAnswer((string)((CheckBox)sender).Content);
-        }
-
-        private void checkBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            answers[actual_number].DeleteAnswer((string)((CheckBox)sender).Content);
+            answers[actual_number] = textbox.Text;
         }
 
         private void reading_Click(object sender, RoutedEventArgs e)
