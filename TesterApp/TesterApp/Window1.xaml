@@ -5,20 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesterApp"
         mc:Ignorable="d"
-        Title="Testing..." Height="450" Width="800">
-    <DockPanel  LastChildFill="True" MinWidth="400" MinHeight="300">
+        Title="Testing..." Height="450" Width="800" Closing="Window_Closing" WindowStyle="None" Deactivated="Window_Deactivated">
+    <DockPanel  LastChildFill="True" MinWidth="400" MinHeight="300" >
         <DockPanel x:Name="dockpanel1" LastChildFill="False" DockPanel.Dock="Bottom" 
-                   MinHeight="50" VerticalAlignment="Center">
+                   MinHeight="50" HorizontalAlignment="Center">
         </DockPanel>
-        <DockPanel x:Name="dockpanel2" LastChildFill="True" DockPanel.Dock="Right" MinWidth="100">
-            <Button x:Name="reading" DockPanel.Dock="Top" Content="Reading"></Button>
-            <Button x:Name="listening" DockPanel.Dock="Top" Content="Listening"></Button>
-            <Button x:Name="writing" DockPanel.Dock="Top" Content="Writing"></Button>
-            <Button x:Name="submit" DockPanel.Dock="Top" Content="Submit" ></Button>
-        </DockPanel>
-        <TextBox x:Name="textbox" DockPanel.Dock="Top" Margin="5,5,5.333,5" MinWidth="100"
-                 BorderBrush="LightBlue" BorderThickness="3" MinHeight="95">Какой то текст...</TextBox>
+        <UniformGrid Rows="4" DockPanel.Dock="Right" MinWidth="100" Margin="5">
+            <Button x:Name="reading" DockPanel.Dock="Top" Content="Reading" Click="reading_Click"></Button>
+            <Button x:Name="listening" DockPanel.Dock="Top" Content="Listening" Click="listening_Click"></Button>
+            <Button x:Name="writing" DockPanel.Dock="Top" Content="Writing" Click="writing_Click"></Button>
+            <Button x:Name="submit"  DockPanel.Dock="Top" Background="PaleVioletRed" Content="Submit" Click="submit_Click" ></Button>
+        </UniformGrid>
+        
+        <TextBlock x:Name="textblock" DockPanel.Dock="Top" Margin="5,5,5.333,5" MinWidth="100"
+                  MinHeight="95">Какой то текст...</TextBlock>
+        <TextBlock x:Name="textblock2" DockPanel.Dock="Top" MinWidth="50"
+                  Height="20" Margin="0,0,0.333,0" Foreground="Gray">Введите ответ в поле ниже:
+        </TextBlock>
         <Grid x:Name="grid" DockPanel.Dock="Top">
+            <TextBox x:Name="textbox"/>
         </Grid>
     </DockPanel>
 

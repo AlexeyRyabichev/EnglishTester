@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TesterLib;
+using ServerLib;
 
 namespace TesterApp
 {
@@ -35,14 +36,17 @@ namespace TesterApp
             string password = textbox2.Text;
             try
             {
-                student = new Student(email, password);
+                string id = Server.Authentication(email, password);
+                if (id == "")
+                    throw new ArgumentOutOfRangeException("Неверно введённые данные");
+                student = new Student(email, password, id);
                 Window1 testerWindow = new Window1(student);
                 testerWindow.Show();
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show( ex.ToString() );
             }
         }
 
