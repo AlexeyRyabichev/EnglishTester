@@ -57,16 +57,21 @@ namespace TesterApp
             actual_number = number;
             Question question = questions[number];
             actual_section = question.Section;
+            Color light_blue = new Color();
+            light_blue.A = 1;
+            light_blue.B = 255;
+            light_blue.G = 230;
+            light_blue.R = 217;
             switch (question.Section)
             {
                 case 1:
-                    listening.Background = Brushes.LightSteelBlue;
+                    listening.Background = new SolidColorBrush(light_blue);
                     break;
                 case 2:
-                    reading.Background = Brushes.LightSteelBlue;
+                    reading.Background = new SolidColorBrush(light_blue);
                     break;
                 case 3:
-                    writing.Background = Brushes.LightSteelBlue;
+                    writing.Background = new SolidColorBrush(light_blue);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

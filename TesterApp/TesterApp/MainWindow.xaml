@@ -10,13 +10,19 @@
     <Grid>
         
         <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Label x:Name="label1" Content="Email:" Margin="5" 
-                   FontFamily="Roboto Medium"></Label>
-            <TextBox x:Name="textbox1" Width="200" Margin="5"  FontFamily="Roboto Light"></TextBox>
-            <Label x:Name="label2" Content="Password:" Margin="5"  FontFamily="Roboto Medium"></Label>
-            <TextBox x:Name="textbox2"  Width="200" Margin="5"  FontFamily="Roboto Light"></TextBox>
-            <Button x:Name="button1" Content="  Begin  " 
-                 Margin="20" FontFamily="Roboto Bold"/>
+            <Image x:Name="myImage" Height="220" Margin="20"  Source="C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\res\logo.png" />
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label x:Name="label1" Content="        Email:" Margin="5" 
+                   FontFamily="./#ROBOTOMEDIUM" HorizontalAlignment="Right"></Label>
+                <TextBox x:Name="textbox1" Width="150" Margin="5"  FontFamily="./#ROBOTOLIGHT"></TextBox>
+            </WrapPanel>
+            <WrapPanel  Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label x:Name="label2" Content="Password:" Margin="5"  FontFamily="./#ROBOTOMEDIUM" HorizontalAlignment="Right"></Label>
+                <TextBox x:Name="textbox2"  Width="150" Margin="5"  FontFamily="./#ROBOTOLIGHT" ></TextBox>
+            </WrapPanel>
+
+            <Button x:Name="button1" Content=" Begin " 
+                 Margin="20" FontFamily="./#ROBOTOBOLD" Background="#d9e6ff"/>
         </WrapPanel>
 
         
