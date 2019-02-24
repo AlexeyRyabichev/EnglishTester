@@ -38,13 +38,6 @@ namespace ServerLib
         }
         public static string Authentication(string email, string password)
         {
-            /*var client = new RestClient("http://138.68.78.205:8080/api/login");
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddParameter("email="+email+"&password="+password, ParameterType.RequestBody);
-            IRestResponse response = client.Execute(request);*/
-            //401
-
             var client = new RestClient("http://138.68.78.205:8080/api/login");
             var request = new RestRequest(Method.POST);
             email.Replace("@", "%40");
@@ -52,8 +45,8 @@ namespace ServerLib
             request.AddParameter("undefined", "email="+ email +"&password="+password, 
                 ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) return "";
-
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                return "";
             else if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 return response.Headers.ToList().Find(x => x.Name == "Authorization").Value.ToString();
 

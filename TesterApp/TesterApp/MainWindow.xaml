@@ -5,24 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesterApp"
         mc:Ignorable="d"
-        Title="Login" Height="450" Width="800"
+        Title="Login" Height="800" Width="1000"
         >
     <Grid>
         
-        <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Image x:Name="myImage" Height="220" Margin="20"  Source="C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\res\logo.png" />
+        <WrapPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image x:Name="myImage" Height="220" Margin="20"  Source="logo.png" />
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label x:Name="label1" Content="        Email:" Margin="5" 
-                   FontFamily="./#ROBOTOMEDIUM" HorizontalAlignment="Right"></Label>
-                <TextBox x:Name="textbox1" Width="150" Margin="5"  FontFamily="./#ROBOTOLIGHT"></TextBox>
+                   FontFamily="./#ROBOTO Medium" HorizontalAlignment="Right"></Label>
+                <TextBox x:Name="textbox1" Width="150" Margin="5"  FontFamily="./#ROBOTO Light"></TextBox>
             </WrapPanel>
             <WrapPanel  Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label x:Name="label2" Content="Password:" Margin="5"  FontFamily="./#ROBOTOMEDIUM" HorizontalAlignment="Right"></Label>
-                <TextBox x:Name="textbox2"  Width="150" Margin="5"  FontFamily="./#ROBOTOLIGHT" ></TextBox>
+                <Label x:Name="label2" Content="Password:" Margin="5"  FontFamily="./#ROBOTO Medium" HorizontalAlignment="Right"></Label>
+                <TextBox x:Name="textbox2"  Width="150" Margin="5"  FontFamily="./#ROBOTO Light" ></TextBox>
             </WrapPanel>
 
             <Button x:Name="button1" Content=" Begin " 
-                 Margin="20" FontFamily="./#ROBOTOBOLD" Background="#d9e6ff"/>
+                 Margin="20" FontFamily="./#ROBOTO Bold" Background="#d9e6ff"/>
         </WrapPanel>
 
         
