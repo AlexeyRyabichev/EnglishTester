@@ -16,7 +16,10 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "audio/mpeg")
 	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
-		w.Write([]byte("У вас нет полномочий для этого действия."))
+		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
+		if err != nil {
+			log.Println(err.Error())
+		}
 		return
 	}
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
@@ -28,16 +31,26 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 		Select(&path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, err := w.Write([]byte(err.Error()))
+		if err != nil {
+			log.Println(err.Error())
+		}
 		return
 	}
 	audioFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, err := w.Write([]byte(err.Error()))
+		if err != nil {
+			log.Println(err.Error())
+		}
 		return
 	}
-	w.Write(audioFile)
+	_, err = w.Write(audioFile)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err.Error())
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -45,14 +58,25 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
-		w.Write([]byte("У вас нет полномочий для этого действия."))
+		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		return
 	}
 
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
-
-	r.ParseMultipartForm(32 << 20)
-
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+	err = r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+	}
 	file, _, err := r.FormFile("file") //retrieve the file from form data
 	defer file.Close()                 //close the file when we finish
 
