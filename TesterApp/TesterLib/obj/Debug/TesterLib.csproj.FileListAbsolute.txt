@@ -9,3 +9,7 @@ C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\obj\Debug\TesterLib.c
 C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\obj\Debug\TesterLib.csproj.CoreCompileInputs.cache
 C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\obj\Debug\TesterLib.dll
 C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\obj\Debug\TesterLib.pdb
+C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\bin\Debug\Newtonsoft.Json.dll
+C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\bin\Debug\Newtonsoft.Json.xml
+C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterLib\obj\Debug\TesterLib.csproj.CopyComplete

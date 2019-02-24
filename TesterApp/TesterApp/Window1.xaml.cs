@@ -77,13 +77,10 @@ namespace TesterApp
             for (int i = 0; i < num; i++)
             {
                 q_buttons[i] = new Button();
-                //numbers[i].Height = 50;
                 q_buttons[i].Name = "l" + i;
                 q_buttons[i].Width = dockpanel1.Width / num;
                 q_buttons[i].Content = "  " + (i + 1) + "  ";
                 q_buttons[i].Click += ButtonOnClick;
-                //numbers[i].Margin = new Thickness(numbers[i].Width*i,
-                //this.Height - 50, 0, 0);
                 dockpanel1.Children.Add(q_buttons[i]);
             }
 
@@ -174,9 +171,6 @@ namespace TesterApp
             if (flag) this.Topmost = true;
         }
 
-            //answers[actual_number] = textbox.Text;
-            //MessageBox.Show(textbox.Text);
-
 
         private void ButtonOnClick(object sender, EventArgs eventArgs)
         {
@@ -196,7 +190,6 @@ namespace TesterApp
         private void Write()
         {
             answers[actual_number] = textbox.Text;
-            MessageBox.Show(textbox.Text);
         }
     }
 }
