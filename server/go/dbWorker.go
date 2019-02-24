@@ -8,14 +8,16 @@ import (
 
 var db *pg.DB
 
+var passwordForDB = "tigra" //TODO: CHANGE THIS PASSWORD TO WHICH YOU HAVE ON YOUR SERVER
+
 func InitDB() {
 	db = pg.Connect(&pg.Options{
 		User:     "postgres",
-		Password: "tigra",
+		Password: passwordForDB,
 	})
 	err := createSchema(db)
 	if err == nil {
-		fmt.Print("kk")
+		fmt.Print(err)
 	}
 }
 

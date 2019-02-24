@@ -18,6 +18,7 @@ span.badge {
     background-color: $badge-bg-color;
     border-radius: 2px;
   }
+
   &.new:after {
     content: " new";
   }
@@ -41,9 +42,11 @@ nav ul a span.badge {
 .collection-item span.badge {
   margin-top: calc(#{$collection-line-height / 2} - #{$badge-height / 2});
 }
+
 .collapsible span.badge {
   margin-left: auto;
 }
+
 .sidenav span.badge {
   margin-top: calc(#{$sidenav-line-height / 2} - #{$badge-height / 2});
 }

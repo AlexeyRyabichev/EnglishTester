@@ -1,13 +1,13 @@
 package swagger
 
 import (
+	"./Roles"
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
 )
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	//log.Print(r.Form)
 
 	email := r.FormValue("email")
 	pass := r.FormValue("password")
@@ -15,10 +15,10 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	var student Student
 	var teacher Teacher
 	err := db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
-	var role string = "student"
+	var role Roles.Role = Roles.Student
 	if err != nil {
 		err = db.Model(&teacher).Where("login = ? and password = ?", email, pass).Select()
-		role = "teacher"
+		role = Roles.Teacher
 		if err != nil {
 
 			w.WriteHeader(http.StatusUnauthorized)

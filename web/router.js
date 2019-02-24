@@ -54,9 +54,11 @@ function getStudentsTable(request, callback) {
                         ans += body[i].name;
                         ans += '</td>';
                         ans += '<td>';
+                        // noinspection JSUnresolvedVariable
                         ans += body[i].lastName;
                         ans += '</td>';
                         ans += '<td>';
+                        // noinspection JSUnresolvedVariable
                         ans += body[i].fatherName;
                         ans += '</td>';
                         ans += '<td>';
@@ -142,12 +144,12 @@ function getUsername(request, callback) {
                     let body = Buffer.concat(chunks);
                     body = JSON.parse(body.toString());
                     let ans = '';
-                    // console.log(`BODY: ${Buffer.concat(chunks).toString()}`);
-                    // console.log(`Email: ${parseCookies(request)['email']}`);
                     for (let i = 0; i < body.length; i++) {
-                        // console.log(`${i} Email: ${body[i].login} Name: ${body[i].name} Surname: ${body[i].surname}`);
+                        // noinspection JSUnresolvedVariable
                         if (parseCookies(request)['email'] === body[i].login)
-                            ans = body[i].surname + " " + body[i].name;
+                            { // noinspection JSUnresolvedVariable
+                                ans = body[i].surname + " " + body[i].name;
+                            }
                     }
                     callback(ans);
                 });
@@ -249,7 +251,6 @@ function handleAuth(request, callback) {
         email = email.replace("%40", "@");
     });
     request.on('end', () => {
-        // body = body.replace("%40", "@");
         console.log("CREDENTIALS: " + body);
         const options = {
             hostname: '127.0.0.1',
@@ -257,9 +258,7 @@ function handleAuth(request, callback) {
             path: '/api/login',
             method: 'POST',
             headers: {
-                // 'Content-Type': 'multipart/form-data',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                // 'Content-Length': Buffer.byteLength(body),
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
         };
 
@@ -280,7 +279,6 @@ function handleAuth(request, callback) {
         });
 
         req.write(body);
-        // console.log("BODY2: " + body);
         req.end();
     });
 }
@@ -321,67 +319,66 @@ function checkToken(request, callback) {
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
-        var date = new Date();
+        const date = new Date();
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         if (request.url === '/' || request.url === '/index.html') {
-            open('./teacher/index.html', response);
-        } else if (request.url === '/res/HseLogo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
-            request.url = path.join(__dirname, "../", request.url);
+            open(path.join(__dirname, '/teacher/index.html'), response);
+        } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
+            request.url = path.join(__dirname, request.url);
             open(request.url, response);
         } else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
-                    request.url = "./teacher/students.html";
+                    request.url = "/teacher/students.html";
                     console.log("TOKEN: " + token);
-                    // response.statusCode = 200;
-                    // response.setHeader("Set-Cookie", ["token=" + token, "email=" + email]);
                     response.writeHead(301, {
                         'Set-Cookie': ["token=" + token, "email=" + email],
                         'Location': "/students.html"
                     });
                     request.headers.authorization = token;
+                    request.url = path.join(__dirname, request.url);
                     openTemplate(request, response);
                 } else {
                     response.writeHead(301, {
                         'Location': "/index.html"
                     });
-                    open('./teacher/index.html', response);
+                    open(path.join(__dirname, '/teacher/index.html'), response);
                 }
             });
         } else {
             checkToken(request, (valid) => {
                 let pathToGo = request.url;
-                if (!valid){
+                if (!valid) {
                     response.writeHead(301, {
                         'Location': "/index.html"
                     });
-                    open('./teacher/index.html', response);
+                    open(path.join(__dirname, '/teacher/index.html'), response);
                 }
                 switch (pathToGo) {
                     case "/":
-                        pathToGo = "./teacher/index.html";
+                        pathToGo = "/teacher/index.html";
                         break;
                     case "/index.html":
-                        pathToGo = "./teacher/index.html";
+                        pathToGo = "/teacher/index.html";
                         break;
                     case "/students.html":
-                        pathToGo = "./teacher/students.html";
+                        pathToGo = "/teacher/students.html";
                         break;
                     case "/tests.html":
-                        pathToGo = "./teacher/tests.html";
+                        pathToGo = "/teacher/tests.html";
                         break;
                     case "/results.html":
-                        pathToGo = "./teacher/results.html";
+                        pathToGo = "/teacher/results.html";
                         break;
                     case "/settings.html":
-                        pathToGo = "./teacher/settings.html";
+                        pathToGo = "/teacher/settings.html";
                         break;
                     default:
-                        pathToGo = path.join(__dirname, "../", pathToGo);
+                        pathToGo = path.join(__dirname, pathToGo);
                         break;
                 }
                 if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
-                    request.url = pathToGo;
+                    request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);
                     openTemplate(request, response);
                 } else open(pathToGo, response);

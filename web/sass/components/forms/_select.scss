@@ -1,8 +1,13 @@
 /* Select Field
    ========================================================================== */
 
-select { display: none; }
-select.browser-default { display: block; }
+select {
+  display: none;
+}
+
+select.browser-default {
+  display: block;
+}
 
 select {
   background-color: $select-background;
@@ -60,6 +65,7 @@ select {
     &:focus {
       border-bottom: 1px solid $input-focus-color;
     }
+
     position: relative;
     cursor: pointer;
     background-color: transparent;
@@ -73,7 +79,7 @@ select {
     margin: $input-margin;
     padding: 0;
     display: block;
-    user-select:none;
+    user-select: none;
     z-index: 1;
   }
 
@@ -84,7 +90,7 @@ select {
     bottom: 0;
     margin: auto 0;
     z-index: 0;
-    fill: rgba(0,0,0,.87);
+    fill: rgba(0, 0, 0, .87);
   }
 
   & + label {
@@ -103,6 +109,7 @@ select:disabled {
   + label {
     color: $input-disabled-color;
   }
+
   .caret {
     fill: $input-disabled-color;
   }
@@ -150,7 +157,9 @@ body.keyboard-focused {
   width: calc(100% - 3rem);
 }
 
-.prefix ~ label { margin-left: 3rem; }
+.prefix ~ label {
+  margin-left: 3rem;
+}
 
 // Icons
 .select-dropdown li {

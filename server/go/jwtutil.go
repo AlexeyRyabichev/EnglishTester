@@ -1,9 +1,11 @@
 package swagger
 
 import (
+	"./Roles"
 	"fmt"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"log"
+	"time"
 )
 
 type MyCustomClaims struct {
@@ -12,16 +14,16 @@ type MyCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func getToken(email, role string) (string, error) {
+func getToken(email string, role Roles.Role) (string, error) {
 	signingKey := []byte("EngTester")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyCustomClaims{
 		email,
-		role,
+		role.String(),
 		jwt.StandardClaims{
-			ExpiresAt: 15000,
+			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 		},
 	})
-	//TODO: think about roles
+
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
 }
@@ -48,7 +50,7 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 			fmt.Println("Couldn't handle this token:", err)
 		}
 	} else {
-		log.Print("couldnt handle this token")
+		log.Print("Couldn't handle this token")
 		return token.Claims, ve
 	}
 	return token.Claims, err
