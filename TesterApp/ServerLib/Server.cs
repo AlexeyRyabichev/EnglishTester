@@ -38,15 +38,20 @@ namespace ServerLib
         }
         public static string Authentication(string email, string password)
         {
+            /*var client = new RestClient("http://138.68.78.205:8080/api/login");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddParameter("email="+email+"&password="+password, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);*/
+            //401
+
             var client = new RestClient("http://138.68.78.205:8080/api/login");
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Postman-Token", "0603f2e8-4496-4c52-bb39-f41fe6e9e917");
-            request.AddHeader("cache-control", "no-cache");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddParameter("undefined", "email=test&password=pass", ParameterType.RequestBody);
+            request.AddParameter("email=admin%40edu.hse.ru&password=123abc&undefined=", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-            //401
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) return ""; 
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) return "401"; 
 
             else if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 return response.Content; 
