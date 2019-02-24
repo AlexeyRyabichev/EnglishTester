@@ -24,11 +24,11 @@ namespace TesterApp
         public Question[] questions;
         public Button[] q_buttons;
         public Button exit;
-        public TextBox textbox;
         public string[] answers;
         public Student student;
         public int actual_number;
         private bool flag;
+        private int actual_section;
 
         public Window1(Student student)
         {
@@ -56,7 +56,8 @@ namespace TesterApp
             int num = 0;
             actual_number = number;
             Question question = questions[number];
-            switch(question.Section)
+            actual_section = question.Section;
+            switch (question.Section)
             {
                 case 1:
                     listening.Background = Brushes.LightSteelBlue;
@@ -77,8 +78,10 @@ namespace TesterApp
             {
                 q_buttons[i] = new Button();
                 //numbers[i].Height = 50;
+                q_buttons[i].Name = "l" + i;
                 q_buttons[i].Width = dockpanel1.Width / num;
                 q_buttons[i].Content = "  " + (i + 1) + "  ";
+                q_buttons[i].Click += ButtonOnClick;
                 //numbers[i].Margin = new Thickness(numbers[i].Width*i,
                 //this.Height - 50, 0, 0);
                 dockpanel1.Children.Add(q_buttons[i]);
@@ -90,9 +93,10 @@ namespace TesterApp
 
         public void ShowWriting()
         {
+            textblock2.Text = "Введите ответ в поле ниже.";
             textblock.Text = questions[actual_number].Text;
             textblock.Height = (this.Height - 70) / 3;
-            TextBox textbox = new TextBox();
+            textbox = new TextBox();
             textbox.TextWrapping = TextWrapping.Wrap;
             textbox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             textbox.AcceptsReturn = true;
@@ -103,6 +107,9 @@ namespace TesterApp
 
         public void ShowQuestion()
         {
+            textblock2.Text = "Введите ответ в поле ниже. " +
+                "Если ответ подразумевает собой несколько вариантов ответов, введите их номера/буквы" +
+                " подряд без пробелов в том порядке, в каком они расположены в задании.";
             textblock.Text = questions[actual_number].Text;
             textblock.Text = questions[actual_number].Text;
             textblock.Height = (this.Height - 70) / 2;
@@ -112,13 +119,10 @@ namespace TesterApp
             grid.Children.Add(textbox);
         }
 
-        private void textbox_TextInput(object sender, KeyEventArgs e)
-        {
-            answers[actual_number] = textbox.Text;
-        }
 
         private void reading_Click(object sender, RoutedEventArgs e)
         {
+            Write();
             int i;
             for (i = 0; i < questions.Length; i++)
                 if (questions[i].Section == 2)
@@ -130,6 +134,7 @@ namespace TesterApp
 
         private void listening_Click(object sender, RoutedEventArgs e)
         {
+            Write();
             int i;
             for (i = 0; i < questions.Length; i++)
                 if (questions[i].Section == 1)
@@ -141,6 +146,7 @@ namespace TesterApp
 
         private void writing_Click(object sender, RoutedEventArgs e)
         {
+            Write();
             int i;
             for (i = 0; i < questions.Length; i++)
                 if (questions[i].Section == 3) {
@@ -151,6 +157,7 @@ namespace TesterApp
 
         private void submit_Click(object sender, RoutedEventArgs e)
         {
+            Write();
             student.AddAnswers(answers);
             flag = false;
             Exit exit = new Exit(student, this);
@@ -165,6 +172,31 @@ namespace TesterApp
         private void Window_Deactivated(object sender, EventArgs e)
         {
             if (flag) this.Topmost = true;
+        }
+
+            //answers[actual_number] = textbox.Text;
+            //MessageBox.Show(textbox.Text);
+
+
+        private void ButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            Write();
+            int index = 0;
+            var button = (Button)sender;
+            int number;
+            int.TryParse((button.Name).Substring(1), out number);
+            while ((questions[index].Section != actual_section) || (index != number))
+            {
+                index++;
+                if (index >= questions.Length) break;
+            }
+            if (index<questions.Length) ShowQuestion(index);
+        }
+
+        private void Write()
+        {
+            answers[actual_number] = textbox.Text;
+            MessageBox.Show(textbox.Text);
         }
     }
 }
