@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Login" Height="450" Width="800">
     <Grid>
-        <Button x:Name="button1" Content="  Begin  " VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <Button x:Name="button1" Content="Begin" VerticalAlignment="Center" HorizontalAlignment="Center" />
         <Canvas>
             <Label x:Name="label1" Content="Email: " Canvas.Top="150" Canvas.Left="510"></Label>
             <TextBox x:Name="textbox1" Canvas.Top="155" Width="200" Canvas.Left="580"></TextBox>

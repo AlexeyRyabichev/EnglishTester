@@ -42,5 +42,3 @@ C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\obj\Debug\TesterApp.c
 C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\obj\Debug\TesterApp.csproj.CopyComplete
 C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\obj\Debug\TesterApp.exe
 C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\obj\Debug\TesterApp.pdb
-C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\obj\Debug\Exit.g.cs
-C:\Users\redhe\Documents\EnglishTester\TesterApp\TesterApp\obj\Debug\Exit.baml
