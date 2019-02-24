@@ -324,14 +324,14 @@ module.exports = {
         var date = new Date();
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         if (request.url === '/' || request.url === '/index.html') {
-            open('./teacher/index.html', response);
+            open(path.join(__dirname,'/teacher/index.html'), response);
         } else if (request.url === '/res/HseLogo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
-            request.url = path.join(__dirname, "../", request.url);
+            request.url = path.join(__dirname, request.url);
             open(request.url, response);
         } else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
-                    request.url = "./teacher/students.html";
+                    request.url = "/teacher/students.html";
                     console.log("TOKEN: " + token);
                     // response.statusCode = 200;
                     // response.setHeader("Set-Cookie", ["token=" + token, "email=" + email]);
@@ -340,12 +340,13 @@ module.exports = {
                         'Location': "/students.html"
                     });
                     request.headers.authorization = token;
+                    request.url = path.join(__dirname, request.url);
                     openTemplate(request, response);
                 } else {
                     response.writeHead(301, {
                         'Location': "/index.html"
                     });
-                    open('./teacher/index.html', response);
+                    open(path.join(__dirname,'/teacher/index.html'), response);
                 }
             });
         } else {
@@ -355,33 +356,33 @@ module.exports = {
                     response.writeHead(301, {
                         'Location': "/index.html"
                     });
-                    open('./teacher/index.html', response);
+                    open(path.join(__dirname,'/teacher/index.html'), response);
                 }
                 switch (pathToGo) {
                     case "/":
-                        pathToGo = "./teacher/index.html";
+                        pathToGo = "/teacher/index.html";
                         break;
                     case "/index.html":
-                        pathToGo = "./teacher/index.html";
+                        pathToGo = "/teacher/index.html";
                         break;
                     case "/students.html":
-                        pathToGo = "./teacher/students.html";
+                        pathToGo = "/teacher/students.html";
                         break;
                     case "/tests.html":
-                        pathToGo = "./teacher/tests.html";
+                        pathToGo = "/teacher/tests.html";
                         break;
                     case "/results.html":
-                        pathToGo = "./teacher/results.html";
+                        pathToGo = "/teacher/results.html";
                         break;
                     case "/settings.html":
-                        pathToGo = "./teacher/settings.html";
+                        pathToGo = "/teacher/settings.html";
                         break;
                     default:
-                        pathToGo = path.join(__dirname, "../", pathToGo);
+                        pathToGo = path.join(__dirname, pathToGo);
                         break;
                 }
                 if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
-                    request.url = pathToGo;
+                    request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);
                     openTemplate(request, response);
                 } else open(pathToGo, response);

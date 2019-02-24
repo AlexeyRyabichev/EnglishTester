@@ -1,4 +1,4 @@
-const router = require(('./jsPrivate/router.js'));
+const router = require(('./router.js'));
 
 const http = require('http');
 // const https = require('https');
