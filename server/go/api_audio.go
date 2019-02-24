@@ -1,5 +1,16 @@
 package swagger
 
+import ( 
+ "github.com/gorilla/mux" 
+ "io" 
+ "io/ioutil" 
+ "log" 
+ "net/http" 
+ "os" 
+ "path/filepath" 
+ "strconv" 
+)
+
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "audio/mpeg")
 	if r.Header.Get("role") == "student" {

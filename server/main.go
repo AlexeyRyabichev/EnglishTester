@@ -14,5 +14,5 @@ func main() {
 	sw.CreateSchemaTeachers()
 	router := sw.NewRouter()
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
