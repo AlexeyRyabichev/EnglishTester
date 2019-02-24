@@ -2,6 +2,8 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 
+//TODO: IF TABLE EMPTY => NOT FAIL
+
 function notFound(response) {
     console.log("notFound");
     fs.readFile(path.join("./teacher/notFound.html"), function (error, data) {
@@ -140,9 +142,12 @@ function getUsername(request, callback) {
                     let body = Buffer.concat(chunks);
                     body = JSON.parse(body.toString());
                     let ans = '';
+                    // console.log(`BODY: ${Buffer.concat(chunks).toString()}`);
+                    // console.log(`Email: ${parseCookies(request)['email']}`);
                     for (let i = 0; i < body.length; i++) {
+                        // console.log(`${i} Email: ${body[i].login} Name: ${body[i].name} Surname: ${body[i].surname}`);
                         if (parseCookies(request)['email'] === body[i].login)
-                            ans = body[i].name;
+                            ans = body[i].surname + " " + body[i].name;
                     }
                     callback(ans);
                 });
@@ -162,7 +167,7 @@ function openTemplate(request, response) {
             if (request.url.indexOf("students.html") > -1)
                 getStudentsTable(request, (table) => {
                     table = "<div class=\"container\">\n" +
-                        "    <table class=\"striped highlight centered\">\n" +
+                        "    <table class=\"highlight centered\">\n" +
                         "        <thead>\n" +
                         "        <tr>\n" +
                         "            <th>Name</th>\n" +
@@ -316,7 +321,8 @@ function checkToken(request, callback) {
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
-        console.log(`Requested: ${request.url}`);
+        var date = new Date();
+        console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         if (request.url === '/' || request.url === '/index.html') {
             open('./teacher/index.html', response);
         } else if (request.url === '/res/HseLogo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
