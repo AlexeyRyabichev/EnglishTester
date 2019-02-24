@@ -43,7 +43,7 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("%s\n", stArr)
+		log.Printf("%s\n", stArr) //TODO: CHECK THIS WARNING
 	}
 
 	_, err := db.Model(&stArr).Insert()
@@ -117,7 +117,7 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	log.Println("deteted: ", res.RowsAffected())
+	log.Println("deleted: ", res.RowsAffected())
 	count, err := db.Model((*Student)(nil)).Count()
 	if err != nil {
 		panic(err)
@@ -126,6 +126,7 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+//TODO: WHY THIS FUNCTION ISN'T USED?
 func StudentDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 

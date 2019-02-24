@@ -30,13 +30,13 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	audiofile, err := ioutil.ReadFile(path)
+	audioFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	w.Write(audiofile)
+	w.Write(audioFile)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -81,7 +81,7 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(fp)
 	defer f.Close()
 	io.Copy(f, file)
-	var audio Audio = Audio{StudentId: studId,
+	var audio = Audio{StudentId: studId,
 		Path: fp,
 	}
 	_, err = db.Model(&audio).Insert()
