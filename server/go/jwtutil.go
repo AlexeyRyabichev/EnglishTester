@@ -3,7 +3,7 @@ package swagger
 import (
 	"./Roles"
 	"fmt"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"log"
 	"time"
 )
@@ -23,7 +23,7 @@ func getToken(email string, role Roles.Role) (string, error) {
 			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 		},
 	})
-	//TODO: think about roles
+
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
 }
@@ -50,7 +50,7 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 			fmt.Println("Couldn't handle this token:", err)
 		}
 	} else {
-		log.Print("couldnt handle this token")
+		log.Print("Couldn't handle this token")
 		return token.Claims, ve
 	}
 	return token.Claims, err
