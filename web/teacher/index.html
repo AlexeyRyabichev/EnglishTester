@@ -8,23 +8,25 @@
 <div align="center">
     <div class="container">
         <div class="row">
-            <form class="col s2 offset-s5">
-                <img class="materialboxed" src="res/HseLogo.png" width="100%" style="margin-top: 100%">
+            <form class="col s2 offset-s5" action="auth" method="post">
+                <img class="materialboxed" src="../res/HseLogo.png" width="100%" style="margin-top: 100%">
                 <div class="row">
                     <div class="input-field">
-                        <input placeholder="Login" id="login" type="text" class="validate">
+                        <input placeholder="Email" name="email" id="email" type="email" class="validate" required>
+                        <!--<label for="login">First Name</label>-->
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field">
-                        <input placeholder="Password" id="password" type="password" class="validate">
+                        <input class="validate" placeholder="Password" name="password" id="password" type="password"
+                               required>
                     </div>
                 </div>
-                <a class="waves-effect waves-light btn" id="loginButton">Login</a>
+                <!--<a class="waves-effect waves-light btn" id="loginButton">Login</a>-->
+                <button class="waves-effect waves-light btn" id="loginButton" type="submit">Login</button>
             </form>
         </div>
     </div>
-
 </div>
 
 
@@ -41,14 +43,13 @@
 
 <!-- Compiled and minified CSS -->
 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
-<link type="text/css" rel="stylesheet" href="sass/materialize.css"  media="screen,projection"/>
-
+<link type="text/css" rel="stylesheet" href="../sass/materialize.css" media="screen,projection"/>
+<script type="text/javascript" src="../js/bin/materialize.min.js"></script>
 <!-- Compiled and minified JavaScript -->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>-->
-<script type="text/javascript" src="js/bin/materialize.min.js"></script>
+<!--<script type="text/javascript" src="../js/bin/materialize.min.js"></script>-->
 
-
-<script type="text/javascript" src="js/mine.js"></script>
+<!--<script type="text/javascript" src="../support.js"></script>-->
 </body>
 
 </html>

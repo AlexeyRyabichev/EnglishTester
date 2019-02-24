@@ -10,6 +10,7 @@
 package swagger
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -30,8 +31,8 @@ func NewRouter() *mux.Router {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc
+		handler = authMiddleware(handler, route.Name)
 		handler = Logger(handler, route.Name)
-		//handler = Auther(handler,route.Name)
 
 		router.
 			Methods(route.Method).
@@ -45,7 +46,7 @@ func NewRouter() *mux.Router {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Hello World!")
+	fmt.Fprintf(w, "Hello World!")
 }
 
 var routes = Routes{
@@ -68,20 +69,6 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/api/audio/{studentId}",
 		AudioStudentIdPost,
-	},
-
-	Route{
-		"ExampleGet",
-		strings.ToUpper("Get"),
-		"/api/example",
-		ExampleGet,
-	},
-
-	Route{
-		"PingGet",
-		strings.ToUpper("Get"),
-		"/api/ping",
-		PingGet,
 	},
 
 	Route{
@@ -165,5 +152,11 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/api/checkCredentials",
 		CheckCredentialsPost,
+	},
+	Route{
+		"LoginPost",
+		strings.ToUpper("Post"),
+		"/api/login",
+		LoginPost,
 	},
 }
