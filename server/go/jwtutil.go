@@ -1,9 +1,11 @@
 package swagger
 
 import (
+	"./Roles"
 	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
 	"log"
+	"time"
 )
 
 type MyCustomClaims struct {
@@ -12,13 +14,13 @@ type MyCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func getToken(email, role string) (string, error) {
+func getToken(email string, role Roles.Role) (string, error) {
 	signingKey := []byte("EngTester")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyCustomClaims{
 		email,
-		role,
+		role.String(),
 		jwt.StandardClaims{
-			ExpiresAt: 15000,
+			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 		},
 	})
 	//TODO: think about roles
