@@ -21,11 +21,208 @@ function open(path, response) {
     })
 }
 
+function getStudentsTable(request, callback) {
+    checkToken(request, (valid) => {
+        if (valid) {
+            const options = {
+                hostname: '127.0.0.1',
+                port: 8080,
+                path: '/api/students',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': parseCookies(request)['token']
+                }
+            };
+
+            const req = http.request(options, function (res) {
+                let chunks = [];
+
+                res.on("data", function (chunk) {
+                    chunks.push(chunk);
+                });
+
+                res.on("end", function () {
+                    let body = Buffer.concat(chunks);
+                    body = JSON.parse(body.toString());
+                    let ans = '';
+                    for (let i = 0; i < body.length; i++) {
+                        ans += '<tr>';
+                        ans += '<td>';
+                        ans += body[i].name;
+                        ans += '</td>';
+                        ans += '<td>';
+                        ans += body[i].lastName;
+                        ans += '</td>';
+                        ans += '<td>';
+                        ans += body[i].fatherName;
+                        ans += '</td>';
+                        ans += '<td>';
+                        ans += body[i].email;
+                        ans += '</td>';
+                        ans += '</tr>';
+                    }
+                    callback(ans);
+                });
+            });
+            req.end();
+        } else
+            callback('Something is wrong');
+    });
+}
+
+function getStudentsResults(request, callback) {
+    checkToken(request, (valid) => {
+        if (valid) {
+            const options = {
+                hostname: '127.0.0.1',
+                port: 8080,
+                path: '/api/students',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': parseCookies(request)['token']
+                }
+            };
+
+            const req = http.request(options, function (res) {
+                let chunks = [];
+
+                res.on("data", function (chunk) {
+                    chunks.push(chunk);
+                });
+
+                res.on("end", function () {
+                    let body = Buffer.concat(chunks);
+                    body = JSON.parse(body.toString());
+                    let ans = '';
+                    for (let i = 0; i < body.length; i++) {
+                        ans += '<tr>';
+                        ans += '<td>';
+                        ans += body[i].name;
+                        ans += '</td>';
+                        ans += '<td>';
+                        ans += "10 \\ 10"; //TODO: GET RESULTS FROM SERVER
+                        ans += '</td>';
+                        ans += '</tr>';
+                    }
+                    callback(ans);
+                });
+            });
+            req.end();
+        } else
+            callback('Something is wrong');
+    });
+}
+
+function getUsername(request, callback) {
+    checkToken(request, (valid) => {
+        if (valid) {
+            const options = {
+                hostname: '127.0.0.1',
+                port: 8080,
+                path: '/api/teachers',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': parseCookies(request)['token']
+                }
+            };
+
+            const req = http.request(options, function (res) {
+                let chunks = [];
+
+                res.on("data", function (chunk) {
+                    chunks.push(chunk);
+                });
+
+                res.on("end", function () {
+                    let body = Buffer.concat(chunks);
+                    body = JSON.parse(body.toString());
+                    let ans = '';
+                    for (let i = 0; i < body.length; i++) {
+                        if (parseCookies(request)['email'] === body[i].login)
+                            ans = body[i].name;
+                    }
+                    callback(ans);
+                });
+            });
+            req.end();
+        } else
+            callback('Something is wrong');
+    });
+}
+
+function openTemplate(request, response) {
+    fs.readFile(request.url, "utf-8", function (error, data) {
+        if (error) {
+            notFound(response);
+        } else {
+            response.statusCode = 200;
+            if (request.url.indexOf("students.html") > -1)
+                getStudentsTable(request, (table) => {
+                    table = "<div class=\"container\">\n" +
+                        "    <table class=\"striped highlight centered\">\n" +
+                        "        <thead>\n" +
+                        "        <tr>\n" +
+                        "            <th>Name</th>\n" +
+                        "            <th>Last Name</th>\n" +
+                        "            <th>Father Name</th>\n" +
+                        "            <th>Email</th>\n" +
+                        "        </tr>\n" +
+                        "        </thead>\n" +
+                        "        <tbody>\n" +
+                        table +
+                        "        </tbody>\n" +
+                        "    </table>\n" +
+                        "</div>";
+                    data = data.replace("{TABLE}", table);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("results.html") > -1)
+                getStudentsResults(request, (table) => {
+                    table = "<div class=\"container\">\n" +
+                        "    <table class=\"striped highlight centered\">\n" +
+                        "        <thead>\n" +
+                        "        <tr>\n" +
+                        "            <th>Name</th>\n" +
+                        "            <th>Result</th>\n" +
+                        "        </tr>\n" +
+                        "        </thead>\n" +
+                        "        <tbody>\n" +
+                        table +
+                        "        </tbody>\n" +
+                        "    </table>\n" +
+                        "</div>";
+                    data = data.replace("{TABLE}", table);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("tests.html") > -1) {
+                getUsername(request, (username) => {
+                    data = data.replace("{USERNAME}", username);
+                    response.end(data);
+                });
+            } else if (request.url.indexOf("settings.html") > -1) {
+                getUsername(request, (username) => {
+                    data = data.replace("{USERNAME}", username);
+                    response.end(data);
+                });
+            }
+        }
+    })
+}
+
 function parseCookies(request) {
-    var list = {}, rc = request.headers.cookie;
+    const list = {}, rc = request.headers.cookie;
 
     rc && rc.split(';').forEach(function (cookie) {
-        var parts = cookie.split('=');
+        const parts = cookie.split('=');
         list[parts.shift().trim()] = decodeURI(parts.join('='));
     });
 
@@ -33,9 +230,18 @@ function parseCookies(request) {
 }
 
 function handleAuth(request, callback) {
-    let body = '';
+    let body = '', email = '';
     request.on('data', chunk => {
         body += chunk.toString();
+        const list = {}, rc = body;
+
+        rc && rc.split('&').forEach(function (cookie) {
+            const parts = cookie.split('=');
+            list[parts.shift().trim()] = decodeURI(parts.join('='));
+        });
+
+        email = list['email'];
+        email = email.replace("%40", "@");
     });
     request.on('end', () => {
         // body = body.replace("%40", "@");
@@ -60,7 +266,7 @@ function handleAuth(request, callback) {
             });
             res.on('end', () => {
                 console.log("TOKEN: " + res.headers.authorization);
-                callback(res.headers.authorization);
+                callback(res.headers.authorization, email);
             });
         });
 
@@ -74,21 +280,10 @@ function handleAuth(request, callback) {
     });
 }
 
-function getAuthToken(request) {
-    // console.log('AUTH: ' + request.cookie.authorization);
-    let rc = request.headers.cookie, list = {};
-    rc && rc.split(';').forEach(function (cookie) {
-        var parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-    // console.log("COOKIE: " + list);
-    // return request.headers.authorization ? request.headers.authorization : "nope";
-}
-
 function checkToken(request, callback) {
     let auth = parseCookies(request)['token'];
 
-    if (!auth || auth === '' || auth === 'undefined'){
+    if (!auth || auth === '' || auth === 'undefined') {
         callback(false);
         return;
     }
@@ -105,13 +300,10 @@ function checkToken(request, callback) {
 
     const req = http.request(options, (res) => {
         console.log(`status: ${res.statusCode}`);
-        if (res.statusCode === 200){
-            console.log("I'm HERE");
+        if (res.statusCode === 200)
             callback(true);
-        }
         else
             callback(false);
-        return;
     });
 
     req.on("error", (e) => {
@@ -125,58 +317,68 @@ module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
         console.log(`Requested: ${request.url}`);
-        if (request.url === '/') {
+        if (request.url === '/' || request.url === '/index.html') {
             open('./teacher/index.html', response);
         } else if (request.url === '/res/HseLogo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, "../", request.url);
             open(request.url, response);
         } else if (request.url === '/auth') {
-            handleAuth(request, (token) => {
-                let path;
+            handleAuth(request, (token, email) => {
                 if (token) {
-                    path = "./teacher/students.html";
+                    request.url = "./teacher/students.html";
                     console.log("TOKEN: " + token);
-                    response.writeHead(200, {
-                        'Set-Cookie': 'token=' + token,
+                    // response.statusCode = 200;
+                    // response.setHeader("Set-Cookie", ["token=" + token, "email=" + email]);
+                    response.writeHead(301, {
+                        'Set-Cookie': ["token=" + token, "email=" + email],
+                        'Location': "/students.html"
                     });
                     request.headers.authorization = token;
-                } else
-                    path = "./teacher/index.html";
-                console.log("GOTO: " + request.url);
-                open(path, response);
+                    openTemplate(request, response);
+                } else {
+                    response.writeHead(301, {
+                        'Location': "/index.html"
+                    });
+                    open('./teacher/index.html', response);
+                }
             });
         } else {
             checkToken(request, (valid) => {
-                let pathtoGo = request.url;
-                if (!valid)
-                    pathtoGo = "/";
-                console.log("VALID: " + valid);
-                console.log("VALID FOR REQUEST: " + pathtoGo);
-                switch (pathtoGo) {
+                let pathToGo = request.url;
+                if (!valid){
+                    response.writeHead(301, {
+                        'Location': "/index.html"
+                    });
+                    open('./teacher/index.html', response);
+                }
+                switch (pathToGo) {
                     case "/":
-                        pathtoGo = "./teacher/index.html";
+                        pathToGo = "./teacher/index.html";
                         break;
                     case "/index.html":
-                        pathtoGo = "./teacher/index.html";
+                        pathToGo = "./teacher/index.html";
                         break;
                     case "/students.html":
-                        pathtoGo = "./teacher/students.html";
+                        pathToGo = "./teacher/students.html";
                         break;
                     case "/tests.html":
-                        pathtoGo = "./teacher/tests.html";
+                        pathToGo = "./teacher/tests.html";
                         break;
                     case "/results.html":
-                        pathtoGo = "./teacher/results.html";
+                        pathToGo = "./teacher/results.html";
                         break;
                     case "/settings.html":
-                        pathtoGo = "./teacher/settings.html";
+                        pathToGo = "./teacher/settings.html";
                         break;
                     default:
-                        pathtoGo = path.join(__dirname, "../", pathtoGo);
-                        console.log("IN DEFAULT WITH URL: " + pathtoGo);
+                        pathToGo = path.join(__dirname, "../", pathToGo);
                         break;
                 }
-                open(pathtoGo, response);
+                if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
+                    request.url = pathToGo;
+                    console.log(request.url);
+                    openTemplate(request, response);
+                } else open(pathToGo, response);
             });
         }
     }
