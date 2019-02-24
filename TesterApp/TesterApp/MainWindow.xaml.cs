@@ -29,6 +29,7 @@ namespace TesterApp
             InitializeComponent();
             this.WindowState = WindowState.Maximized;
             button1.Click += TryToStart;
+            
         }
         void TryToStart(object sender, RoutedEventArgs e)
         {
