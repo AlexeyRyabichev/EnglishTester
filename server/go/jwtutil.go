@@ -8,7 +8,7 @@ import (
 
 type MyCustomClaims struct {
 	Email string `json:"email"`
-	Role string `json:"role"`
+	Role  string `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -40,7 +40,7 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 			log.Print(ve.Error())
-			return token.Claims,ve
+			return token.Claims, ve
 		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
 			// Token is either expired or not active yet
 			fmt.Println("Timing is everything")
@@ -49,7 +49,7 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 		}
 	} else {
 		log.Print("couldnt handle this token")
-		return token.Claims,ve
+		return token.Claims, ve
 	}
-
+	return token.Claims, err
 }
