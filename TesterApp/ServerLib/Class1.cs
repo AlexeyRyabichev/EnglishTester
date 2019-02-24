@@ -24,9 +24,9 @@ namespace ServerLib
         {
             return true;
         }
-        public static bool Authentication(string email, string password)
+        public static string Authentication(string email, string password)
         {
-            return true;
+            return "0";
         }
     }
 }

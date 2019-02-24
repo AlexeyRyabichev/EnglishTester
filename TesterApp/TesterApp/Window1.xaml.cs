@@ -28,6 +28,7 @@ namespace TesterApp
         public string[] answers;
         public Student student;
         public int actual_number;
+        private bool flag;
 
         public Window1(Student student)
         {
@@ -35,7 +36,9 @@ namespace TesterApp
             this.Height = SystemParameters.FullPrimaryScreenHeight;
             this.Width = SystemParameters.FullPrimaryScreenWidth;
             this.WindowState = WindowState.Maximized;
+            this.Topmost = true;
             this.BorderThickness = new Thickness(0);
+            flag = true;
             questions = Server.GetQuestions();
             answers = new string[questions.Length];
             this.student = student;
@@ -149,8 +152,19 @@ namespace TesterApp
         private void submit_Click(object sender, RoutedEventArgs e)
         {
             student.AddAnswers(answers);
+            flag = false;
             Exit exit = new Exit(student, this);
             exit.ShowDialog();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (flag) e.Cancel = true;
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            if (flag) this.Topmost = true;
         }
     }
 }

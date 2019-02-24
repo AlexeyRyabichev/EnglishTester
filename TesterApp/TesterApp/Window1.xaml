@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesterApp"
         mc:Ignorable="d"
-        Title="Testing..." Height="450" Width="800">
+        Title="Testing..." Height="450" Width="800" Closing="Window_Closing" WindowStyle="None" Deactivated="Window_Deactivated">
     <DockPanel  LastChildFill="True" MinWidth="400" MinHeight="300" >
         <DockPanel x:Name="dockpanel1" LastChildFill="False" DockPanel.Dock="Bottom" 
                    MinHeight="50" HorizontalAlignment="Center">

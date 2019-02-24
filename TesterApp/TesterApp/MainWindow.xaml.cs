@@ -36,9 +36,10 @@ namespace TesterApp
             string password = textbox2.Text;
             try
             {
-                if (!(Server.Authentication(email, password)))
+                string id = Server.Authentication(email, password);
+                if (id == "")
                     throw new ArgumentOutOfRangeException("Неверно введённые данные");
-                student = new Student(email, password);
+                student = new Student(email, password, id);
                 Window1 testerWindow = new Window1(student);
                 testerWindow.Show();
                 this.Close();

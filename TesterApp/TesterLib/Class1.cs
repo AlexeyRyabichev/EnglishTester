@@ -13,12 +13,13 @@ namespace TesterLib
         private string password;
         private string[] answers;
         private string id;
-        public Student(string email, string password)
+        public Student(string email, string password, string id)
         {
             this.email = email;
             this.password = password;
+            this.id = id;
         }
-        public string ID { get { return id; } set { id = value; } }
+        public string ID { get { return id; } private set { id = value; } }
         public void AddAnswers(string[] answers)
         {
             this.answers = new string[answers.Length];
