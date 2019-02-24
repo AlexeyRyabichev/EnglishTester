@@ -47,15 +47,16 @@ namespace ServerLib
 
             var client = new RestClient("http://138.68.78.205:8080/api/login");
             var request = new RestRequest(Method.POST);
+            email.Replace("@", "%40");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddParameter("email=admin%40edu.hse.ru&password=123abc&undefined=", ParameterType.RequestBody);
+            request.AddParameter("undefined", "email="+ email +"&password="+password, 
+                ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) return "401"; 
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) return "";
 
             else if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                return response.Content; 
-            
+                return response.Headers.ToList().Find(x => x.Name == "Authorization").Value.ToString();
+
             return "";
         }
     }
