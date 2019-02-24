@@ -23,7 +23,7 @@ func getToken(email string, role Roles.Role) (string, error) {
 			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 		},
 	})
-	//TODO: think about roles
+
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
 }

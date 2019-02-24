@@ -81,6 +81,12 @@ var routes = Routes{
 		"/api/student",
 		StudentPut,
 	},
+	Route{
+		"StudentDelete",
+		strings.ToUpper("Delete"),
+		"/api/student",
+		StudentDelete,
+	},
 
 	Route{
 		"StudentsDelete",

@@ -1,6 +1,7 @@
 package swagger
 
 import (
+	"./Roles"
 	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
@@ -13,7 +14,7 @@ import (
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "audio/mpeg")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -42,7 +43,7 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 
 func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
