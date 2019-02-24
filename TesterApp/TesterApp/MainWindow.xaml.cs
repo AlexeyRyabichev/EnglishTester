@@ -39,7 +39,6 @@ namespace TesterApp
                 string id = Server.Authentication(email, password);
                 if (id == "")
                     throw new FieldAccessException();
-                MessageBox.Show(id);
                 student = new Student(email, password, id);
                 Window1 testerWindow = new Window1(student);
                 testerWindow.Show();
