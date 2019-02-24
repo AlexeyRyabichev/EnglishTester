@@ -3,7 +3,7 @@ package swagger
 import (
 	"./Roles"
 	"fmt"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"log"
 	"time"
 )

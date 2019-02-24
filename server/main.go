@@ -12,6 +12,7 @@ func main() {
 	log.Printf("Server started")
 	sw.InitDB()
 	sw.CreateSchemaTeachers()
+	sw.CreateSchemaTest()
 	router := sw.NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8080", router))

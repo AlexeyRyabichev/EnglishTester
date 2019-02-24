@@ -1,14 +1,14 @@
 package swagger
 
-import ( 
- "github.com/gorilla/mux" 
- "io" 
- "io/ioutil" 
- "log" 
- "net/http" 
- "os" 
- "path/filepath" 
- "strconv" 
+import (
+	"github.com/gorilla/mux"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
 )
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
@@ -81,8 +81,9 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(fp)
 	defer f.Close()
 	io.Copy(f, file)
-	var audio Audio = Audio{StudentId: studId,
-		Path: fp,
+	var audio = Audio{
+		StudentId: studId,
+		Path:      fp,
 	}
 	_, err = db.Model(&audio).Insert()
 	if err != nil {
