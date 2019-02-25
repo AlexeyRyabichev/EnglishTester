@@ -10,8 +10,8 @@ import (
 
 var db *pg.DB
 
-const dbPASS = "aaa" //CHANGE HERE
-const addr = "138.68.78.205:5432"
+const dbPASS = "aaa"          //CHANGE HERE
+const addr = "localhost:5432" //"138.68.78.205:5432"
 
 //TODO override
 

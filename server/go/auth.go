@@ -20,7 +20,7 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	var role Roles.Role = Roles.Student
 	id = student.Id
 	if err != nil {
-		err = db.Model(&teacher).Where("login = ? and password = ?", email, pass).Select()
+		err = db.Model(&teacher).Where("email = ? and password = ?", email, pass).Select()
 		role = Roles.Teacher
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)

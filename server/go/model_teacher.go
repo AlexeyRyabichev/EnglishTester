@@ -6,7 +6,7 @@ type Teacher struct {
 	Email       string `json:"login,omitempty"`
 	Password    string `json:"password,omitempty"`
 	Name        string `json:"name,omitempty"`
-	LastName    string `json:"surname,omitempty"`
-	FatherName  string `json:"father	name,omitempty"`
+	LastName    string `json:"lastName,omitempty"`
+	FatherName  string `json:"fatherName,omitempty"`
 	AccessToken string `json:"accessToken,omitempty"`
 }

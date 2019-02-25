@@ -1,7 +1,6 @@
 package swagger
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
