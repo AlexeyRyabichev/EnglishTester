@@ -40,6 +40,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MaterialDesignColors, Version=1.0.0.14576, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\MaterialDesignColors.1.1.1\lib\net45\MaterialDesignColors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=2.5.0.1205, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\MaterialDesignThemes.2.5.0.1205\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="RestSharp, Version=106.6.8.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.106.6.8\lib\net452\RestSharp.dll</HintPath>
     </Reference>
@@ -114,18 +122,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Resource Include="Roboto-Black.ttf" />
-    <Resource Include="Roboto-BlackItalic.ttf" />
-    <Resource Include="Roboto-Bold.ttf" />
-    <Resource Include="Roboto-BoldItalic.ttf" />
-    <Resource Include="Roboto-Italic.ttf" />
-    <Resource Include="Roboto-Light.ttf" />
-    <Resource Include="Roboto-LightItalic.ttf" />
-    <Resource Include="Roboto-Medium.ttf" />
-    <Resource Include="Roboto-MediumItalic.ttf" />
-    <Resource Include="Roboto-Regular.ttf" />
-    <Resource Include="Roboto-Thin.ttf" />
-    <Resource Include="Roboto-ThinItalic.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

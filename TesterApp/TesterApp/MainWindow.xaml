@@ -5,24 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesterApp"
         mc:Ignorable="d"
-        Title="Login" Height="800" Width="1000">
+        Title="Login" Height="800" Width="1000"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+
     <Grid>
 
         <WrapPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image x:Name="Logo" Height="220" Margin="20" Source="logo.png" />
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label x:Name="EmailLabel" Content="        Email:" Margin="5"
-                       FontFamily="./#Roboto Medium" HorizontalAlignment="Right" />
-                <TextBox x:Name="EmailTextBox" Width="150" Margin="5" FontFamily="./#Roboto Light" VerticalAlignment="Center"/>
+                       FontFamily="Roboto Medium" HorizontalAlignment="Right" />
+                <TextBox x:Name="EmailTextBox" Width="150" Margin="5" FontFamily="Roboto Light"
+                         VerticalAlignment="Center" />
             </WrapPanel>
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label x:Name="PasswordLabel" Content="Password:" Margin="5" FontFamily="./#Roboto Medium"
+                <Label x:Name="PasswordLabel" Content="Password:" Margin="5" FontFamily="Roboto Medium"
                        HorizontalAlignment="Right" />
-                <PasswordBox x:Name="PasswordTextBox" Width="150" Margin="5" FontFamily="./#Roboto Light" VerticalAlignment="Center"/>
+                <PasswordBox x:Name="PasswordTextBox" Width="150" Margin="5" FontFamily="Roboto Light"
+                             VerticalAlignment="Center" />
             </WrapPanel>
 
             <Button x:Name="LoginButton" Content=" Begin "
-                    Margin="20" FontFamily="./#Roboto Bold" Background="#d9e6ff" />
+                    Style="{DynamicResource MaterialDesignRaisedButton}"
+                    Margin="20" FontFamily="Roboto Bold" />
         </WrapPanel>
 
 
