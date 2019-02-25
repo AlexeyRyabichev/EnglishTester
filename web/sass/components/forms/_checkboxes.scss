@@ -54,8 +54,8 @@
     transform: scale(1);
     border: 0;
     border-radius: 50%;
-    box-shadow: 0 0 0 10px rgba(0,0,0,.1);
-    background-color: rgba(0,0,0,.1);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, .1);
+    background-color: rgba(0, 0, 0, .1);
   }
 }
 
@@ -169,7 +169,7 @@
   &.tabbed:focus + span:not(.lever):after {
     border-radius: 2px;
     border-color: $radio-empty-color;
-    background-color: rgba(0,0,0,.1);
+    background-color: rgba(0, 0, 0, .1);
   }
 
   &.tabbed:checked:focus + span:not(.lever):after {

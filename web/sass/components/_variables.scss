@@ -30,11 +30,10 @@
 //  24. Progress Bar
 
 
-
 // 1. Colors
 // ==========================================================================
 
-$primary-color: rgba(0,51,153, 1) !default;
+$primary-color: rgba(0, 51, 153, 1) !default;
 //$primary-color-light: rgba(0, 51, 128, 1) !default;
 //$primary-color-dark: rgba(226, 226, 226, 1) !default;
 //$primary-color: color("materialize-red", "lighten-2") !default;
@@ -144,7 +143,7 @@ $datepicker-weekday-color: rgba(0, 0, 0, .87) !default;
 $datepicker-weekday-bg: darken($secondary-color, 7%) !default;
 $datepicker-date-bg: $secondary-color !default;
 $datepicker-year: rgba(255, 255, 255, .7) !default;
-$datepicker-focus: rgba(0,0,0, .05) !default;
+$datepicker-focus: rgba(0, 0, 0, .05) !default;
 $datepicker-selected: $secondary-color !default;
 $datepicker-selected-outfocus: desaturate(lighten($secondary-color, 35%), 15%) !default;
 $datepicker-day-focus: transparentize(desaturate($secondary-color, 5%), .75) !default;
@@ -179,7 +178,7 @@ $input-margin-bottom: 8px;
 $input-margin: 0 0 $input-margin-bottom 0 !default;
 $input-padding: 0 !default;
 $label-font-size: .8rem !default;
-$input-disabled-color: rgba(0,0,0, .42) !default;
+$input-disabled-color: rgba(0, 0, 0, .42) !default;
 $input-disabled-solid-color: #949494 !default;
 $input-disabled-border: 1px dotted $input-disabled-color !default;
 $input-invalid-border: 1px solid $input-error-color !default;
@@ -201,18 +200,18 @@ $track-height: 3px !default;
 $select-border: 1px solid #f2f2f2 !default;
 $select-background: rgba(255, 255, 255, 0.90) !default;
 $select-focus: 1px solid lighten($secondary-color, 47%) !default;
-$select-option-hover: rgba(0,0,0,.08) !default;
-$select-option-focus: rgba(0,0,0,.08) !default;
-$select-option-selected: rgba(0,0,0,.03) !default;
+$select-option-hover: rgba(0, 0, 0, .08) !default;
+$select-option-focus: rgba(0, 0, 0, .08) !default;
+$select-option-selected: rgba(0, 0, 0, .03) !default;
 $select-padding: 5px !default;
 $select-radius: 2px !default;
-$select-disabled-color: rgba(0,0,0,.3) !default;
+$select-disabled-color: rgba(0, 0, 0, .3) !default;
 
 // Switches
 $switch-bg-color: $secondary-color !default;
 $switch-checked-lever-bg: desaturate(lighten($switch-bg-color, 25%), 25%) !default;
 $switch-unchecked-bg: #F1F1F1 !default;
-$switch-unchecked-lever-bg: rgba(0,0,0,.38) !default;
+$switch-unchecked-lever-bg: rgba(0, 0, 0, .38) !default;
 $switch-radius: 15px !default;
 
 
@@ -260,7 +259,7 @@ $navbar-brand-font-size: 2.1rem !default;
 
 $sidenav-width: 300px !default;
 $sidenav-font-size: 14px !default;
-$sidenav-font-color: rgba(0,0,0,.87) !default;
+$sidenav-font-color: rgba(0, 0, 0, .87) !default;
 $sidenav-bg-color: #fff !default;
 $sidenav-padding: 16px !default;
 $sidenav-item-height: 48px !default;
@@ -292,10 +291,9 @@ $tabs-bg-color: #fff !default;
 // 18. Tables
 // ==========================================================================
 
-$table-border-color: rgba(0,0,0,.12) !default;
+$table-border-color: rgba(0, 0, 0, .12) !default;
 $table-striped-color: rgba(0, 51, 153, 75) !default;
 //$table-striped-color: rgba(242, 242, 242, 0.5) !default;
-
 
 
 // 19. Toasts
@@ -326,14 +324,14 @@ $h6-fontsize: 1.15rem !default;
 
 $footer-font-color: #fff !default;
 $footer-bg-color: $primary-color !default;
-$footer-copyright-font-color: rgba(255,255,255,.8) !default;
-$footer-copyright-bg-color: rgba(51,51,51,.08) !default;
+$footer-copyright-font-color: rgba(255, 255, 255, .8) !default;
+$footer-copyright-bg-color: rgba(51, 51, 51, .08) !default;
 
 
 // 22. Flow Text
 // ==========================================================================
 
-$range : $large-screen - $small-screen !default;
+$range: $large-screen - $small-screen !default;
 $intervals: 20 !default;
 $interval-size: $range / $intervals !default;
 

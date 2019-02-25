@@ -1,6 +1,7 @@
 package swagger
 
 import (
+	"./Roles"
 	"encoding/json"
 	"io"
 	"log"
@@ -9,7 +10,7 @@ import (
 
 func StudentsGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -29,7 +30,7 @@ func StudentsGet(w http.ResponseWriter, r *http.Request) {
 
 func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -56,7 +57,7 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 
 func StudentPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -80,7 +81,7 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 
 func StudentPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -103,7 +104,7 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 
 func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == "student" {
+	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -117,7 +118,7 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	log.Println("deteted: ", res.RowsAffected())
+	log.Println("deleted: ", res.RowsAffected())
 	count, err := db.Model((*Student)(nil)).Count()
 	if err != nil {
 		panic(err)

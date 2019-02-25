@@ -65,7 +65,7 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 			fmt.Println("Couldn't handle this token:", err)
 		}
 	} else {
-		log.Print("couldnt handle this token")
+		log.Print("Couldn't handle this token")
 		return token.Claims, ve
 	}
 	return token.Claims, err
