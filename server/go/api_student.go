@@ -43,7 +43,7 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("%s\n", stArr)
+		log.Printf("%v\n", stArr)
 	}
 
 	_, err := db.Model(&stArr).Insert()

@@ -3,27 +3,37 @@ package swagger
 import (
 	"./Roles"
 	"fmt"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"log"
 	"time"
 )
 
+type TokenDoesNotExistError struct {
+	Token string
+	Text  string
+}
+
+func (e TokenDoesNotExistError) Error() string {
+	return fmt.Sprintf("Token: %v %v", e.Token, e.Text)
+}
+
 type MyCustomClaims struct {
 	Email string `json:"email"`
 	Role  string `json:"role"`
+	Id    int64  `json:"id"`
 	jwt.StandardClaims
 }
 
-func getToken(email string, role Roles.Role) (string, error) {
+func getToken(email string, role Roles.Role, id int64) (string, error) {
 	signingKey := []byte("EngTester")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyCustomClaims{
 		email,
 		role.String(),
+		id,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
 		},
 	})
-	//TODO: think about roles
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
 }
@@ -37,7 +47,12 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 		return nil, err
 	}
 
-	if token.Valid {
+	exists, err := TokenExists(tokenString)
+	if !exists {
+		return token.Claims, TokenDoesNotExistError{Token: tokenString, Text: "Does not exists"}
+	}
+
+	if token.Valid && exists {
 		return token.Claims, err
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {

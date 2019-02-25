@@ -5,7 +5,7 @@ type Role int
 const (
 	Student = iota
 	Teacher
-	Admin
+	//Admin
 )
 
 func (role Role) String() string {
