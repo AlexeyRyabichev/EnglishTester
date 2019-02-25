@@ -10,11 +10,11 @@ server/\.idea/
 
 
 TesterApp/\.vs/
-\.vs
+\.vs/
 
-TesterApp/ServerLib/bin/
+TesterApp/AppLib/bin/
 
-TesterApp/ServerLib/obj/
+TesterApp/AppLib/obj/
 
 TesterApp/TesterApp/bin/
 

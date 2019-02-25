@@ -1,0 +1,33 @@
+﻿<Window x:Class="TesterApp.TestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Testing..." Height="450" Width="800" Closing="Window_Closing" WindowStyle="None"
+        Deactivated="Window_Deactivated">
+    <DockPanel LastChildFill="True" MinWidth="400" MinHeight="300">
+        <DockPanel x:Name="TestWindowDockpanel" LastChildFill="False" DockPanel.Dock="Bottom"
+                   MinHeight="50" HorizontalAlignment="Center" />
+        <UniformGrid Rows="4" DockPanel.Dock="Right" MinWidth="100" Margin="5">
+            <Button x:Name="Reading" DockPanel.Dock="Top" Content="Reading" Click="Reading_Click" />
+            <Button x:Name="Listening" DockPanel.Dock="Top" Content="Listening" Click="Listening_Click" />
+            <Button x:Name="Writing" DockPanel.Dock="Top" Content="Writing" Click="Writing_Click" />
+            <Button x:Name="Submit" DockPanel.Dock="Top" Background="PaleVioletRed" Content="Submit"
+                    Click="Submit_Click" />
+        </UniformGrid>
+
+        <TextBlock x:Name="Textblock" DockPanel.Dock="Top" Margin="5,5,5.333,5" MinWidth="100"
+                   MinHeight="95">
+            .
+        </TextBlock>
+        <TextBlock x:Name="Textblock2" DockPanel.Dock="Top" MinWidth="50"
+                   Height="20" Margin="0,0,0.333,0" Foreground="Gray">
+            Type your answer in the box below:
+        </TextBlock>
+        <Grid x:Name="Grid" DockPanel.Dock="Top">
+            <TextBox x:Name="Textbox" />
+        </Grid>
+    </DockPanel>
+
+</Window>
