@@ -34,7 +34,7 @@ namespace TesterApp
             }
             catch (FieldAccessException)
             {
-                MessageBox.Show("Wrong email or password");
+                ErrorLabel.Content = "Wrong email or password";
             }
             catch (Exception ex)
             {

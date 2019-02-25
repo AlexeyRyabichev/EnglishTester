@@ -20,6 +20,8 @@ namespace TesterApp
         public Button[] QButtons;
         public Question[] Questions;
         public Student Student;
+        public TextBox TextBox;
+        public RadioButton[] RadioButtons;
 
         public TestWindow(Student student)
         {
@@ -34,92 +36,64 @@ namespace TesterApp
             Answers = new string[Questions.Length];
             Student = student;
             ShowQuestion(0);
-            Textbox.BorderThickness = new Thickness(3);
+            TextBox.BorderThickness = new Thickness(3);
         }
 
         private void ShowQuestion(int number)
         {
             Grid.Children.Clear();
             TestWindowDockpanel.Children.Clear();
-            Reading.Background = Brushes.White;
-            Listening.Background = Brushes.White;
-            Writing.Background = Brushes.White;
             var num = 0;
             ActualNumber = number;
             var question = Questions[number];
             _actualSection = question.Section;
-            var lightBlue = new Color
-            {
-                A = 1,
-                B = 255,
-                G = 230,
-                R = 217
-            };
+
             switch (question.Section)
             {
                 case 1:
-                    Listening.Background = new SolidColorBrush(lightBlue);
+                    Listening.Background = Brushes.DarkBlue;
                     break;
                 case 2:
-                    Reading.Background = new SolidColorBrush(lightBlue);
+                    Reading.Background = Brushes.DarkBlue;
                     break;
                 case 3:
-                    Writing.Background = new SolidColorBrush(lightBlue);
+                    Writing.Background = Brushes.DarkBlue;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            foreach (var q in Questions)
-                if (q.Section == question.Section)
-                    num++;
-            QButtons = new Button[num];
-            for (var i = 0; i < num; i++)
-            {
-                QButtons[i] = new Button
-                {
-                    Name = "l" + i,
-                    Width = TestWindowDockpanel.Width / num,
-                    Content = "  " + (i + 1) + "  "
-                };
-                QButtons[i].Click += ButtonOnClick;
-                TestWindowDockpanel.Children.Add(QButtons[i]);
-            }
-
-            if (question.Section == 3) ShowWriting();
-            else ShowQuestion();
+            AddButtons();
         }
 
         private void ShowWriting()
         {
-            Textblock2.Text = "Введите ответ в поле ниже.";
             Textblock.Text = Questions[ActualNumber].Text;
             Textblock.Height = (Height - 70) / 3;
-            Textbox = new TextBox
+            TextBox = new TextBox
             {
                 TextWrapping = TextWrapping.Wrap,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
                 AcceptsReturn = true,
                 Height = (Height - 70) / 3 * 2,
-                Text = Answers[ActualNumber]
+                Text = Answers[ActualNumber],
+                Margin = new Thickness(5)
             };
-            Grid.Children.Add(Textbox);
+            Grid.Children.Add(TextBox);
         }
 
         private void ShowQuestion()
         {
-            Textblock2.Text = "Введите ответ в поле ниже. " +
-                              "Если ответ подразумевает собой несколько вариантов ответов, введите их номера/буквы" +
-                              " подряд без пробелов в том порядке, в каком они расположены в задании.";
             Textblock.Text = Questions[ActualNumber].Text;
             Textblock.Text = Questions[ActualNumber].Text;
             Textblock.Height = (Height - 70) / 2;
-            Textbox = new TextBox
+            TextBox = new TextBox
             {
                 Height = (Height - 70) / 2,
-                Text = Answers[ActualNumber]
+                Text = Answers[ActualNumber],
+                Margin = new Thickness(5)
             };
-            Grid.Children.Add(Textbox);
+            Grid.Children.Add(TextBox);
         }
 
 
@@ -196,7 +170,66 @@ namespace TesterApp
 
         private void Write()
         {
-            Answers[ActualNumber] = Textbox.Text;
+            Answers[ActualNumber] = TextBox.Text;
+        }
+
+        private void AddButtons()
+        {
+            int num = Questions.Length;
+            Question question = Questions[0];
+            QButtons = new Button[num];
+            int re = 0, wr = 0, li = 0;
+            for (var i = 0; i < num; i++)
+            {
+                if (Questions[i].Section == 1)
+                {
+                    QButtons[i] = new Button
+                    {
+                        Name = "q" + i,
+                        Width = TestWindowDockpanel.Width / num,
+                        Content = "  " + (li + 1) + "  ",
+                        Margin = new Thickness(5),
+                        MaxWidth = Height
+                    };
+                    li++;
+                    QButtons[i].Click += ButtonOnClick;
+
+                    ListeningPanel.Children.Add(QButtons[i]);
+                }
+                else if (Questions[i].Section == 2)
+                {
+                    QButtons[i] = new Button
+                    {
+                        Name = "q" + i,
+                        Width = TestWindowDockpanel.Width / num,
+                        Content = "  " + (re + 1) + "  ",
+                        Margin = new Thickness(5),
+                        MaxWidth = Height
+                    };
+                    re++;
+                    QButtons[i].Click += ButtonOnClick;
+
+                    ReadingPanel.Children.Add(QButtons[i]);
+                }
+                else
+                {
+                    QButtons[i] = new Button
+                    {
+                        Name = "q" + i,
+                        Width = TestWindowDockpanel.Width / num,
+                        Content = "  " + (wr + 1) + "  ",
+                        Margin = new Thickness(5),
+                        MaxWidth = Height
+                    };
+                    wr++;
+                    QButtons[i].Click += ButtonOnClick;
+
+                    WritingPanel.Children.Add(QButtons[i]);
+                }
+            }
+
+            if (question.Section == 3) ShowWriting();
+            else ShowQuestion();
         }
     }
 }

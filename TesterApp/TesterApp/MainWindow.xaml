@@ -32,6 +32,8 @@
             <Button x:Name="LoginButton" Content=" Begin "
                     Style="{DynamicResource MaterialDesignRaisedButton}"
                     Margin="20" FontFamily="Roboto Bold" />
+            <Label x:Name="ErrorLabel" Content="" FontFamily="Roboto Light"
+                       HorizontalAlignment="Center" Foreground="PaleVioletRed"/>
         </WrapPanel>
 
 
