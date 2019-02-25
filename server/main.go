@@ -14,7 +14,7 @@ func main() {
 	sw.CreateSchemaTest()
 	sw.CreateSchemaAudio()
 	router := sw.NewRouter()
-	sw.InsertTests()
+	//sw.InsertTests()
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
