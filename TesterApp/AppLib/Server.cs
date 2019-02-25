@@ -11,12 +11,18 @@ namespace AppLib
     {
         public static Question[] GetQuestions()
         {
-            var q = new Question[5];
-            q[0] = new Question("ASA", 1);
-            q[1] = new Question("ASP", 1);
-            q[2] = new Question("ASR", 1);
-            q[3] = new Question("AWA", 2);
-            q[4] = new Question("Work it, make it, do it \nMakes us harder, better, faster, stronger!" +
+            var q = new Question[11];
+            q[0] = new Question("ASA", 2);
+            q[1] = new Question("ASP", 2);
+            q[2] = new Question("ASR", 2);
+            q[3] = new Question("ASA", 2);
+            q[4] = new Question("ASP", 2);
+            q[5] = new Question("ASR", 2);
+            q[6] = new Question("ASA", 2);
+            q[7] = new Question("ASP", 2);
+            q[8] = new Question("ASR", 2);
+            q[9] = new Question("AWA", 2);
+            q[10] = new Question("Work it, make it, do it \nMakes us harder, better, faster, stronger!" +
                                 "\n N - n - now that don’t kill me \nCan only make me stronger...", 3);
             return q;
         }
