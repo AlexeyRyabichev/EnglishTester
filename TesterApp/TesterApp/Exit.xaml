@@ -13,9 +13,10 @@
         TextElement.FontSize="14"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
-        <TextBlock Text=" Are you sure you want to exit?" Margin="50" FontFamily="Roboto Medium"/>
+        <TextBlock x:Name="TextBlock" Text="Are you sure you want to exit?" Margin="50" 
+                   FontFamily="Roboto Medium" TextAlignment="Center"/>
         <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="YesButton" Content="   Yes   " Margin="30" BorderBrush="Blue" Click="YesButton_Click" />
+            <Button x:Name="YesButton" Content="   Yes   " Margin="30" BorderBrush="LightSeaGreen" Click="YesButton_Click" />
             <Button x:Name="NoButton" Content="   No   " Margin="30" Click="NoButton_Click" />
         </WrapPanel>
     </WrapPanel>

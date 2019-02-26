@@ -14,13 +14,16 @@ namespace TesterApp
         private readonly Window parent;
         private bool flag;
 
-        public Exit(Student student, Window parent)
+        public Exit(Window parent, Student student, bool areAllAnswersGot)
         {
             InitializeComponent();
             flag = true;
             this.student = student;
             this.parent = parent;
             Topmost = true;
+            if (!areAllAnswersGot) TextBlock.Text = "Are you sure you want to exit?" +
+                    "\nYou have not answered all the questions.";
+            else TextBlock.Text = "Are you sure you want to exit?";
         }
 
         private void YesButton_Click(object sender, RoutedEventArgs e)

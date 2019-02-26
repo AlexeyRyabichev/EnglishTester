@@ -14,11 +14,13 @@ namespace TesterApp
     {
         private int actualSection;
         private bool flag;
-        public int ActualNumber;
-        public string[] Answers;
+        private Brush defaultColor;
+        private bool areAllAnswersGot;
+        private int actualNumber;
+        private string[] answers;
         public Button[] QuestionButtons;
-        public Question[] Questions;
-        public Student Student;
+        private Question[] questions;
+        private Student student;
         public TextBox TextBox;
         public RadioButton[] RadioButtons;
 
@@ -31,9 +33,11 @@ namespace TesterApp
             Topmost = true;
             BorderThickness = new Thickness(0);
             flag = true;
-            Questions = Server.GetQuestions();
-            Answers = new string[Questions.Length];
-            Student = student;
+            defaultColor = Reading.Background;
+            questions = Server.GetQuestions();
+            answers = new string[questions.Length];
+            this.student = student;
+            areAllAnswersGot = false;
             AddButtons();
             ShowQuestion(0);
         }
@@ -41,8 +45,8 @@ namespace TesterApp
         private void ShowQuestion(int number)
         {
             Grid.Children.Clear();
-            ActualNumber = number;
-            var question = Questions[number];
+            actualNumber = number;
+            var question = questions[number];
             actualSection = question.Section;
             if (actualSection == 2) ShowQuestion_Reading();
             else ShowQuestion_Writing();
@@ -50,7 +54,7 @@ namespace TesterApp
 
         private void ShowQuestion_Writing()
         {
-            Textblock.Text = Questions[ActualNumber].Text;
+            Textblock.Text = questions[actualNumber].Text;
             Textblock.Height = (Height - 20) / 3;
             Textblock2.Text = "Type your answer in the box below:";
             TextBox = new TextBox
@@ -58,7 +62,7 @@ namespace TesterApp
                 TextWrapping = TextWrapping.Wrap,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
                 AcceptsReturn = true,
-                Text = Answers[ActualNumber],
+                Text = answers[actualNumber],
                 Margin = new Thickness(5),
                 BorderThickness = new Thickness(2),
                 VerticalContentAlignment = VerticalAlignment.Top
@@ -68,7 +72,7 @@ namespace TesterApp
 
         private void ShowQuestion_Reading()
         {
-            Textblock.Text = Questions[ActualNumber].Text;
+            Textblock.Text = questions[actualNumber].Text;
             Textblock.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
             TextBox = new TextBox
@@ -76,7 +80,7 @@ namespace TesterApp
                 TextWrapping = TextWrapping.Wrap,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
                 AcceptsReturn = true,
-                Text = Answers[ActualNumber],
+                Text = answers[actualNumber],
                 Margin = new Thickness(5),
                 BorderThickness = new Thickness(2),
                 VerticalContentAlignment = VerticalAlignment.Top
@@ -89,8 +93,8 @@ namespace TesterApp
         {
             WriteAnswers();
             int i;
-            for (i = 0; i < Questions.Length; i++)
-                if (Questions[i].Section == 2)
+            for (i = 0; i < questions.Length; i++)
+                if (questions[i].Section == 2)
                 {
                     ShowQuestion(i);
                     break;
@@ -102,8 +106,8 @@ namespace TesterApp
         {
             WriteAnswers();
             int i;
-            for (i = 0; i < Questions.Length; i++)
-                if (Questions[i].Section == 3)
+            for (i = 0; i < questions.Length; i++)
+                if (questions[i].Section == 3)
                 {
                     ShowQuestion(i);
                     break;
@@ -113,9 +117,9 @@ namespace TesterApp
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
-            Student.AddAnswers(Answers);
+            student.AddAnswers(answers);
             flag = false;
-            var exit = new Exit(Student, this);
+            var exit = new Exit(this, student, areAllAnswersGot);
             exit.ShowDialog();
         }
 
@@ -133,31 +137,25 @@ namespace TesterApp
         private void ButtonOnClick(object sender, EventArgs eventArgs)
         {
             WriteAnswers();
-            var index = 0;
             var button = (Button) sender;
-            int.TryParse(button.Name.Substring(1), out var number);
-            while (Questions[index].Section != actualSection || index != number)
-            {
-                index++;
-                if (index >= Questions.Length) break;
-            }
-
-            if (index < Questions.Length) ShowQuestion(index);
+            int.TryParse(button.Name.Substring(1), out var index);
+            ShowQuestion(index);
         }
 
         private void WriteAnswers()
         {
-            if (TextBox != null) Answers[ActualNumber] = TextBox.Text;
+            if (TextBox != null) answers[actualNumber] = TextBox.Text;
+            CheckAnswers();
         }
 
         private void AddButtons()
         {
-            int num = Questions.Length;
+            int num = questions.Length;
             QuestionButtons = new Button[num];
             int readingCount = 0, writingCount = 0;
             for (var i = 0; i < num; i++)
             {
-                if (Questions[i].Section == 2)
+                if (questions[i].Section == 2)
                 {
                     QuestionButtons[i] = new Button
                     {
@@ -184,6 +182,22 @@ namespace TesterApp
                     QuestionButtons[i].Click += ButtonOnClick;
 
                     WritingPanel.Children.Add(QuestionButtons[i]);
+                }
+            }
+        }
+
+        private void CheckAnswers()
+        {
+            int num = questions.Length;
+            areAllAnswersGot = true;
+            for (var i = 0; i < num; i++)
+            {
+                if ((answers[i] != null) && (answers[i] != ""))
+                    QuestionButtons[i].Background = Brushes.LightSeaGreen;
+                else
+                {
+                    QuestionButtons[i].Background = defaultColor;
+                    areAllAnswersGot = false;
                 }
             }
         }
