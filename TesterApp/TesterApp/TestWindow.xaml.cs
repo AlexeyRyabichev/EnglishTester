@@ -23,6 +23,7 @@ namespace TesterApp
         private Student student;
         public TextBox TextBox;
         public RadioButton[] RadioButtons;
+        public StackPanel RadioPanel;
 
         public TestWindow(Student student)
         {
@@ -38,13 +39,14 @@ namespace TesterApp
             answers = new string[questions.Length];
             this.student = student;
             areAllAnswersGot = false;
+            RadioPanel = new StackPanel();
             AddButtons();
             ShowQuestion(0);
         }
 
         private void ShowQuestion(int number)
         {
-            Grid.Children.Clear();
+            AnswerPanel.Children.Clear();
             actualNumber = number;
             var question = questions[number];
             actualSection = question.Section;
@@ -65,9 +67,10 @@ namespace TesterApp
                 Text = answers[actualNumber],
                 Margin = new Thickness(5),
                 BorderThickness = new Thickness(2),
-                VerticalContentAlignment = VerticalAlignment.Top
+                VerticalContentAlignment = VerticalAlignment.Top,
+                MinHeight = AnswerPanel.Height - 20
             };
-            Grid.Children.Add(TextBox);
+            AnswerPanel.Children.Add(TextBox);
         }
 
         private void ShowQuestion_Reading()
@@ -75,17 +78,24 @@ namespace TesterApp
             Textblock.Text = questions[actualNumber].Text;
             Textblock.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
-            TextBox = new TextBox
+            RadioButtons = new RadioButton[4];
+            RadioPanel.Children.Clear();
+            for (int i = 0; i < 4; i++)
             {
-                TextWrapping = TextWrapping.Wrap,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
-                AcceptsReturn = true,
-                Text = answers[actualNumber],
-                Margin = new Thickness(5),
-                BorderThickness = new Thickness(2),
-                VerticalContentAlignment = VerticalAlignment.Top
-            };
-            Grid.Children.Add(TextBox);
+                RadioButtons[i] = new RadioButton
+                {
+                    Content = "" + (i + 1),
+                    Name = "r" + i
+                };
+                RadioButtons[i].Checked += RadioButtonOnClick;
+                RadioPanel.Children.Add(RadioButtons[i]);
+            }
+            AnswerPanel.Children.Add(RadioPanel);
+            if ((answers[actualNumber] != "") && (answers[actualNumber] != null))
+            {
+                int.TryParse(answers[actualNumber], out int num);
+                RadioButtons[num].IsChecked = true;
+            }
         }
 
 
@@ -140,6 +150,14 @@ namespace TesterApp
             var button = (Button) sender;
             int.TryParse(button.Name.Substring(1), out var index);
             ShowQuestion(index);
+        }
+
+        private void RadioButtonOnClick(object sender, EventArgs eventArgs)
+        {
+            RadioButton radioButton = (RadioButton)sender;
+            string stringNumber = radioButton.Name.Substring(1);
+            int.TryParse(stringNumber, out int number);
+            answers[actualNumber] = "" + number;
         }
 
         private void WriteAnswers()

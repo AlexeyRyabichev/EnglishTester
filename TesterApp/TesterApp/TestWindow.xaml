@@ -11,7 +11,7 @@
         TextElement.FontSize="14"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         Deactivated="Window_Deactivated">
-    <DockPanel LastChildFill="True" MinWidth="400" MinHeight="300">
+    <DockPanel x:Name="DockPanel" LastChildFill="True" MinWidth="400" MinHeight="300">
         <StackPanel DockPanel.Dock="Right" MinWidth="100" MaxWidth="200" Margin="5">
             <StackPanel Margin="5">
                 <Button x:Name="Reading" DockPanel.Dock="Top" Content="Reading" Click="Reading_Click" />
@@ -34,7 +34,7 @@
                    Height="20" Margin="5" Foreground="Gray">
             Type your answer in the box below:
         </TextBlock>
-        <Grid x:Name="Grid" Margin ="0" DockPanel.Dock="Bottom" IsEnabled="True">
+        <Grid x:Name="AnswerPanel" DockPanel.Dock="Bottom" Margin = "5">
             
         </Grid>
     </DockPanel>
