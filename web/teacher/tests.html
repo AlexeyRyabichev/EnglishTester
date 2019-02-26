@@ -83,7 +83,7 @@
         <h3 class="center-align">Writing</h3>
         <div class="input-field col s12">
             <textarea id="writingText" class="materialize-textarea" required></textarea>
-            <label for="readingText">Text for writing</label>
+            <label for="writingText">Text for writing</label>
         </div>
         <div class="center-align" style="margin-top: 5%; margin-bottom: 5%">
             <button type="submit" class="waves-effect waves-light btn" id="submitButton" onclick="sendTest()">Submit
@@ -107,6 +107,7 @@
         var instances = M.FormSelect.init(elems, {});
     });
 
+    //TODO: UPDATE ALL IDS AFTER DELETING ROW
     function addCustomRow(tableName) {
         let table = document.getElementById(tableName).getElementsByTagName('tbody')[0];
         let id = table.getElementsByTagName("tr").length;
@@ -209,7 +210,8 @@
     }
 
     function sendTest() {
-        let BaseQuestionsTableData = '"BaseQuestions":[';
+        let answers = '"answers":[';
+        let BaseQuestionsTableData = '"baseQuestions":[';
         let rows = document.getElementById("baseQuestionsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
         for (let i = 0; i < rows; i++) {
             let row = document.getElementById("baseQuestionsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr")[i];
@@ -218,50 +220,55 @@
             let options = row.getElementsByTagName("td")[2].getElementsByTagName("input");
             let selectEl = row.getElementsByTagName("td")[3].getElementsByTagName("select")[0];
             let select = selectEl.options[selectEl.selectedIndex].innerText;
-            
-            // console.log(options[0].value);
-            // console.log(options[1].value);
-            // console.log(options[2].value);
-            // console.log(options[3].value);
-            BaseQuestionsTableData += "{";
-            BaseQuestionsTableData += '"Id":';
+            BaseQuestionsTableData += '{';
+            BaseQuestionsTableData += `"id" : "${id}",`;
+            BaseQuestionsTableData += `"question" : "${question}",`;
+            BaseQuestionsTableData += `"optionA" : "${options[0].value}",`;
+            BaseQuestionsTableData += `"optionB" : "${options[1].value}",`;
+            BaseQuestionsTableData += `"optionC" : "${options[2].value}",`;
+            BaseQuestionsTableData += `"optionD" : "${options[3].value}"`;
+            BaseQuestionsTableData += "}";
+
+
+            answers += `{"id": ${id}, "type": "reading", "answer": "${select}"},`;
+            if (i !== rows - 1)
+                BaseQuestionsTableData += ",";
+
         }
-        // $('#baseQuestionsTable tr').each(function (row, tr) {
-        //     // if ($(tr)[0][0])
-        //     // TableData = TableData
-        //     //     + $(tr).find('td:eq(0)').children(0)[0].value + ' '
-        //     //     + $(tr).find('td:eq(1)').children(0)[0].value + ' ';
-        //     console.log($(tr).children()[0].innerText);
-        //     console.log($(tr).children()[1].innerText);
-        //     console.log($(tr).children()[2].innerText);
-        //     console.log($(tr).children()[3].innerText);
-        //     console.log($(tr).children()[4].innerText);
-        // });
+        BaseQuestionsTableData += "],";
 
-        // var myRows = [];
-        // var $headers = $("th");
-        // var $rows = $("tbody tr").each(function (index) {
-        //     $cells = $(this).find("td");
-        //     myRows[index] = {};
-        //     $cells.each(function (cellIndex) {
-        //         myRows[index][$($headers[cellIndex]).html()] = $(this).html();
-        //     });
-        // });
+        let ReadingQuestionsTableData = `"reading": { "question" : "${document.getElementById("readingText").value}", `;
+        ReadingQuestionsTableData += '"questions":[';
+        let readingRows = document.getElementById("readingQuestionsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
+        for (let i = 0; i < readingRows; i++) {
+            let row = document.getElementById("readingQuestionsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr")[i];
+            let id = row.getElementsByTagName("td")[0].innerHTML;
+            let question = row.getElementsByTagName("td")[1].getElementsByTagName("input")[0].value;
+            let options = row.getElementsByTagName("td")[2].getElementsByTagName("input");
+            let selectEl = row.getElementsByTagName("td")[3].getElementsByTagName("select")[0];
+            let select = selectEl.options[selectEl.selectedIndex].innerText;
+            ReadingQuestionsTableData += '{';
+            ReadingQuestionsTableData += `"id" : "${id}",`;
+            ReadingQuestionsTableData += `"question" : "${question}",`;
+            ReadingQuestionsTableData += `"optionA" : "${options[0].value}",`;
+            ReadingQuestionsTableData += `"optionB" : "${options[1].value}",`;
+            ReadingQuestionsTableData += `"optionC" : "${options[2].value}",`;
+            ReadingQuestionsTableData += `"optionD" : "${options[3].value}"`;
+            ReadingQuestionsTableData += "}";
 
-        // Let's put this in the object like you want and convert to JSON (Note: jQuery will also do this for you on the Ajax request)
-        // var myObj = {};
-        // myObj.myrows = myRows;
-        // alert(JSON.stringify(myObj));
+            answers += `{"id": ${id}, "type": "writing", "answer": "${select}"}`;
+            if (i !== readingRows - 1) {
+                ReadingQuestionsTableData += ",";
+                answers += ",";
+            }
+        }
+        ReadingQuestionsTableData += "]},";
+        answers += "]";
 
-        // alert(JSON.stringify(myObj));​
-        // let TableData;
-        // $('#baseQuestionsTable tr').each(function (row, tr) {
-        //     TableData = TableData
-        //         + $(tr).find('td:eq(0)').children(0)[0].value + ' '  // Task No.
-        //         + $(tr).find('td:eq(1)').text() + ' '
-        //         + '\n';
-        // });
-        // console.log(TableData.replace('undefined', ''));
+        let writingTask = `"writing": "${document.getElementById("writingText").value}",`;
+
+        let toSend = "{" + BaseQuestionsTableData + ReadingQuestionsTableData + writingTask + answers + "}";
+        console.log(toSend);
     }
 </script>
 
