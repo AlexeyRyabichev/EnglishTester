@@ -68,7 +68,6 @@ namespace TesterApp
                 Margin = new Thickness(5),
                 BorderThickness = new Thickness(2),
                 VerticalContentAlignment = VerticalAlignment.Top,
-                MinHeight = AnswerPanel.Height - 20
             };
             AnswerPanel.Children.Add(TextBox);
         }
@@ -102,6 +101,7 @@ namespace TesterApp
         private void Reading_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
+            CheckAnswers();
             int i;
             for (i = 0; i < questions.Length; i++)
                 if (questions[i].Section == 2)
@@ -115,6 +115,7 @@ namespace TesterApp
         private void Writing_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
+            CheckAnswers();
             int i;
             for (i = 0; i < questions.Length; i++)
                 if (questions[i].Section == 3)
@@ -127,6 +128,7 @@ namespace TesterApp
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
+            CheckAnswers();
             student.AddAnswers(answers);
             flag = false;
             var exit = new Exit(this, student, areAllAnswersGot);
