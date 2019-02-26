@@ -9,7 +9,7 @@ namespace TesterApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Student _student;
+        private Student student;
 
         public MainWindow()
         {
@@ -27,8 +27,8 @@ namespace TesterApp
                 var id = Server.Authentication(email, password);
                 if (id == "")
                     throw new FieldAccessException();
-                _student = new Student(email, password, id);
-                var testerWindow = new TestWindow(_student);
+                student = new Student(email, password, id);
+                var testerWindow = new TestWindow(student);
                 testerWindow.Show();
                 Close();
             }

@@ -10,40 +10,40 @@ namespace TesterApp
     /// </summary>
     public partial class Exit : Window
     {
-        private readonly Student _student;
+        private readonly Student student;
         private readonly Window parent;
-        private bool _flag;
+        private bool flag;
 
         public Exit(Student student, Window parent)
         {
             InitializeComponent();
-            _flag = true;
-            _student = student;
+            flag = true;
+            this.student = student;
             this.parent = parent;
             Topmost = true;
         }
 
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
-            Server.SendData(_student);
-            _flag = false;
+            Server.SendData(student);
+            flag = false;
             parent.Close();
             Close();
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            if (_flag) Topmost = true;
+            if (flag) Topmost = true;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (_flag) e.Cancel = true;
+            if (flag) e.Cancel = true;
         }
 
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
-            _flag = false;
+            flag = false;
             Close();
         }
     }
