@@ -210,7 +210,7 @@
     }
 
     function sendTest() {
-        let answers = '"answers":[';
+        let answers = '"answers":[{"base":[';
         let BaseQuestionsTableData = '"baseQuestions":[';
         let rows = document.getElementById("baseQuestionsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
         for (let i = 0; i < rows; i++) {
@@ -221,7 +221,7 @@
             let selectEl = row.getElementsByTagName("td")[3].getElementsByTagName("select")[0];
             let select = selectEl.options[selectEl.selectedIndex].innerText;
             BaseQuestionsTableData += '{';
-            BaseQuestionsTableData += `"id" : "${id}",`;
+            BaseQuestionsTableData += `"id" : ${id},`;
             BaseQuestionsTableData += `"question" : "${question}",`;
             BaseQuestionsTableData += `"optionA" : "${options[0].value}",`;
             BaseQuestionsTableData += `"optionB" : "${options[1].value}",`;
@@ -230,12 +230,14 @@
             BaseQuestionsTableData += "}";
 
 
-            answers += `{"id": ${id}, "type": "reading", "answer": "${select}"},`;
-            if (i !== rows - 1)
+            answers += `{"id": ${id}, "answer": "${select}"}`;
+            if (i !== rows - 1) {
                 BaseQuestionsTableData += ",";
-
+                answers += ",";
+            }
         }
         BaseQuestionsTableData += "],";
+        answers += '],"reading" : [';
 
         let ReadingQuestionsTableData = `"reading": { "question" : "${document.getElementById("readingText").value}", `;
         ReadingQuestionsTableData += '"questions":[';
@@ -248,7 +250,7 @@
             let selectEl = row.getElementsByTagName("td")[3].getElementsByTagName("select")[0];
             let select = selectEl.options[selectEl.selectedIndex].innerText;
             ReadingQuestionsTableData += '{';
-            ReadingQuestionsTableData += `"id" : "${id}",`;
+            ReadingQuestionsTableData += `"id" : ${id},`;
             ReadingQuestionsTableData += `"question" : "${question}",`;
             ReadingQuestionsTableData += `"optionA" : "${options[0].value}",`;
             ReadingQuestionsTableData += `"optionB" : "${options[1].value}",`;
@@ -256,14 +258,14 @@
             ReadingQuestionsTableData += `"optionD" : "${options[3].value}"`;
             ReadingQuestionsTableData += "}";
 
-            answers += `{"id": ${id}, "type": "writing", "answer": "${select}"}`;
+            answers += `{"id": ${id}, "answer": "${select}"}`;
             if (i !== readingRows - 1) {
                 ReadingQuestionsTableData += ",";
                 answers += ",";
             }
         }
         ReadingQuestionsTableData += "]},";
-        answers += "]";
+        answers += "]}";
 
         let writingTask = `"writing": "${document.getElementById("writingText").value}",`;
 
