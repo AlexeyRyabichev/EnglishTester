@@ -36,7 +36,8 @@
 </nav>
 
 <div class="container">
-    <form method="post" class="col s6">
+    <form method="post" class="col s6" onsubmit="createTestJSON()" action="/sendTest">
+        <input type="hidden" name="testText:" id="hiddenHolder"/>
         <h3 class="center-align">Base questions</h3>
         <table id="baseQuestionsTable">
             <thead>
@@ -86,10 +87,10 @@
             <label for="writingText">Text for writing</label>
         </div>
         <div class="center-align" style="margin-top: 5%; margin-bottom: 5%">
-            <button type="submit" class="waves-effect waves-light btn" id="submitButton" onclick="sendTest()">Submit
+            <button type="submit" class="waves-effect waves-light btn" id="submitButton">Submit
             </button>
-            <a class="waves-effect waves-light btn" id="logButton" onclick="sendTest()">Log
-            </a>
+            <!--<a class="waves-effect waves-light btn" id="logButton" onclick="createTestJSON()">Log-->
+            <!--</a>-->
         </div>
     </form>
 </div>
@@ -209,8 +210,8 @@
         correctAnswerCell.appendChild(divSelect);
     }
 
-    function sendTest() {
-        let answers = '"answers":[{"base":[';
+    function createTestJSON() {
+        let answers = '"answers":{"base":[';
         let BaseQuestionsTableData = '"baseQuestions":[';
         let rows = document.getElementById("baseQuestionsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
         for (let i = 0; i < rows; i++) {
@@ -270,6 +271,7 @@
         let writingTask = `"writing": "${document.getElementById("writingText").value}",`;
 
         let toSend = "{" + BaseQuestionsTableData + ReadingQuestionsTableData + writingTask + answers + "}";
+        document.getElementById("hiddenHolder").value = toSend;
         console.log(toSend);
     }
 </script>

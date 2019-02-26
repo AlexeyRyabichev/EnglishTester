@@ -316,6 +316,54 @@ function checkToken(request, callback) {
     req.end();
 }
 
+function sendTest(request, callback) {
+    let body = '', email = '';
+    request.on('data', chunk => {
+        body += chunk.toString();
+        // const list = {}, rc = body;
+
+        // rc && rc.split('&').forEach(function (cookie) {
+        //     const parts = cookie.split('=');
+        //     list[parts.shift().trim()] = decodeURI(parts.join('='));
+        // });
+        //
+        // email = list['email'];
+        // email = email.replace("%40", "@");
+    });
+    request.on('end', () => {
+        console.log("JSON: " + body);
+        callback();
+        // const options = {
+        //     hostname: '127.0.0.1',
+        //     port: 8080,
+        //     path: '/api/login',
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded'
+        //     }
+        // };
+        //
+        // const req = http.request(options, (res) => {
+        //     console.log(`status: ${res.statusCode}`);
+        //     let tmp = '';
+        //     res.on('data', chunk => {
+        //         tmp += chunk.toString();
+        //     });
+        //     res.on('end', () => {
+        //         console.log("TOKEN: " + res.headers.authorization);
+        //         callback(res.headers.authorization, email);
+        //     });
+        // });
+        //
+        // req.on("error", (e) => {
+        //     console.log(e);
+        // });
+        //
+        // req.write(body);
+        // req.end();
+    });
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -326,7 +374,12 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
-        } else if (request.url === '/auth') {
+        } else if (request.url === '/sendTest'){
+            sendTest(request, () => {
+                open(path.join(__dirname, '/teacher/tests.html'), response);
+            });
+        }
+        else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
                     request.url = "/teacher/students.html";
