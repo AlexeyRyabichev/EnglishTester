@@ -1,25 +1,41 @@
 package swagger
 
-import (
-	"database/sql/driver"
-	"encoding/json"
-)
-
 type Test struct {
-	Id        int        `json:"id,omitempty"`
-	Questions []Question `json:"questions" sql:",notnull"`
-	Answers   []string   `json:"answers" sql:",array"`
+	Id               int             `json:"id,omitempty"`
+	BaseQuestions    []Question      `json:"baseQuestions" sql:",notnull"`
+	ReadingQuestions *Reading        `json:"reading"`
+	Writing          string          `json:"writing"`
+	Answers          AnswerContainer `json:"answers"`
 }
 
 type Question struct {
-	Section int    `json:"section"`
-	Text    string `json:"text"`
+	Id       int    `json:"id"`
+	Question string `json:"question"`
+	OptionA  string `json:"optionA"`
+	OptionB  string `json:"optionB"`
+	OptionC  string `json:"optionC"`
+	OptionD  string `json:"optionD"`
 }
 
-func (m Question) Value() (driver.Value, error) {
-	b, err := json.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-	return string(b), nil
+type Reading struct {
+	Question     string     `json:"question"`
+	BaseQuestion []Question `json:"questions"`
 }
+
+type AnswerContainer struct {
+	Base    []Answer `json:"base"`
+	Reading []Answer `json:"reading"`
+}
+
+type Answer struct {
+	Id     int    `json:"id"`
+	Answer string `json:"answer"`
+}
+
+//func (m Question) Value() (driver.Value, error) {
+//	b, err := json.Marshal(m)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return string(b), nil
+//}

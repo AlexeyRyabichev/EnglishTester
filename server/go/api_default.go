@@ -2,11 +2,28 @@ package swagger
 
 import (
 	"bufio"
+	"encoding/json"
+	"io"
+	"log"
 	"net/http"
 )
 
 func TestPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	dec := json.NewDecoder(r.Body)
+	var test Test
+
+	if err := dec.Decode(&test); err == io.EOF {
+		//OK
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err := db.Model(&test).Insert()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
