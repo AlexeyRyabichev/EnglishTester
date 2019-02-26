@@ -108,7 +108,6 @@
         var instances = M.FormSelect.init(elems, {});
     });
 
-    //TODO: UPDATE ALL IDS AFTER DELETING ROW
     function addCustomRow(tableName) {
         let table = document.getElementById(tableName).getElementsByTagName('tbody')[0];
         let id = table.getElementsByTagName("tr").length;
@@ -196,6 +195,11 @@
         delButton.addEventListener("click", function () {
             let rowId = this.closest('tr').rowIndex - 1;
             table.deleteRow(rowId);
+            let rowsCounter = table.getElementsByTagName("tr").length;
+            for (let i = 0; i < rowsCounter; i++) {
+                let rowToUpdate = table.getElementsByTagName("tr")[i];
+                rowToUpdate.getElementsByTagName("td")[0].innerHTML = i + 1;
+            }
         });
         let iForButton = document.createElement("i");
         iForButton.classList.add("material-icons");
