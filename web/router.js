@@ -148,7 +148,7 @@ function getUsername(request, callback) {
                         // noinspection JSUnresolvedVariable
                         if (parseCookies(request)['email'] === body[i].login)
                             { // noinspection JSUnresolvedVariable
-                                ans = body[i].surname + " " + body[i].name;
+                                ans = body[i].lastName + " " + body[i].name;
                             }
                     }
                     callback(ans);
@@ -331,7 +331,7 @@ module.exports = {
                 if (token) {
                     request.url = "/teacher/students.html";
                     console.log("TOKEN: " + token);
-                    response.writeHead(301, {
+                    response.writeHead(302, {
                         'Set-Cookie': ["token=" + token, "email=" + email],
                         'Location': "/students.html"
                     });
@@ -339,7 +339,7 @@ module.exports = {
                     request.url = path.join(__dirname, request.url);
                     openTemplate(request, response);
                 } else {
-                    response.writeHead(301, {
+                    response.writeHead(302, {
                         'Location': "/index.html"
                     });
                     open(path.join(__dirname, '/teacher/index.html'), response);
@@ -349,7 +349,7 @@ module.exports = {
             checkToken(request, (valid) => {
                 let pathToGo = request.url;
                 if (!valid) {
-                    response.writeHead(301, {
+                    response.writeHead(302, {
                         'Location': "/index.html"
                     });
                     open(path.join(__dirname, '/teacher/index.html'), response);
@@ -377,6 +377,7 @@ module.exports = {
                         pathToGo = path.join(__dirname, pathToGo);
                         break;
                 }
+                console.log("GONNA CHECK GOT THIS REQUEST" + pathToGo);
                 if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
                     request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);
