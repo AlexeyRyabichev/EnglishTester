@@ -1,7 +1,6 @@
 package swagger
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
@@ -35,18 +34,7 @@ func NewRouter() *mux.Router {
 
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
-}
-
 var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"/api/",
-		Index,
-	},
-
 	Route{
 		"AudioStudentIdGet",
 		strings.ToUpper("Get"),
@@ -114,6 +102,13 @@ var routes = Routes{
 		strings.ToUpper("Put"),
 		"/api/test",
 		TestPut,
+	},
+
+	Route{
+		"QuestionsGet",
+		strings.ToUpper("Get"),
+		"/api/questions",
+		QuestionsGet,
 	},
 
 	Route{

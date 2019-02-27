@@ -146,10 +146,9 @@ function getUsername(request, callback) {
                     let ans = '';
                     for (let i = 0; i < body.length; i++) {
                         // noinspection JSUnresolvedVariable
-                        if (parseCookies(request)['email'] === body[i].login)
-                            { // noinspection JSUnresolvedVariable
-                                ans = body[i].surname + " " + body[i].name;
-                            }
+                        if (parseCookies(request)['email'] === body[i].login) { // noinspection JSUnresolvedVariable
+                            ans = body[i].lastName + " " + body[i].name;
+                        }
                     }
                     callback(ans);
                 });
@@ -316,6 +315,48 @@ function checkToken(request, callback) {
     req.end();
 }
 
+function sendTest(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let body = '';
+    request.on('data', chunk => {
+        body += chunk.toString();
+    });
+    request.on('end', (flag) => {
+        console.log("JSON: " + body);
+
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/test',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': auth,
+                body: body
+            }
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end();
+    });
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -326,12 +367,31 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
+        } else if (request.url === '/sendTest') {
+            sendTest(request, (valid) => {
+                if (valid) {
+                    request.url = "/teacher/tests.html";
+                    response.writeHead(302, {
+                        'Location': "/tests.html"
+                    });
+                    request.url = path.join(__dirname, request.url);
+                    openTemplate(request, response);
+                } else {
+                    request.url = "/teacher/index.html";
+                    response.writeHead(302, {
+                        'Location': "/index.html"
+                    });
+                    request.url = path.join(__dirname, request.url);
+                    openTemplate(request, response);
+                }
+
+            });
         } else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
                     request.url = "/teacher/students.html";
                     console.log("TOKEN: " + token);
-                    response.writeHead(301, {
+                    response.writeHead(302, {
                         'Set-Cookie': ["token=" + token, "email=" + email],
                         'Location': "/students.html"
                     });
@@ -339,7 +399,7 @@ module.exports = {
                     request.url = path.join(__dirname, request.url);
                     openTemplate(request, response);
                 } else {
-                    response.writeHead(301, {
+                    response.writeHead(302, {
                         'Location': "/index.html"
                     });
                     open(path.join(__dirname, '/teacher/index.html'), response);
@@ -349,7 +409,7 @@ module.exports = {
             checkToken(request, (valid) => {
                 let pathToGo = request.url;
                 if (!valid) {
-                    response.writeHead(301, {
+                    response.writeHead(302, {
                         'Location': "/index.html"
                     });
                     open(path.join(__dirname, '/teacher/index.html'), response);
@@ -377,6 +437,7 @@ module.exports = {
                         pathToGo = path.join(__dirname, pathToGo);
                         break;
                 }
+                console.log("GONNA CHECK GOT THIS REQUEST" + pathToGo);
                 if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
                     request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);

@@ -9,11 +9,12 @@ import (
 func main() {
 	log.Printf("Server started")
 	sw.InitDB()
-	err := sw.CreateSchemaTeachers()
-	if err != nil {
-		log.Print(err)
-	}
+	sw.CreateSchemaTeachers()
+	sw.CreateSchemaStudents()
+	sw.CreateSchemaTest()
+	sw.CreateSchemaAudio()
 	router := sw.NewRouter()
+	//sw.InsertTests()
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

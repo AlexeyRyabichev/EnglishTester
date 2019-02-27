@@ -4,6 +4,7 @@ import (
 	"./Roles"
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
+	"strconv"
 )
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
@@ -14,23 +15,37 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 
 	var student Student
 	var teacher Teacher
+	var id int64
 	err := db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
 	var role Roles.Role = Roles.Student
+	id = student.Id
 	if err != nil {
-		err = db.Model(&teacher).Where("login = ? and password = ?", email, pass).Select()
+		err = db.Model(&teacher).Where("email = ? and password = ?", email, pass).Select()
 		role = Roles.Teacher
 		if err != nil {
-
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Wrong login or password"))
 			return
 		}
 	}
-	token, err := getToken(email, role)
+	token, err := getToken(email, role, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Error generating JWT token: " + err.Error()))
+		return
 	}
+
+	switch role {
+	case Roles.Student:
+		err = GiveStudentToken(&student, token)
+	case Roles.Teacher:
+		err = GiveTeacherToken(&teacher, token)
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+
 	w.Header().Set("Authorization", token)
 	w.WriteHeader(http.StatusOK)
 
@@ -56,9 +71,11 @@ func authMiddleware(next http.Handler, routeName string) http.Handler {
 		}
 		email := claims.(jwt.MapClaims)["email"].(string)
 		role := claims.(jwt.MapClaims)["role"].(string)
+		id := int64(claims.(jwt.MapClaims)["id"].(float64))
 
 		r.Header.Set("email", email)
 		r.Header.Set("role", role)
+		r.Header.Set("id", strconv.FormatInt(id, 10))
 
 		next.ServeHTTP(w, r)
 	})
