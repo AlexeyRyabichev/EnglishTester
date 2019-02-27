@@ -21,15 +21,11 @@ func InitDB() {
 }
 
 func TokenExists(token string) (bool, error) {
-	var student Student
+	//var student Student
 	var teacher Teacher
 
-	exists, err := db.Model(&student).Where("access_token = ?", token).Exists()
-	if err == nil {
-		return exists, err
-	}
 
-	exists, err = db.Model(&teacher).Where("access_token = ?", token).Exists()
+	exists, err := db.Model(&teacher).Where("access_token = ?", token).Exists()
 	if err == nil {
 		return exists, err
 	}

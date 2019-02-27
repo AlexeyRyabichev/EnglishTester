@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"io"
+
+	//"io"
 	"log"
 	"net/http"
 )
@@ -11,8 +13,14 @@ import (
 func TestPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	dec := json.NewDecoder(r.Body)
+	//r.ParseForm()
+	//str:=r.FormValue("testText")
 	var test Test
-
+	//err:=json.Unmarshal([]byte(str),&test)
+	//if err != nil {
+	//	log.Print(err)
+	//	return
+	//}
 	if err := dec.Decode(&test); err == io.EOF {
 		//OK
 	} else if err != nil {

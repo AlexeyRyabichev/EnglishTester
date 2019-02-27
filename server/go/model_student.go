@@ -9,5 +9,6 @@ type Student struct {
 	Password    string `json:"password,omitempty"`
 	TestId      int64  `json:"-"`
 	Test        *Test  `json:"-"`
+	Answers		AnswerContainer `json:"answers"`
 	AccessToken string `json:"accessToken,omitempty"`
 }
