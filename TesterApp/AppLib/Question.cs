@@ -5,7 +5,7 @@ namespace AppLib
 
     public class Test
     {
-        public Test(int id, BaseQuestions baseQuestions, Reading reading, Writing writing)
+        public Test(int id, Question[] baseQuestions, Reading reading, string writing)
         {
             Id = id;
             BaseQuestions = baseQuestions;
@@ -14,9 +14,9 @@ namespace AppLib
         }
 
         public int Id { get; set; }
-        public BaseQuestions BaseQuestions { get; set; }
+        public Question[] BaseQuestions { get; set; }
         public Reading Reading { get; set; }
-        public Writing Writing { get; set; }
+        public string Writing { get; set; }
     }
 
 
@@ -32,26 +32,6 @@ namespace AppLib
         public string Text { get; set; }
     }
 
-    public class Writing
-    {
-        public Writing(string text)
-        {
-            Text = text;
-        }
-
-        public string Text { get; set; }
-    }
-
-    public class BaseQuestions
-    {
-        public BaseQuestions(Question[] questions)
-        {
-            Questions = new Question[questions.Length];
-            questions.CopyTo(Questions, 0);
-        }
-
-        public Question[] Questions { get; set; }
-    }
 
     public class Question
     {

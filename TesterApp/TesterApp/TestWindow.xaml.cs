@@ -37,7 +37,7 @@ namespace TesterApp
             defaultColor = Reading.Background;
             Test = Server.GetTest();
             question_count = Test.Reading.Questions.Length 
-                + Test.BaseQuestions.Questions.Length + 1;
+                + Test.BaseQuestions.Length + 1;
             answers = 
                 new string[question_count];
             this.student = student;
@@ -51,7 +51,7 @@ namespace TesterApp
         {
             AnswerPanel.Children.Clear();
             actualNumber = number;
-            if (actualNumber < Test.BaseQuestions.Questions.Length)
+            if (actualNumber < Test.BaseQuestions.Length)
             {
                 ShowQuestion_Base();
             }
@@ -67,7 +67,7 @@ namespace TesterApp
 
         private void ShowQuestion_Writing()
         {
-            Textblock.Text = Test.Writing.Text;
+            Textblock.Text = Test.Writing;
             Textblock.Height = (Height - 20) / 3;
             Textblock2.Text = "Type your answer in the box below:";
             TextBox = new TextBox
@@ -87,7 +87,7 @@ namespace TesterApp
         {
             Textblock.Text = Test.Reading.Text;
             Textblock.Text += "\n" + 
-                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].Text;
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].Text;
             Textblock.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
             RadioButtons = new RadioButton[4];
@@ -95,25 +95,25 @@ namespace TesterApp
             RadioButtons[0] = new RadioButton
             {
                 Content = "" + 
-                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionA,
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].optionA,
                 Name = "A1"
             };
             RadioButtons[1] = new RadioButton
             {
                 Content = "" +
-                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionB,
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].optionB,
                 Name = "B2"
             };
             RadioButtons[2] = new RadioButton
             {
                 Content = "" +
-                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionC,
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].optionC,
                 Name = "C3"
             };
             RadioButtons[3] = new RadioButton
             {
                 Content = "" +
-                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionD,
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].optionD,
                 Name = "D4"
             };
             for (int i = 0; i < 4; i++)
@@ -131,7 +131,7 @@ namespace TesterApp
 
         private void ShowQuestion_Base()
         {
-            Textblock.Text = Test.BaseQuestions.Questions[actualNumber].Text;
+            Textblock.Text = Test.BaseQuestions[actualNumber].Text;
             Textblock.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
             RadioButtons = new RadioButton[4];
@@ -139,25 +139,25 @@ namespace TesterApp
             RadioButtons[0] = new RadioButton
             {
                 Content = "" +
-                Test.BaseQuestions.Questions[actualNumber].optionA,
+                Test.BaseQuestions[actualNumber].optionA,
                 Name = "A1"
             };
             RadioButtons[1] = new RadioButton
             {
                 Content = "" +
-                Test.BaseQuestions.Questions[actualNumber].optionB,
+                Test.BaseQuestions[actualNumber].optionB,
                 Name = "B2"
             };
             RadioButtons[2] = new RadioButton
             {
                 Content = "" +
-                Test.BaseQuestions.Questions[actualNumber].optionC,
+                Test.BaseQuestions[actualNumber].optionC,
                 Name = "C3"
             };
             RadioButtons[3] = new RadioButton
             {
                 Content = "" +
-                Test.BaseQuestions.Questions[actualNumber].optionD,
+                Test.BaseQuestions[actualNumber].optionD,
                 Name = "D4"
             };
             for (int i = 0; i < 4; i++)
@@ -182,7 +182,7 @@ namespace TesterApp
         private void Reading_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
-            ShowQuestion(Test.BaseQuestions.Questions.Length);
+            ShowQuestion(Test.BaseQuestions.Length);
         }
 
 
@@ -238,7 +238,7 @@ namespace TesterApp
         {
            
             QuestionButtons = new Button[question_count];
-            for (var i = 0; i < Test.BaseQuestions.Questions.Length; i++)
+            for (var i = 0; i < Test.BaseQuestions.Length; i++)
             {
                     QuestionButtons[i] = new Button
                     {
@@ -251,12 +251,12 @@ namespace TesterApp
 
                     BasePanel.Children.Add(QuestionButtons[i]);
             }
-            for (var i = Test.BaseQuestions.Questions.Length; i < question_count - 1; i++)
+            for (var i = Test.BaseQuestions.Length; i < question_count - 1; i++)
             {
                 QuestionButtons[i] = new Button
                 {
                     Name = "q" + i,
-                    Content = "  " + (i - Test.BaseQuestions.Questions.Length + 1) + "  ",
+                    Content = "  " + (i - Test.BaseQuestions.Length + 1) + "  ",
                     Margin = new Thickness(5),
                     MaxWidth = Height
                 };
