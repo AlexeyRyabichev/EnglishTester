@@ -3,13 +3,16 @@ package swagger
 import (
 	"./Roles"
 	"github.com/dgrijalva/jwt-go"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-
+	stbyte,_:=ioutil.ReadAll(r.Body)
+	log.Print(string(stbyte))
 	email := r.FormValue("email")
 	pass := r.FormValue("password")
 
@@ -39,7 +42,7 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	case Roles.Student:
 		err = GiveStudentToken(&student, token)
 	case Roles.Teacher:
-		err = GiveTeacherToken(&teacher, token)
+			err = GiveTeacherToken(&teacher, token)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -2,24 +2,32 @@ package swagger
 
 import (
 	"bufio"
-	"encoding/json"
-	"io"
-
-	//"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
 func TestPost(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	dec := json.NewDecoder(r.Body)
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	//r.ParseForm()
-	//str:=r.FormValue("testText")
-	var test Test
-	//err:=json.Unmarshal([]byte(str),&test)
-	//if err != nil {
-	//	log.Print(err)
-	//	return
+	r.ParseForm()
+	stbyte,_:=ioutil.ReadAll(r.Body)
+	log.Print(string(stbyte))
+	text:=r.FormValue("testText")
+	log.Print(text)
+	//email := r.FormValue("email")
+	//pass := r.FormValue("password")
+//	str := r.FormValue("testText")
+//	stbyte,_:=ioutil.ReadAll(r.Body)
+//	parsedValue, err := url.QueryUnescape(string(stbyte))
+//	log.Print(string(stbyte))
+	//dec := json.NewDecoder(r.Body)
+	//var test Test
+	//json.Unmarshal([]byte(parsedValue), &test)
+	//if err := dec.Decode(&test); err == io.EOF {
+	//	//OK
+	//} else if err != nil {
+	//	log.Fatal(err)
 	//}
 	if err := dec.Decode(&test); err == io.EOF {
 		//OK
@@ -27,11 +35,11 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := db.Model(&test).Insert()
-	if err != nil {
-		log.Print(err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	//_, err = db.Model(&test).Insert()
+	//if err != nil {
+	//	log.Print(err)
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//}
 	w.WriteHeader(http.StatusOK)
 }
 
