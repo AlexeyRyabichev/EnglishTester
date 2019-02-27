@@ -12,18 +12,18 @@ namespace TesterApp
     /// </summary>
     public partial class TestWindow : Window
     {
-        private int actualSection;
         private bool flag;
         private Brush defaultColor;
         private bool areAllAnswersGot;
         private int actualNumber;
+        private int question_count;
         private string[] answers;
         public Button[] QuestionButtons;
-        private Question[] questions;
         private Student student;
         public TextBox TextBox;
         public RadioButton[] RadioButtons;
         public StackPanel RadioPanel;
+        public Test Test;
 
         public TestWindow(Student student)
         {
@@ -35,8 +35,11 @@ namespace TesterApp
             BorderThickness = new Thickness(0);
             flag = true;
             defaultColor = Reading.Background;
-            questions = Server.GetQuestions();
-            answers = new string[questions.Length];
+            Test = Server.GetTest();
+            question_count = Test.Reading.Questions.Length 
+                + Test.BaseQuestions.Questions.Length + 1;
+            answers = 
+                new string[question_count];
             this.student = student;
             areAllAnswersGot = false;
             RadioPanel = new StackPanel();
@@ -48,15 +51,23 @@ namespace TesterApp
         {
             AnswerPanel.Children.Clear();
             actualNumber = number;
-            var question = questions[number];
-            actualSection = question.Section;
-            if (actualSection == 2) ShowQuestion_Reading();
-            else ShowQuestion_Writing();
+            if (actualNumber < Test.BaseQuestions.Questions.Length)
+            {
+                ShowQuestion_Base();
+            }
+            else if (actualNumber < question_count - 1)
+            {
+                ShowQuestion_Reading();
+            }
+            else
+            {
+                ShowQuestion_Writing();
+            }
         }
 
         private void ShowQuestion_Writing()
         {
-            Textblock.Text = questions[actualNumber].Text;
+            Textblock.Text = Test.Writing.Text;
             Textblock.Height = (Height - 20) / 3;
             Textblock2.Text = "Type your answer in the box below:";
             TextBox = new TextBox
@@ -74,18 +85,39 @@ namespace TesterApp
 
         private void ShowQuestion_Reading()
         {
-            Textblock.Text = questions[actualNumber].Text;
+            Textblock.Text = Test.Reading.Text;
+            Textblock.Text += "\n" + 
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].Text;
             Textblock.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
             RadioButtons = new RadioButton[4];
             RadioPanel.Children.Clear();
+            RadioButtons[0] = new RadioButton
+            {
+                Content = "" + 
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionA,
+                Name = "A1"
+            };
+            RadioButtons[1] = new RadioButton
+            {
+                Content = "" +
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionB,
+                Name = "B2"
+            };
+            RadioButtons[2] = new RadioButton
+            {
+                Content = "" +
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionC,
+                Name = "C3"
+            };
+            RadioButtons[3] = new RadioButton
+            {
+                Content = "" +
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Questions.Length].optionD,
+                Name = "D4"
+            };
             for (int i = 0; i < 4; i++)
             {
-                RadioButtons[i] = new RadioButton
-                {
-                    Content = "" + (i + 1),
-                    Name = "r" + i
-                };
                 RadioButtons[i].Checked += RadioButtonOnClick;
                 RadioPanel.Children.Add(RadioButtons[i]);
             }
@@ -97,38 +129,72 @@ namespace TesterApp
             }
         }
 
+        private void ShowQuestion_Base()
+        {
+            Textblock.Text = Test.BaseQuestions.Questions[actualNumber].Text;
+            Textblock.Height = (Height - 20) / 5 * 4;
+            Textblock2.Text = "Choose the correct answer:";
+            RadioButtons = new RadioButton[4];
+            RadioPanel.Children.Clear();
+            RadioButtons[0] = new RadioButton
+            {
+                Content = "" +
+                Test.BaseQuestions.Questions[actualNumber].optionA,
+                Name = "A1"
+            };
+            RadioButtons[1] = new RadioButton
+            {
+                Content = "" +
+                Test.BaseQuestions.Questions[actualNumber].optionB,
+                Name = "B2"
+            };
+            RadioButtons[2] = new RadioButton
+            {
+                Content = "" +
+                Test.BaseQuestions.Questions[actualNumber].optionC,
+                Name = "C3"
+            };
+            RadioButtons[3] = new RadioButton
+            {
+                Content = "" +
+                Test.BaseQuestions.Questions[actualNumber].optionD,
+                Name = "D4"
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                RadioButtons[i].Checked += RadioButtonOnClick;
+                RadioPanel.Children.Add(RadioButtons[i]);
+            }
+            AnswerPanel.Children.Add(RadioPanel);
+            if ((answers[actualNumber] != "") && (answers[actualNumber] != null))
+            {
+                int.TryParse(answers[actualNumber], out int num);
+                RadioButtons[num].IsChecked = true;
+            }
+        }
+
+        private void Base_Click(object sender, RoutedEventArgs e)
+        {
+            WriteAnswers();
+            ShowQuestion(0);
+        }
 
         private void Reading_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
-            CheckAnswers();
-            int i;
-            for (i = 0; i < questions.Length; i++)
-                if (questions[i].Section == 2)
-                {
-                    ShowQuestion(i);
-                    break;
-                }
+            ShowQuestion(Test.BaseQuestions.Questions.Length);
         }
 
 
         private void Writing_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
-            CheckAnswers();
-            int i;
-            for (i = 0; i < questions.Length; i++)
-                if (questions[i].Section == 3)
-                {
-                    ShowQuestion(i);
-                    break;
-                }
+            ShowQuestion(question_count - 1);
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             WriteAnswers();
-            CheckAnswers();
             student.AddAnswers(answers);
             flag = false;
             var exit = new Exit(this, student, areAllAnswersGot);
@@ -170,45 +236,50 @@ namespace TesterApp
 
         private void AddButtons()
         {
-            int num = questions.Length;
-            QuestionButtons = new Button[num];
-            int readingCount = 0, writingCount = 0;
-            for (var i = 0; i < num; i++)
+           
+            QuestionButtons = new Button[question_count];
+            for (var i = 0; i < Test.BaseQuestions.Questions.Length; i++)
             {
-                if (questions[i].Section == 2)
-                {
                     QuestionButtons[i] = new Button
                     {
                         Name = "q" + i,
-                        Content = "  " + (readingCount + 1) + "  ",
+                        Content = "  " + (i + 1) + "  ",
                         Margin = new Thickness(5),
                         MaxWidth = Height
                     };
-                    readingCount++;
                     QuestionButtons[i].Click += ButtonOnClick;
 
-                    ReadingPanel.Children.Add(QuestionButtons[i]);
-                }
-                else
-                {
-                    QuestionButtons[i] = new Button
-                    {
-                        Name = "q" + i,
-                        Content = "  " + (writingCount + 1) + "  ",
-                        Margin = new Thickness(5),
-                        MaxWidth = Height
-                    };
-                    writingCount++;
-                    QuestionButtons[i].Click += ButtonOnClick;
-
-                    WritingPanel.Children.Add(QuestionButtons[i]);
-                }
+                    BasePanel.Children.Add(QuestionButtons[i]);
             }
+            for (var i = Test.BaseQuestions.Questions.Length; i < question_count - 1; i++)
+            {
+                QuestionButtons[i] = new Button
+                {
+                    Name = "q" + i,
+                    Content = "  " + (i - Test.BaseQuestions.Questions.Length + 1) + "  ",
+                    Margin = new Thickness(5),
+                    MaxWidth = Height
+                };
+                QuestionButtons[i].Click += ButtonOnClick;
+
+                ReadingPanel.Children.Add(QuestionButtons[i]);
+            }
+
+            QuestionButtons[question_count - 1] = new Button
+            {
+                Name = "q" + (question_count - 1),
+                Content = "  1  ",
+                Margin = new Thickness(5),
+                MaxWidth = Height
+            };
+            QuestionButtons[question_count - 1].Click += ButtonOnClick;
+            WritingPanel.Children.Add(QuestionButtons[question_count - 1]);
+
         }
 
         private void CheckAnswers()
         {
-            int num = questions.Length;
+            int num = answers.Length;
             areAllAnswersGot = true;
             for (var i = 0; i < num; i++)
             {
@@ -221,5 +292,7 @@ namespace TesterApp
                 }
             }
         }
+
+       
     }
 }

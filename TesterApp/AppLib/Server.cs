@@ -9,22 +9,29 @@ namespace AppLib
 {
     public static class Server
     {
-        public static Question[] GetQuestions()
+        public static Test GetTest()
         {
-            var q = new Question[11];
-            q[0] = new Question("ASA", 2);
-            q[1] = new Question("ASP", 2);
-            q[2] = new Question("ASR", 2);
-            q[3] = new Question("ASA", 2);
-            q[4] = new Question("ASP", 2);
-            q[5] = new Question("ASR", 2);
-            q[6] = new Question("ASA", 2);
-            q[7] = new Question("ASP", 2);
-            q[8] = new Question("ASR", 2);
-            q[9] = new Question("AWA", 2);
-            q[10] = new Question("Work it, make it, do it \nMakes us harder, better, faster, stronger!" +
-                                "\n N - n - now that don’t kill me \nCan only make me stronger...", 3);
-            return q;
+            Question question1 = new Question(1, "asdkjhgfdshjkl", "a", "b", "c", "d");
+            Question question2 = new Question(2, "AAAAAAAAAAAAAAA", "a", "b", "c", "d");
+            Question[] questions = new Question[2] { question1, question2 };
+            Reading reading = new Reading(questions, "ITS READING TIME");
+            Writing writing = new Writing("xdyuyihojp\nzrxtcfyvgubh\nzrxtcyvgbh\nerxtcyvubhnj\nhj");
+            BaseQuestions baseQuestions = new BaseQuestions(questions);
+            Test test = new Test(1, baseQuestions, reading, writing);
+            using (var sw = new StreamWriter("test1.json",
+                false, Encoding.Default))
+            {
+                var serialized = JsonConvert.SerializeObject(test);
+                sw.Write(serialized);
+                sw.Close();
+            }
+            using (var sr = new StreamReader(new FileStream("test.json", FileMode.Open)))
+            {
+                string output = sr.ReadToEnd();
+                test = JsonConvert.DeserializeObject<Test>(output);
+                sr.Close();
+            }
+            return test;
         }
 
         public static bool SendData(Student student)
