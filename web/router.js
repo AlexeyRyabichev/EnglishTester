@@ -336,9 +336,9 @@ function sendTest(request, callback) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': auth,
-                body: body
-            }
+                'Authorization': auth
+            },
+            body : body
         };
 
         const req = http.request(options, (res) => {
