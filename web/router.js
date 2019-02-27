@@ -337,8 +337,7 @@ function sendTest(request, callback) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': auth
-            },
-            body : body
+            }
         };
 
         const req = http.request(options, (res) => {
@@ -348,6 +347,8 @@ function sendTest(request, callback) {
             else
                 callback(false);
         });
+
+        req.write(body);
 
         req.on("error", (e) => {
             console.log(e);
