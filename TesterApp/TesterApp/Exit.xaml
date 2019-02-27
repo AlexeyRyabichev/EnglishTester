@@ -5,13 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TesterApp"
         mc:Ignorable="d"
-        Title="Exit" Height="450" Width="800" Deactivated="Window_Deactivated" 
-        WindowStyle="None" Closing="Window_Closing">
+        Title="Exit" Height="300" Width="500" Deactivated="Window_Deactivated"
+        WindowStyle="None" Closing="Window_Closing"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
-        <TextBlock Text=" Are you sure you want to exit?"  Margin="50"></TextBlock>
+        <TextBlock x:Name="TextBlock" Text="Are you sure you want to exit?" Margin="50" 
+                   FontFamily="Roboto Medium" TextAlignment="Center"/>
         <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="button1" Content="   Yes   " Margin="30" BorderBrush="Blue" Click="button1_Click"></Button>
-            <Button x:Name="button2" Content="   No   " Margin="30" Click="button2_Click_1"></Button>
+            <Button x:Name="YesButton" Content="   Yes   " Margin="30" BorderBrush="LightSeaGreen" Click="YesButton_Click" />
+            <Button x:Name="NoButton" Content="   No   " Margin="30" Click="NoButton_Click" />
         </WrapPanel>
     </WrapPanel>
 </Window>

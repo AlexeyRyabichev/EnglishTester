@@ -1,58 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using TesterLib;
-using ServerLib;
+using AppLib;
 
 namespace TesterApp
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Student student;
+        private Student student;
 
         public MainWindow()
         {
             InitializeComponent();
-            this.WindowState = WindowState.Maximized;
-            button1.Click += TryToStart;
+            WindowState = WindowState.Maximized;
+            LoginButton.Click += TryToStart;
         }
-        void TryToStart(object sender, RoutedEventArgs e)
+
+        private void TryToStart(object sender, RoutedEventArgs e)
         {
-            string email = textbox1.Text;
-            string password = textbox2.Text;
+            var email = EmailTextBox.Text;
+            var password = PasswordTextBox.Password;
             try
             {
-                string id = Server.Authentication(email, password);
+                var id = Server.Authentication(email, password);
                 if (id == "")
                     throw new FieldAccessException();
                 student = new Student(email, password, id);
-                Window1 testerWindow = new Window1(student);
+                var testerWindow = new TestWindow(student);
                 testerWindow.Show();
-                this.Close();
+                Close();
             }
             catch (FieldAccessException)
             {
-                MessageBox.Show("Wrong email or password");
+                ErrorLabel.Content = "Wrong email or password";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.ToString());
             }
         }
-
     }
 }
