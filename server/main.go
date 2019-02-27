@@ -1,19 +1,20 @@
 package main
 
 import (
-	sw "./go"
+	"./go/DbWorker"
+	"./go/swagger"
 	"log"
 	"net/http"
 )
 
 func main() {
 	log.Printf("Server started")
-	sw.InitDB()
-	sw.CreateSchemaTeachers()
-	sw.CreateSchemaStudents()
-	sw.CreateSchemaTest()
-	sw.CreateSchemaAudio()
-	router := sw.NewRouter()
+	DbWorker.InitDB()
+	DbWorker.CreateSchemaTeachers()
+	DbWorker.CreateSchemaStudents()
+	DbWorker.CreateSchemaTest()
+	DbWorker.CreateSchemaAudio()
+	router := swagger.NewRouter()
 	//sw.InsertTests()
 
 	log.Fatal(http.ListenAndServe(":8080", router))

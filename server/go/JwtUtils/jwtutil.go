@@ -1,7 +1,8 @@
-package swagger
+package JwtUtils
 
 import (
-	"./Roles"
+	"../DbWorker"
+	"../Roles"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"log"
@@ -47,7 +48,7 @@ func VerifyToken(tokenString string) (jwt.Claims, error) {
 		return nil, err
 	}
 
-	exists, err := TokenExists(tokenString)
+	exists, err := DbWorker.TokenExists(tokenString)
 	if !exists {
 		return token.Claims, TokenDoesNotExistError{Token: tokenString, Text: "Does not exists"}
 	}

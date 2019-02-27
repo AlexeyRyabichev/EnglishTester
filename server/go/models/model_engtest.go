@@ -25,6 +25,7 @@ type Reading struct {
 type AnswerContainer struct {
 	Base    []Answer `json:"base"`
 	Reading []Answer `json:"reading"`
+	Writing Answer   `json:"writing"`
 }
 
 type Answer struct {

@@ -1,7 +1,7 @@
 package swagger
 
 import (
-	api "./apis"
+	api "../apis"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"

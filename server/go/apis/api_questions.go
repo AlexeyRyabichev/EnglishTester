@@ -1,7 +1,7 @@
 package apis
 
 import (
-	sw "../../go"
+	"../DbWorker"
 	Model "../models"
 	"encoding/json"
 	"io"
@@ -17,7 +17,7 @@ func QuestionsGet(w http.ResponseWriter, r *http.Request) {
 	//check if this test is belong to this user
 	var student Model.Student
 	var test Model.Test
-	err := sw.Db.Model(&student).Relation("Test").
+	err := DbWorker.Db.Model(&student).Relation("Test").
 		Where("student.id = ?", id).Select(&test)
 	if err != nil {
 		log.Print(err)
@@ -48,7 +48,7 @@ func AnswersPost(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		log.Fatal(err)
 	}
-	_, err := sw.Db.Model(&student).Column("answers").Where("id = ?", id).Update()
+	_, err := DbWorker.Db.Model(&student).Column("answers").Where("id = ?", id).Update()
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)

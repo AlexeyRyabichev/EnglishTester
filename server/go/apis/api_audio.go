@@ -1,7 +1,7 @@
 package apis
 
 import (
-	sw "../../go"
+	"../DbWorker"
 	"../Roles"
 	Model "../models"
 	"github.com/gorilla/mux"
@@ -27,7 +27,7 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
 	var path string
 
-	err = sw.Db.Model((*Model.Audio)(nil)).
+	err = DbWorker.Db.Model((*Model.Audio)(nil)).
 		Column("path").
 		Where("student_id = ?", studId).
 		Select(&path)
@@ -111,7 +111,7 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	var audio = Model.Audio{StudentId: studId,
 		Path: fp,
 	}
-	_, err = sw.Db.Model(&audio).Insert()
+	_, err = DbWorker.Db.Model(&audio).Insert()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

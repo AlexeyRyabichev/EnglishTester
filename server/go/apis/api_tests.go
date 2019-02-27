@@ -1,7 +1,7 @@
 package apis
 
 import (
-	sw "../../go"
+	"../DbWorker"
 	Model "../models"
 	"bufio"
 	"encoding/json"
@@ -25,7 +25,7 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = sw.Db.Model(&test).Insert()
+	_, err = DbWorker.Db.Model(&test).Insert()
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,7 +48,7 @@ func TestPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = sw.Db.Model(&test).WherePK().Update()
+	_, err = DbWorker.Db.Model(&test).WherePK().Update()
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -68,7 +68,7 @@ func TestGet(w http.ResponseWriter, r *http.Request) {
 	}
 	var test Model.Test
 
-	err = sw.Db.Model(&test).Where("id = ?", testId).Select()
+	err = DbWorker.Db.Model(&test).Where("id = ?", testId).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
@@ -82,7 +82,7 @@ func TestGet(w http.ResponseWriter, r *http.Request) {
 func TestsGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	var tests []Model.Test
-	err := sw.Db.Model(&tests).Select()
+	err := DbWorker.Db.Model(&tests).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
@@ -102,7 +102,7 @@ func CheckCredentialsTeacherPost(w http.ResponseWriter, r *http.Request) {
 	res, _, _ = scanner.ReadLine()
 	pass := string(res)
 
-	err := sw.Db.Model(&teachers).Where("login = ? and password = ?", login, pass).Select()
+	err := DbWorker.Db.Model(&teachers).Where("login = ? and password = ?", login, pass).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -126,7 +126,7 @@ func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
 	res, _, _ = scanner.ReadLine()
 	pass := string(res)
 
-	err := sw.Db.Model(&student).Where("email = ? and password = ?", login, pass).Select()
+	err := DbWorker.Db.Model(&student).Where("email = ? and password = ?", login, pass).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}

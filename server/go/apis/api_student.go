@@ -1,7 +1,7 @@
 package apis
 
 import (
-	sw "../../go"
+	"../DbWorker"
 	"../Roles"
 	Model "../models"
 	"encoding/json"
@@ -18,7 +18,7 @@ func StudentsGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var students []Model.Student
-	err := sw.Db.Model(&students).Select()
+	err := DbWorker.Db.Model(&students).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
@@ -49,7 +49,7 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%v\n", stArr)
 	}
 
-	_, err := sw.Db.Model(&stArr).Insert()
+	_, err := DbWorker.Db.Model(&stArr).Insert()
 	log.Printf("dsds")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -73,7 +73,7 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := sw.Db.Model(&student).Insert()
+	_, err := DbWorker.Db.Model(&student).Insert()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -96,7 +96,7 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := sw.Db.Model(&student).WherePK().Update()
+	_, err := DbWorker.Db.Model(&student).WherePK().Update()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -112,16 +112,16 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var students []Model.Student
-	err := sw.Db.Model(&students).Select()
+	err := DbWorker.Db.Model(&students).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	res, err := sw.Db.Model(&students).Delete()
+	res, err := DbWorker.Db.Model(&students).Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	log.Println("deleted: ", res.RowsAffected())
-	count, err := sw.Db.Model((*Model.Student)(nil)).Count()
+	count, err := DbWorker.Db.Model((*Model.Student)(nil)).Count()
 	if err != nil {
 		panic(err)
 	}
@@ -141,7 +141,7 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := sw.Db.Model(&student).WherePK().Delete()
+	_, err := DbWorker.Db.Model(&student).WherePK().Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}

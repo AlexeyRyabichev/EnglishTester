@@ -1,7 +1,8 @@
 package apis
 
 import (
-	sw "../../go"
+	"../DbWorker"
+	"../JwtUtils"
 	"../Roles"
 	Model "../models"
 	"github.com/dgrijalva/jwt-go"
@@ -21,11 +22,11 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	var student Model.Student
 	var teacher Model.Teacher
 	var id int64
-	err := sw.Db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
+	err := DbWorker.Db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
 	var role Roles.Role = Roles.Student
 	id = student.Id
 	if err != nil {
-		err = sw.Db.Model(&teacher).Where("email = ? and password = ?", email, pass).Select()
+		err = DbWorker.Db.Model(&teacher).Where("email = ? and password = ?", email, pass).Select()
 		role = Roles.Teacher
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -33,7 +34,7 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	token, err := sw.GetToken(email, role, id)
+	token, err := JwtUtils.GetToken(email, role, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Error generating JWT token: " + err.Error()))
@@ -42,9 +43,9 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 
 	switch role {
 	case Roles.Student:
-		err = sw.GiveStudentToken(&student, token)
+		err = DbWorker.GiveStudentToken(&student, token)
 	case Roles.Teacher:
-		err = sw.GiveTeacherToken(&teacher, token)
+		err = DbWorker.GiveTeacherToken(&teacher, token)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -69,7 +70,7 @@ func AuthMiddleware(next http.Handler, routeName string) http.Handler {
 			w.Write([]byte("Missing Authorization Header"))
 			return
 		}
-		claims, err := sw.VerifyToken(tokenString)
+		claims, err := JwtUtils.VerifyToken(tokenString)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Error verifying JWT token: " + err.Error()))

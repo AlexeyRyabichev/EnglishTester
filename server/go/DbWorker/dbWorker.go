@@ -1,7 +1,7 @@
-package swagger
+package DbWorker
 
 import (
-	Model "./models"
+	Model "../models"
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
 )
