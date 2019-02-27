@@ -51,6 +51,7 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
+	w.Header().Set("Role", role.String())
 	w.Header().Set("Authorization", token)
 	w.WriteHeader(http.StatusOK)
 
