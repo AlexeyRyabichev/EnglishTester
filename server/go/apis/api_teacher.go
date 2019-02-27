@@ -1,7 +1,7 @@
-package swagger
+package apis
 
 import (
-	"./Roles"
+	"../Roles"
 	"encoding/json"
 	"io"
 	"log"

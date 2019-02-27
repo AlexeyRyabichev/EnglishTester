@@ -24,7 +24,7 @@ type MyCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func getToken(email string, role Roles.Role, id int64) (string, error) {
+func GetToken(email string, role Roles.Role, id int64) (string, error) {
 	signingKey := []byte("EngTester")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyCustomClaims{
 		email,
@@ -38,7 +38,7 @@ func getToken(email string, role Roles.Role, id int64) (string, error) {
 	return tokenString, err
 }
 
-func verifyToken(tokenString string) (jwt.Claims, error) {
+func VerifyToken(tokenString string) (jwt.Claims, error) {
 	signingKey := []byte("EngTester")
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return signingKey, nil

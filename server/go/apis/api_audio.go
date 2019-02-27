@@ -1,7 +1,9 @@
-package swagger
+package apis
 
 import (
-	"./Roles"
+	sw "../../go"
+	"../Roles"
+	Model "../models"
 	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
@@ -25,7 +27,7 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
 	var path string
 
-	err = db.Model((*Audio)(nil)).
+	err = sw.Db.Model((*Model.Audio)(nil)).
 		Column("path").
 		Where("student_id = ?", studId).
 		Select(&path)
@@ -106,10 +108,10 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(fp)
 	defer f.Close()
 	io.Copy(f, file)
-	var audio = Audio{StudentId: studId,
+	var audio = Model.Audio{StudentId: studId,
 		Path: fp,
 	}
-	_, err = db.Model(&audio).Insert()
+	_, err = sw.Db.Model(&audio).Insert()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

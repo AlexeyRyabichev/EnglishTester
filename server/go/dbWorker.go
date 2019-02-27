@@ -1,11 +1,12 @@
 package swagger
 
 import (
+	Model "./models"
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
 )
 
-var db *pg.DB
+var Db *pg.DB
 
 const dbPASS = "tigra"        //CHANGE HERE
 const addr = "localhost:5432" //"138.68.78.205:5432"
@@ -13,7 +14,7 @@ const addr = "localhost:5432" //"138.68.78.205:5432"
 //TODO override
 
 func InitDB() {
-	db = pg.Connect(&pg.Options{
+	Db = pg.Connect(&pg.Options{
 		Addr:     addr,
 		User:     "postgres",
 		Password: dbPASS,
@@ -22,30 +23,29 @@ func InitDB() {
 
 func TokenExists(token string) (bool, error) {
 	//var student Student
-	var teacher Teacher
+	var teacher Model.Teacher
 
-
-	exists, err := db.Model(&teacher).Where("access_token = ?", token).Exists()
+	exists, err := Db.Model(&teacher).Where("access_token = ?", token).Exists()
 	if err == nil {
 		return exists, err
 	}
 	return false, nil
 }
 
-func GiveStudentToken(student *Student, token string) error {
+func GiveStudentToken(student *Model.Student, token string) error {
 	student.AccessToken = token
-	_, err := db.Model(student).WherePK().Update()
+	_, err := Db.Model(student).WherePK().Update()
 	return err
 }
 
-func GiveTeacherToken(teacher *Teacher, token string) error {
+func GiveTeacherToken(teacher *Model.Teacher, token string) error {
 	teacher.AccessToken = token
-	_, err := db.Model(teacher).WherePK().Update()
+	_, err := Db.Model(teacher).WherePK().Update()
 	return err
 }
 
 func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{(*Student)(nil), (*Test)(nil)} {
+	for _, model := range []interface{}{(*Model.Student)(nil), (*Model.Test)(nil)} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
@@ -57,8 +57,8 @@ func createSchema(db *pg.DB) error {
 }
 
 func CreateSchemaStudents() error {
-	for _, model := range []interface{}{(*Student)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
+	for _, model := range []interface{}{(*Model.Student)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
 		if err != nil {
@@ -69,8 +69,8 @@ func CreateSchemaStudents() error {
 }
 
 func CreateSchemaTeachers() error {
-	for _, model := range []interface{}{(*Teacher)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
+	for _, model := range []interface{}{(*Model.Teacher)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
 		if err != nil {
@@ -81,8 +81,8 @@ func CreateSchemaTeachers() error {
 }
 
 func CreateSchemaTest() error {
-	for _, model := range []interface{}{(*Test)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
+	for _, model := range []interface{}{(*Model.Test)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
 		if err != nil {
@@ -93,8 +93,8 @@ func CreateSchemaTest() error {
 }
 
 func CreateSchemaAudio() error {
-	for _, model := range []interface{}{(*Audio)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
+	for _, model := range []interface{}{(*Model.Audio)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
 		if err != nil {

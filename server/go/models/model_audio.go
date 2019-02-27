@@ -1,4 +1,4 @@
-package swagger
+package models
 
 type Audio struct {
 	Id        int64  `json:"id,omitempty"`

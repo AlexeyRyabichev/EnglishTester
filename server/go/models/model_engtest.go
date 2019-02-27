@@ -1,4 +1,4 @@
-package swagger
+package models
 
 type Test struct {
 	Id               int             `json:"id,omitempty"`
@@ -30,6 +30,12 @@ type AnswerContainer struct {
 type Answer struct {
 	Id     int    `json:"id"`
 	Answer string `json:"answer"`
+}
+
+type ProxyQuestions struct {
+	BaseQuestions    []Question `json:"baseQuestions" sql:",notnull"`
+	ReadingQuestions *Reading   `json:"reading"`
+	Writing          string     `json:"writing"`
 }
 
 //func (m Question) Value() (driver.Value, error) {
