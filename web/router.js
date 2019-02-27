@@ -146,10 +146,9 @@ function getUsername(request, callback) {
                     let ans = '';
                     for (let i = 0; i < body.length; i++) {
                         // noinspection JSUnresolvedVariable
-                        if (parseCookies(request)['email'] === body[i].login)
-                            { // noinspection JSUnresolvedVariable
-                                ans = body[i].lastName + " " + body[i].name;
-                            }
+                        if (parseCookies(request)['email'] === body[i].login) { // noinspection JSUnresolvedVariable
+                            ans = body[i].lastName + " " + body[i].name;
+                        }
                     }
                     callback(ans);
                 });
@@ -317,50 +316,44 @@ function checkToken(request, callback) {
 }
 
 function sendTest(request, callback) {
-    let body = '', email = '';
+    let auth = parseCookies(request)['token'];
+    let body = '';
     request.on('data', chunk => {
         body += chunk.toString();
-        // const list = {}, rc = body;
-
-        // rc && rc.split('&').forEach(function (cookie) {
-        //     const parts = cookie.split('=');
-        //     list[parts.shift().trim()] = decodeURI(parts.join('='));
-        // });
-        //
-        // email = list['email'];
-        // email = email.replace("%40", "@");
     });
-    request.on('end', () => {
+    request.on('end', (flag) => {
+        body = body.replace("testText%3A=", "");
         console.log("JSON: " + body);
-        callback();
-        // const options = {
-        //     hostname: '127.0.0.1',
-        //     port: 8080,
-        //     path: '/api/login',
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded'
-        //     }
-        // };
-        //
-        // const req = http.request(options, (res) => {
-        //     console.log(`status: ${res.statusCode}`);
-        //     let tmp = '';
-        //     res.on('data', chunk => {
-        //         tmp += chunk.toString();
-        //     });
-        //     res.on('end', () => {
-        //         console.log("TOKEN: " + res.headers.authorization);
-        //         callback(res.headers.authorization, email);
-        //     });
-        // });
-        //
-        // req.on("error", (e) => {
-        //     console.log(e);
-        // });
-        //
-        // req.write(body);
-        // req.end();
+
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/test',
+            method: 'POST',
+            headers: {
+                'Authorization': auth
+            },
+            body: body
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end();
     });
 }
 
@@ -374,12 +367,26 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
-        } else if (request.url === '/sendTest'){
-            sendTest(request, () => {
-                open(path.join(__dirname, '/teacher/tests.html'), response);
+        } else if (request.url === '/sendTest') {
+            sendTest(request, (valid) => {
+                if (valid) {
+                    request.url = "/teacher/tests.html";
+                    response.writeHead(302, {
+                        'Location': "/tests.html"
+                    });
+                    request.url = path.join(__dirname, request.url);
+                    openTemplate(request, response);
+                } else {
+                    request.url = "/teacher/index.html";
+                    response.writeHead(302, {
+                        'Location': "/index.html"
+                    });
+                    request.url = path.join(__dirname, request.url);
+                    openTemplate(request, response);
+                }
+
             });
-        }
-        else if (request.url === '/auth') {
+        } else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
                     request.url = "/teacher/students.html";
