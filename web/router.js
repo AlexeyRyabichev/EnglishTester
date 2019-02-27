@@ -322,7 +322,6 @@ function sendTest(request, callback) {
         body += chunk.toString();
     });
     request.on('end', (flag) => {
-        body = body.replace("testText%3A=", "");
         console.log("JSON: " + body);
 
         if (!auth || auth === '' || auth === 'undefined') {
@@ -336,9 +335,10 @@ function sendTest(request, callback) {
             path: '/api/test',
             method: 'POST',
             headers: {
-                'Authorization': auth
-            },
-            body: body
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': auth,
+                body: body
+            }
         };
 
         const req = http.request(options, (res) => {
