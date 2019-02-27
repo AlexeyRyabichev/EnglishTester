@@ -1,13 +1,12 @@
-package swagger
+package models
 
-type Student struct {
+type Teacher struct {
 	Id          int64  `json:"id,omitempty"`
+	Role        string `json:"role,omitempty"`
+	Email       string `json:"login,omitempty"`
+	Password    string `json:"password,omitempty"`
 	Name        string `json:"name,omitempty"`
 	LastName    string `json:"lastName,omitempty"`
 	FatherName  string `json:"fatherName,omitempty"`
-	Email       string `json:"email,omitempty"`
-	Password    string `json:"password,omitempty"`
-	TestId      int64  `json:"-"`
-	Test        *Test  `json:"-"`
 	AccessToken string `json:"accessToken,omitempty"`
 }

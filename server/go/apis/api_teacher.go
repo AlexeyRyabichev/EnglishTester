@@ -1,7 +1,9 @@
-package swagger
+package apis
 
 import (
-	"./Roles"
+	"../DbWorker"
+	"../Roles"
+	Model "../models"
 	"encoding/json"
 	"io"
 	"log"
@@ -15,8 +17,8 @@ func TeachersGet(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
 	}
-	var teachers []Teacher
-	err := db.Model(&teachers).Select()
+	var teachers []Model.Teacher
+	err := DbWorker.Db.Model(&teachers).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -39,7 +41,7 @@ func TeacherPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dec := json.NewDecoder(r.Body)
-	var teacher Teacher
+	var teacher Model.Teacher
 
 	if err := dec.Decode(&teacher); err == io.EOF {
 		//OK
@@ -47,7 +49,7 @@ func TeacherPost(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := db.Model(&teacher).Insert()
+	_, err := DbWorker.Db.Model(&teacher).Insert()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -64,7 +66,7 @@ func TeacherDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dec := json.NewDecoder(r.Body)
-	var teacher Teacher
+	var teacher Model.Teacher
 
 	if err := dec.Decode(&teacher); err == io.EOF {
 		//OK
@@ -72,7 +74,7 @@ func TeacherDelete(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := db.Model(&teacher).WherePK().Delete()
+	_, err := DbWorker.Db.Model(&teacher).WherePK().Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}

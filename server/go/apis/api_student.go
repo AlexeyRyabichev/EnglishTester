@@ -1,7 +1,9 @@
-package swagger
+package apis
 
 import (
-	"./Roles"
+	"../DbWorker"
+	"../Roles"
+	Model "../models"
 	"encoding/json"
 	"io"
 	"log"
@@ -15,8 +17,8 @@ func StudentsGet(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
 	}
-	var students []Student
-	err := db.Model(&students).Select()
+	var students []Model.Student
+	err := DbWorker.Db.Model(&students).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
@@ -36,7 +38,7 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dec := json.NewDecoder(r.Body)
-	var stArr []Student
+	var stArr []Model.Student
 	for {
 
 		if err := dec.Decode(&stArr); err == io.EOF {
@@ -47,7 +49,7 @@ func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%v\n", stArr)
 	}
 
-	_, err := db.Model(&stArr).Insert()
+	_, err := DbWorker.Db.Model(&stArr).Insert()
 	log.Printf("dsds")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -63,7 +65,7 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dec := json.NewDecoder(r.Body)
-	var student Student
+	var student Model.Student
 
 	if err := dec.Decode(&student); err == io.EOF {
 		//OK
@@ -71,7 +73,7 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := db.Model(&student).Insert()
+	_, err := DbWorker.Db.Model(&student).Insert()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -87,14 +89,14 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dec := json.NewDecoder(r.Body)
-	var student Student
+	var student Model.Student
 	if err := dec.Decode(&student); err == io.EOF {
 		//OK
 	} else if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err := db.Model(&student).WherePK().Update()
+	_, err := DbWorker.Db.Model(&student).WherePK().Update()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -109,17 +111,17 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
 	}
-	var students []Student
-	err := db.Model(&students).Select()
+	var students []Model.Student
+	err := DbWorker.Db.Model(&students).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	res, err := db.Model(&students).Delete()
+	res, err := DbWorker.Db.Model(&students).Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	log.Println("deleted: ", res.RowsAffected())
-	count, err := db.Model((*Student)(nil)).Count()
+	count, err := DbWorker.Db.Model((*Model.Student)(nil)).Count()
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +133,7 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	dec := json.NewDecoder(r.Body)
-	var student Student
+	var student Model.Student
 
 	if err := dec.Decode(&student); err == io.EOF {
 		//OK
@@ -139,7 +141,7 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	_, err := db.Model(&student).WherePK().Delete()
+	_, err := DbWorker.Db.Model(&student).WherePK().Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
