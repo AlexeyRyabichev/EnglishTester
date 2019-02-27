@@ -25,12 +25,12 @@ namespace AppLib
                 sw.Write(serialized);
                 sw.Close();
             }
-            using (var sr = new StreamReader(new FileStream("test.json", FileMode.Open)))
+            /*using (var sr = new StreamReader(new FileStream("test.json", FileMode.Open)))
             {
                 string output = sr.ReadToEnd();
                 test = JsonConvert.DeserializeObject<Test>(output);
                 sr.Close();
-            }
+            }*/
             return test;
         }
 
