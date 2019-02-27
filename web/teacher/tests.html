@@ -9,8 +9,9 @@
     <div class="navbar-fixed">
         <nav>
             <div class="nav-wrapper">
-                <a class="brand-logo" href="#" style="margin-left: 1%"><img src="../res/smallLogo.png" style="margin-top: 1%"
-                                                                            width="19.5%" alt="HSE Logo"></a>
+                <a class="brand-logo" href="#" style="margin-left: 1%"><img alt="HSE Logo"
+                                                                            src="../res/smallLogo.png"
+                                                                            style="margin-top: 1%" width="19.5%"></a>
                 <a class="brand-logo center" href="#">{USERNAME}</a>
                 <a class="sidenav-trigger" data-target="mobile-demo" href="#"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-med-and-down" id="nav-mobile">
@@ -35,13 +36,75 @@
 </nav>
 
 <div class="container">
-    <h1>COMING SOON</h1>
+    <form action="/sendTest" class="col s6" method="post" onsubmit="createTestJSON()">
+        <input id="hiddenHolder" name="testText:" type="hidden"/>
+        <h3 class="center-align">Base questions</h3>
+        <table id="baseQuestionsTable">
+            <thead>
+            <tr>
+                <th style="width: 2%">№</th>
+                <th style="width: 30%">Question</th>
+                <th style="width: 30%">Options</th>
+                <th style="width: 30%">Correct answer</th>
+                <th>Functions</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div class="center-align" style="margin-top: 5%; margin-bottom: 10%">
+            <a class="btn" id="addBaseQuestion" onclick="addCustomRow('baseQuestionsTable')">Add base question</a>
+        </div>
+
+        <h3 class="center-align">Reading</h3>
+        <div class="input-field col s12">
+            <textarea class="materialize-textarea" id="readingText" required></textarea>
+            <label for="readingText">Text for reading</label>
+        </div>
+        <table id="readingQuestionsTable">
+            <thead>
+            <tr>
+                <th style="width: 2%">№</th>
+                <th style="width: 30%">Question</th>
+                <th style="width: 30%">Options</th>
+                <th style="width: 30%">Correct answer</th>
+                <th>Functions</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div class="center-align" style="margin-top: 5%; margin-bottom: 10%">
+            <a class="btn" id="addReadingQuestion" onclick="addCustomRow('readingQuestionsTable')">Add reading
+                question</a>
+        </div>
+
+        <h3 class="center-align">Writing</h3>
+        <div class="input-field col s12">
+            <textarea class="materialize-textarea" id="writingText" required></textarea>
+            <label for="writingText">Text for writing</label>
+        </div>
+        <div class="center-align" style="margin-top: 5%; margin-bottom: 5%">
+            <button class="waves-effect waves-light btn" id="submitButton" type="submit">Submit
+            </button>
+        </div>
+    </form>
 </div>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="../sass/materialize.css" media="screen,projection" rel="stylesheet" type="text/css"/>
-<script src="../js/bin/materialize.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="../navbarInit.js"></script>
+<link href="/sass/materialize.css" media="screen,projection" rel="stylesheet" type="text/css"/>
+<script src="/js/bin/materialize.min.js" type="text/javascript"></script>
+<script src="/navbarInit.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/testsSupport.js" type="text/javascript"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('select');
+        let instances = M.FormSelect.init(elems, {});
+    });
+</script>
 
 </body>
 
