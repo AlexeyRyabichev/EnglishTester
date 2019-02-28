@@ -193,9 +193,9 @@ function fillTestsView(request, callback) {
             table += '</ul>' + '</div>';
 
             for (let i = 0; i < obj.length; i++) {
-                table += `<div id="test${obj[i].id}" class="col s12">`;
+                table += `<div id="test${obj[i].id}" class="col s12" style="margin-top: 3%">`;
                 // Base
-                table += `<h3 align="center" ">Base questions</h3>`;
+                table += `<h3 align="center">Base questions</h3>`;
                 table += `<table id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
 
                 for (let j = 0; j < obj[i].baseQuestions.length; j++) {
@@ -211,7 +211,7 @@ function fillTestsView(request, callback) {
                 table += '</table>';
 
                 // Reading
-                table += `<h3 align="center" ">Reading</h3>`;
+                table += `<h3 align="center" style="margin-top: 5%">Reading</h3>`;
                 table += `<strong>Reading task: </strong>${obj[i].reading.question}`;
                 table += `<table id="readingQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
 
@@ -228,7 +228,7 @@ function fillTestsView(request, callback) {
                 table += '</table>';
 
                 // Writing
-                table += `<h3 align="center" ">Writing</h3>`;
+                table += `<h3 align="center" style="margin-top: 5%">Writing</h3>`;
                 table += `<strong>Writing task: </strong>${obj[i].writing}`;
 
                 table += '</div>';
