@@ -21,13 +21,15 @@ func StudentsGet(w http.ResponseWriter, r *http.Request) {
 	err := DbWorker.Db.Model(&students).Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	StudentJson, err := json.Marshal(students)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-	w.Write(StudentJson)
 	w.WriteHeader(http.StatusOK)
+	w.Write(StudentJson)
 }
 
 func StudentCreateWithArrayPost(w http.ResponseWriter, r *http.Request) {
