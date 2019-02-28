@@ -4693,7 +4693,7 @@ small {
   overflow-y: hidden;
   height: 48px;
   width: 100%;
-  background-color: #fff;
+  background-color: rgba(0, 51, 153, 0.15);
   margin: 0 auto;
   white-space: nowrap;
 }
@@ -4707,7 +4707,7 @@ small {
 }
 .tabs.tabs-transparent .tab a:hover,
 .tabs.tabs-transparent .tab a.active {
-  color: #fff;
+  color: #0044cc;
 }
 .tabs.tabs-transparent .indicator {
   background-color: #fff;

@@ -10,7 +10,7 @@
 
     .tab a:hover,
     .tab a.active {
-      color: #fff;
+      color: $primary-color-light;
     }
 
     .indicator {
@@ -31,7 +31,8 @@
   overflow-y: hidden;
   height: 48px;
   width: 100%;
-  background-color: $tabs-bg-color;
+  background-color: rgba(0, 51, 153, 0.15);
+  //background-color: $tabs-bg-color;
   margin: 0 auto;
   white-space: nowrap;
 

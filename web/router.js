@@ -159,6 +159,10 @@ function getUsername(request, callback) {
     });
 }
 
+function fillTestsView(request, callback) {
+
+}
+
 function openTemplate(request, response) {
     fs.readFile(request.url, "utf-8", function (error, data) {
         if (error) {
@@ -203,6 +207,28 @@ function openTemplate(request, response) {
                         "        </tbody>\n" +
                         "    </table>\n" +
                         "</div>";
+                    data = data.replace("{TABLE}", table);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("viewtests.html") > -1)
+                fillTestsView(request, (tests) => {
+                    let table = '<div class="row">\n' +
+                        '    <div class="col s12">\n' +
+                        '      <ul class="tabs">\n' +
+                        '        <li class="tab col s3"><a class="active" href="#test1">Test 1</a></li>\n' +
+                        '        <li class="tab col s3"><a href="#test2">Test 2</a></li>\n' +
+                        '        <li class="tab col s3"><a href="#test3">Tab 3</a></li>\n' +
+                        '        <li class="tab col s3"><a href="#test4">Test 4</a></li>\n' +
+                        '      </ul>\n' +
+                        '    </div>\n' +
+                        '    <div id="test1" class="col s12">Test 1</div>\n' +
+                        '    <div id="test2" class="col s12">Test 2</div>\n' +
+                        '    <div id="test3" class="col s12">Test 3</div>\n' +
+                        '    <div id="test4" class="col s12">Test 4</div>\n' +
+                        '  </div>';
                     data = data.replace("{TABLE}", table);
                     getUsername(request, (username) => {
                         data = data.replace("{USERNAME}", username);
