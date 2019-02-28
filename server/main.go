@@ -14,6 +14,7 @@ func main() {
 	DbWorker.CreateSchemaStudents()
 	DbWorker.CreateSchemaTest()
 	DbWorker.CreateSchemaAudio()
+	DbWorker.MockAnswers()
 	router := swagger.NewRouter()
 	//sw.InsertTests()
 

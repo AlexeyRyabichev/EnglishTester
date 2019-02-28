@@ -2,8 +2,10 @@ package DbWorker
 
 import (
 	Model "../models"
+	"encoding/json"
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
+	"log"
 )
 
 var Db *pg.DB
@@ -101,6 +103,18 @@ func CreateSchemaAudio() error {
 			return err
 		}
 	}
+	return nil
+}
+
+func MockAnswers() error {
+	var ans Model.AnswerContainer
+	ans.Writing = "eto moe esse"
+	ans.Reading = []Model.Answer{Model.Answer{Answer: "otvetchtenie", Id: 1},
+		{Id: 2, Answer: "kek"}}
+	ans.Base = []Model.Answer{Model.Answer{Answer: "asadas", Id: 1}}
+
+	str, _ := json.Marshal(ans)
+	log.Print(string(str))
 	return nil
 }
 
