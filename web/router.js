@@ -191,7 +191,7 @@ function openTemplate(request, response) {
             else if (request.url.indexOf("results.html") > -1)
                 getStudentsResults(request, (table) => {
                     table = "<div class=\"container\">\n" +
-                        "    <table class=\"striped highlight centered\">\n" +
+                        "    <table class=\"highlight centered\">\n" +
                         "        <thead>\n" +
                         "        <tr>\n" +
                         "            <th>Name</th>\n" +

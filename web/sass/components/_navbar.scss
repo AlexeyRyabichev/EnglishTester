@@ -123,7 +123,8 @@ nav {
       padding: 0;
 
       &.active {
-        background-color: rgba(0, 0, 0, .1);
+        background-color: $primary-color-dark;
+        //background-color: rgba(0, 51, 153, 0.15);
       }
     }
 
