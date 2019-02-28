@@ -1,6 +1,8 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+// const axios = require('axios');
+var qs = require("querystring");
 
 //TODO: IF TABLE EMPTY => NOT FAIL
 
@@ -22,6 +24,8 @@ function open(path, response) {
         }
     })
 }
+
+//TODO: REWRITE ALL REQUESTS ON AXIOS ???
 
 function getStudentsTable(request, callback) {
     checkToken(request, (valid) => {
@@ -160,7 +164,81 @@ function getUsername(request, callback) {
 }
 
 function fillTestsView(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/tests',
+        method: 'GET',
+        headers: {
+            'Authorization': parseCookies(request)['token']
+        }
+    };
 
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            let obj = JSON.parse(body);
+            let table = '<div class="row">' + '<div class="col s12">' + '<ul class="tabs">';
+
+            for (let i = 0; i < obj.length; i++) {
+                table += `<li class="tab col s3"><a class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+            }
+
+            table += '</ul>' + '</div>';
+
+            for (let i = 0; i < obj.length; i++) {
+                table += `<div id="test${obj[i].id}" class="col s12">`;
+                // Base
+                table += `<h3 align="center" ">Base questions</h3>`;
+                table += `<table id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
+
+                for (let j = 0; j < obj[i].baseQuestions.length; j++) {
+                    table += '<tr>';
+                    table += `<td>${obj[i].baseQuestions[j].id}</td>`;
+                    table += `<td>${obj[i].baseQuestions[j].question}</td>`;
+                    table += `<td>A: ${obj[i].baseQuestions[j].optionA}</br>B: ${obj[i].baseQuestions[j].optionB}</br>C: ${obj[i].baseQuestions[j].optionC}</br>D: ${obj[i].baseQuestions[j].optionD}</td>`;
+                    table += `<td>${obj[i].answers.base[j].answer}</td>`;
+                    table += `</tr>`;
+                }
+
+                table += '</tbody>';
+                table += '</table>';
+
+                // Reading
+                table += `<h3 align="center" ">Reading</h3>`;
+                table += `<strong>Reading task: </strong>${obj[i].reading.question}`;
+                table += `<table id="readingQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
+
+                for (let j = 0; j < obj[i].reading.questions.length; j++) {
+                    table += '<tr>';
+                    table += `<td>${obj[i].reading.questions[j].id}</td>`;
+                    table += `<td>${obj[i].reading.questions[j].question}</td>`;
+                    table += `<td>A: ${obj[i].reading.questions[j].optionA}</br>B: ${obj[i].reading.questions[j].optionB}</br>C: ${obj[i].reading.questions[j].optionC}</br>D: ${obj[i].reading.questions[j].optionD}</td>`;
+                    table += `<td>${obj[i].answers.reading[j].answer}</td>`;
+                    table += `</tr>`;
+                }
+
+                table += '</tbody>';
+                table += '</table>';
+
+                // Writing
+                table += `<h3 align="center" ">Writing</h3>`;
+                table += `<strong>Writing task: </strong>${obj[i].writing}`;
+
+                table += '</div>';
+            }
+
+            callback(table);
+        });
+    });
+
+    req.end();
 }
 
 function openTemplate(request, response) {
@@ -214,21 +292,7 @@ function openTemplate(request, response) {
                     });
                 });
             else if (request.url.indexOf("viewtests.html") > -1)
-                fillTestsView(request, (tests) => {
-                    let table = '<div class="row">\n' +
-                        '    <div class="col s12">\n' +
-                        '      <ul class="tabs">\n' +
-                        '        <li class="tab col s3"><a class="active" href="#test1">Test 1</a></li>\n' +
-                        '        <li class="tab col s3"><a href="#test2">Test 2</a></li>\n' +
-                        '        <li class="tab col s3"><a href="#test3">Tab 3</a></li>\n' +
-                        '        <li class="tab col s3"><a href="#test4">Test 4</a></li>\n' +
-                        '      </ul>\n' +
-                        '    </div>\n' +
-                        '    <div id="test1" class="col s12">Test 1</div>\n' +
-                        '    <div id="test2" class="col s12">Test 2</div>\n' +
-                        '    <div id="test3" class="col s12">Test 3</div>\n' +
-                        '    <div id="test4" class="col s12">Test 4</div>\n' +
-                        '  </div>';
+                fillTestsView(request, (table) => {
                     data = data.replace("{TABLE}", table);
                     getUsername(request, (username) => {
                         data = data.replace("{USERNAME}", username);
