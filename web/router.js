@@ -209,12 +209,7 @@ function openTemplate(request, response) {
                         response.end(data);
                     });
                 });
-            else if (request.url.indexOf("tests.html") > -1) {
-                getUsername(request, (username) => {
-                    data = data.replace("{USERNAME}", username);
-                    response.end(data);
-                });
-            } else if (request.url.indexOf("settings.html") > -1) {
+            else {
                 getUsername(request, (username) => {
                     data = data.replace("{USERNAME}", username);
                     response.end(data);
@@ -371,9 +366,9 @@ module.exports = {
         } else if (request.url === '/sendTest') {
             sendTest(request, (valid) => {
                 if (valid) {
-                    request.url = "/teacher/tests.html";
+                    request.url = "/teacher/createtest.html";
                     response.writeHead(302, {
-                        'Location': "/tests.html"
+                        'Location': "/createtest.html"
                     });
                     request.url = path.join(__dirname, request.url);
                     openTemplate(request, response);
@@ -415,31 +410,37 @@ module.exports = {
                     });
                     open(path.join(__dirname, '/teacher/index.html'), response);
                 }
-                switch (pathToGo) {
-                    case "/":
-                        pathToGo = "/teacher/index.html";
-                        break;
-                    case "/index.html":
-                        pathToGo = "/teacher/index.html";
-                        break;
-                    case "/students.html":
-                        pathToGo = "/teacher/students.html";
-                        break;
-                    case "/tests.html":
-                        pathToGo = "/teacher/tests.html";
-                        break;
-                    case "/results.html":
-                        pathToGo = "/teacher/results.html";
-                        break;
-                    case "/settings.html":
-                        pathToGo = "/teacher/settings.html";
-                        break;
-                    default:
-                        pathToGo = path.join(__dirname, pathToGo);
-                        break;
-                }
+                if (pathToGo.endsWith(".html"))
+                    switch (pathToGo) {
+                        case "/":
+                            pathToGo = "/teacher/index.html";
+                            break;
+                        case "/index.html":
+                            pathToGo = "/teacher/index.html";
+                            break;
+                        // case "/students.html":
+                        //     pathToGo = "/teacher/students.html";
+                        //     break;
+                        // case "/createtest.html":
+                        //     pathToGo = "/teacher/createtest.html";
+                        //     break;
+                        // case "/viewtests.html":
+                        //     pathToGo = "/teacher/viewtests.html";
+                        //     break;
+                        // case "/results.html":
+                        //     pathToGo = "/teacher/results.html";
+                        //     break;
+                        // case "/settings.html":
+                        //     pathToGo = "/teacher/settings.html";
+                        //     break;
+                        default:
+                            pathToGo = path.join("teacher", pathToGo);
+                            break;
+                    }
+                else
+                    pathToGo = path.join(__dirname, pathToGo);
                 console.log("GONNA CHECK GOT THIS REQUEST" + pathToGo);
-                if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
+                if (pathToGo.endsWith(".html") && pathToGo.indexOf("index.html") === -1) {
                     request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);
                     openTemplate(request, response);
