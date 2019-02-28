@@ -186,8 +186,53 @@ function fillTestsView(request, callback) {
             let obj = JSON.parse(body);
             let table = '<div class="row">' + '<div class="col s12">' + '<ul class="tabs">';
 
+            let size;
+            switch (obj.length) {
+                case 1:
+                    size = "col s12";
+                    break;
+                case 2:
+                    size = "col s6";
+                    break;
+                case 3:
+                    size = "col s4";
+                    break;
+                case 4:
+                    size = "col s3";
+                    break;
+                case 5:
+                    size = "col s2";
+                    break;
+                case 6:
+                    size = "col s2";
+                    break;
+                case 7:
+                    size = "col s1";
+                    break;
+                case 8:
+                    size = "col s1";
+                    break;
+                case 9:
+                    size = "col s1";
+                    break;
+                case 10:
+                    size = "col s1";
+                    break;
+                case 11:
+                    size = "col s1";
+                    break;
+                case 12:
+                    size = "col s1";
+                    break;
+                default:
+                    size = "";
+                    break;
+            }
             for (let i = 0; i < obj.length; i++) {
-                table += `<li class="tab col s3"><a class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+                if (i === 0)
+                    table += `<li class="tab ${size}"><a class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+                else
+                    table += `<li class="tab ${size}"><a href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
             }
 
             table += '</ul>' + '</div>';
