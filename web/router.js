@@ -1,6 +1,8 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+// const axios = require('axios');
+var qs = require("querystring");
 
 //TODO: IF TABLE EMPTY => NOT FAIL
 
@@ -22,6 +24,8 @@ function open(path, response) {
         }
     })
 }
+
+//TODO: REWRITE ALL REQUESTS ON AXIOS ???
 
 function getStudentsTable(request, callback) {
     checkToken(request, (valid) => {
@@ -159,6 +163,84 @@ function getUsername(request, callback) {
     });
 }
 
+function fillTestsView(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/tests',
+        method: 'GET',
+        headers: {
+            'Authorization': parseCookies(request)['token']
+        }
+    };
+
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            let obj = JSON.parse(body);
+            let table = '<div class="row">' + '<div class="col s12">' + '<ul class="tabs">';
+
+            for (let i = 0; i < obj.length; i++) {
+                table += `<li class="tab col s3"><a class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+            }
+
+            table += '</ul>' + '</div>';
+
+            for (let i = 0; i < obj.length; i++) {
+                table += `<div id="test${obj[i].id}" class="col s12" style="margin-top: 3%">`;
+                // Base
+                table += `<h3 align="center">Base questions</h3>`;
+                table += `<table id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
+
+                for (let j = 0; j < obj[i].baseQuestions.length; j++) {
+                    table += '<tr>';
+                    table += `<td>${obj[i].baseQuestions[j].id}</td>`;
+                    table += `<td>${obj[i].baseQuestions[j].question}</td>`;
+                    table += `<td>A: ${obj[i].baseQuestions[j].optionA}</br>B: ${obj[i].baseQuestions[j].optionB}</br>C: ${obj[i].baseQuestions[j].optionC}</br>D: ${obj[i].baseQuestions[j].optionD}</td>`;
+                    table += `<td>${obj[i].answers.base[j].answer}</td>`;
+                    table += `</tr>`;
+                }
+
+                table += '</tbody>';
+                table += '</table>';
+
+                // Reading
+                table += `<h3 align="center" style="margin-top: 5%">Reading</h3>`;
+                table += `<strong>Reading task: </strong>${obj[i].reading.question}`;
+                table += `<table id="readingQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
+
+                for (let j = 0; j < obj[i].reading.questions.length; j++) {
+                    table += '<tr>';
+                    table += `<td>${obj[i].reading.questions[j].id}</td>`;
+                    table += `<td>${obj[i].reading.questions[j].question}</td>`;
+                    table += `<td>A: ${obj[i].reading.questions[j].optionA}</br>B: ${obj[i].reading.questions[j].optionB}</br>C: ${obj[i].reading.questions[j].optionC}</br>D: ${obj[i].reading.questions[j].optionD}</td>`;
+                    table += `<td>${obj[i].answers.reading[j].answer}</td>`;
+                    table += `</tr>`;
+                }
+
+                table += '</tbody>';
+                table += '</table>';
+
+                // Writing
+                table += `<h3 align="center" style="margin-top: 5%">Writing</h3>`;
+                table += `<strong>Writing task: </strong>${obj[i].writing}`;
+
+                table += '</div>';
+            }
+
+            callback(table);
+        });
+    });
+
+    req.end();
+}
+
 function openTemplate(request, response) {
     fs.readFile(request.url, "utf-8", function (error, data) {
         if (error) {
@@ -191,7 +273,7 @@ function openTemplate(request, response) {
             else if (request.url.indexOf("results.html") > -1)
                 getStudentsResults(request, (table) => {
                     table = "<div class=\"container\">\n" +
-                        "    <table class=\"striped highlight centered\">\n" +
+                        "    <table class=\"highlight centered\">\n" +
                         "        <thead>\n" +
                         "        <tr>\n" +
                         "            <th>Name</th>\n" +
@@ -209,12 +291,15 @@ function openTemplate(request, response) {
                         response.end(data);
                     });
                 });
-            else if (request.url.indexOf("tests.html") > -1) {
-                getUsername(request, (username) => {
-                    data = data.replace("{USERNAME}", username);
-                    response.end(data);
+            else if (request.url.indexOf("viewtests.html") > -1)
+                fillTestsView(request, (table) => {
+                    data = data.replace("{TABLE}", table);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
                 });
-            } else if (request.url.indexOf("settings.html") > -1) {
+            else {
                 getUsername(request, (username) => {
                     data = data.replace("{USERNAME}", username);
                     response.end(data);
@@ -371,9 +456,9 @@ module.exports = {
         } else if (request.url === '/sendTest') {
             sendTest(request, (valid) => {
                 if (valid) {
-                    request.url = "/teacher/tests.html";
+                    request.url = "/teacher/createtest.html";
                     response.writeHead(302, {
-                        'Location': "/tests.html"
+                        'Location': "/createtest.html"
                     });
                     request.url = path.join(__dirname, request.url);
                     openTemplate(request, response);
@@ -415,31 +500,37 @@ module.exports = {
                     });
                     open(path.join(__dirname, '/teacher/index.html'), response);
                 }
-                switch (pathToGo) {
-                    case "/":
-                        pathToGo = "/teacher/index.html";
-                        break;
-                    case "/index.html":
-                        pathToGo = "/teacher/index.html";
-                        break;
-                    case "/students.html":
-                        pathToGo = "/teacher/students.html";
-                        break;
-                    case "/tests.html":
-                        pathToGo = "/teacher/tests.html";
-                        break;
-                    case "/results.html":
-                        pathToGo = "/teacher/results.html";
-                        break;
-                    case "/settings.html":
-                        pathToGo = "/teacher/settings.html";
-                        break;
-                    default:
-                        pathToGo = path.join(__dirname, pathToGo);
-                        break;
-                }
+                if (pathToGo.endsWith(".html"))
+                    switch (pathToGo) {
+                        case "/":
+                            pathToGo = "/teacher/index.html";
+                            break;
+                        case "/index.html":
+                            pathToGo = "/teacher/index.html";
+                            break;
+                        // case "/students.html":
+                        //     pathToGo = "/teacher/students.html";
+                        //     break;
+                        // case "/createtest.html":
+                        //     pathToGo = "/teacher/createtest.html";
+                        //     break;
+                        // case "/viewtests.html":
+                        //     pathToGo = "/teacher/viewtests.html";
+                        //     break;
+                        // case "/results.html":
+                        //     pathToGo = "/teacher/results.html";
+                        //     break;
+                        // case "/settings.html":
+                        //     pathToGo = "/teacher/settings.html";
+                        //     break;
+                        default:
+                            pathToGo = path.join("teacher", pathToGo);
+                            break;
+                    }
+                else
+                    pathToGo = path.join(__dirname, pathToGo);
                 console.log("GONNA CHECK GOT THIS REQUEST" + pathToGo);
-                if (pathToGo.indexOf('results.html') > -1 || pathToGo.indexOf('settings.html') > -1 || pathToGo.indexOf('students.html') > -1 || pathToGo.indexOf('tests.html') > -1) {
+                if (pathToGo.endsWith(".html") && pathToGo.indexOf("index.html") === -1) {
                     request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);
                     openTemplate(request, response);
