@@ -24,6 +24,7 @@ namespace TesterApp
         public RadioButton[] RadioButtons;
         public StackPanel RadioPanel;
         public Test Test;
+        public TestAnswers testAnswers;
 
         public TestWindow(Student student)
         {
@@ -35,7 +36,8 @@ namespace TesterApp
             BorderThickness = new Thickness(0);
             flag = true;
             defaultColor = Reading.Background;
-            Test = Server.GetTest();
+            Test = Server.GetTest(student.ID);
+            if (Test == null) throw new DivideByZeroException();
             question_count = Test.Reading.Questions.Length 
                 + Test.BaseQuestions.Length + 1;
             answers = 
@@ -67,8 +69,9 @@ namespace TesterApp
 
         private void ShowQuestion_Writing()
         {
-            Textblock.Text = Test.Writing;
-            Textblock.Height = (Height - 20) / 3;
+            Textblock.Text = "Writing.\n\n";
+            Textblock.Text += Test.Writing;
+            gridText.Height = (Height - 20) / 5 * 2;
             Textblock2.Text = "Type your answer in the box below:";
             TextBox = new TextBox
             {
@@ -85,10 +88,11 @@ namespace TesterApp
 
         private void ShowQuestion_Reading()
         {
-            Textblock.Text = Test.Reading.Text;
+            Textblock.Text = "Reading. Excersize " + (actualNumber - Test.BaseQuestions.Length + 1) + ".\n\n";
+            Textblock.Text += Test.Reading.Question;
             Textblock.Text += "\n" + 
-                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].Text;
-            Textblock.Height = (Height - 20) / 5 * 4;
+                Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].Question;
+            gridText.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
             RadioButtons = new RadioButton[4];
             RadioPanel.Children.Clear();
@@ -131,8 +135,9 @@ namespace TesterApp
 
         private void ShowQuestion_Base()
         {
-            Textblock.Text = Test.BaseQuestions[actualNumber].Text;
-            Textblock.Height = (Height - 20) / 5 * 4;
+            Textblock.Text = "Excersize " + (actualNumber + 1) + ".\n\n";
+            Textblock.Text += Test.BaseQuestions[actualNumber].Question;           
+            gridText.Height = (Height - 20) / 5 * 4;          
             Textblock2.Text = "Choose the correct answer:";
             RadioButtons = new RadioButton[4];
             RadioPanel.Children.Clear();
@@ -197,7 +202,8 @@ namespace TesterApp
             WriteAnswers();
             student.AddAnswers(answers);
             flag = false;
-            var exit = new Exit(this, student, areAllAnswersGot);
+            FormateAnswers();
+            var exit = new Exit(this, student.ID, testAnswers, areAllAnswersGot);
             exit.ShowDialog();
         }
 
@@ -209,6 +215,7 @@ namespace TesterApp
         private void Window_Deactivated(object sender, EventArgs e)
         {
             if (flag) Topmost = true;
+            Topmost = false;
         }
 
 
@@ -294,5 +301,39 @@ namespace TesterApp
         }
 
        
+        private void FormateAnswers()
+        {
+            testAnswers = new TestAnswers();
+            testAnswers.Base = new VariableAnswer[Test.BaseQuestions.Length];
+            for (int i = 0; i < testAnswers.Base.Length; i++)
+            {
+                testAnswers.Base[i] = new VariableAnswer(Test.BaseQuestions[i].Id,
+                    FromIntToABCD(answers[i]));
+            }
+            testAnswers.Reading = new VariableAnswer[Test.Reading.Questions.Length];
+            for (int i = 0; i < testAnswers.Reading.Length; i++)
+            {
+                testAnswers.Reading[i] = new VariableAnswer(Test.Reading.Questions[i].Id,
+                    FromIntToABCD(answers[Test.BaseQuestions.Length + i]));
+            }
+            testAnswers.Writing = answers[answers.Length - 1];
+        }
+
+        private string FromIntToABCD(string str)
+        {
+            switch (str)
+            {
+                case "1":
+                    return "A";
+                case "2":
+                    return "B";
+                case "3":
+                    return "C";
+                case "4":
+                    return "D";
+                default:
+                    return "";
+            }
+        }
     }
 }

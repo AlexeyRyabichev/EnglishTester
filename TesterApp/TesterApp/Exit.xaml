@@ -19,5 +19,6 @@
             <Button x:Name="YesButton" Content="   Yes   " Margin="30" BorderBrush="LightSeaGreen" Click="YesButton_Click" />
             <Button x:Name="NoButton" Content="   No   " Margin="30" Click="NoButton_Click" />
         </WrapPanel>
+        <Label x:Name="LabelError" FontFamily="Roboto Light" Visibility="Hidden">Error</Label>
     </WrapPanel>
 </Window>

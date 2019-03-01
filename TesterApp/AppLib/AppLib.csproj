@@ -64,6 +64,7 @@
     <Compile Include="Question.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Student.cs" />
+    <Compile Include="TestAnswers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

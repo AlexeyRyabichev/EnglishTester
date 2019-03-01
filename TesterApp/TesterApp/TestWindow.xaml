@@ -12,7 +12,8 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         Deactivated="Window_Deactivated">
     <DockPanel x:Name="DockPanel" LastChildFill="True" MinWidth="400" MinHeight="300">
-        <StackPanel DockPanel.Dock="Right" MinWidth="100" MaxWidth="300" Margin="5">
+        <StackPanel DockPanel.Dock="Left" Width="200" Background="LightBlue"></StackPanel>
+        <StackPanel DockPanel.Dock="Right" MinWidth="200" MaxWidth="300" Background="LightBlue">
             <StackPanel Margin="5">
                 <Button x:Name="Base"  DockPanel.Dock="Top" Content="Base questions" Click="Base_Click" />
                 <WrapPanel x:Name="BasePanel">
@@ -31,11 +32,13 @@
             <Button x:Name="Submit" DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Background="PaleVioletRed" Content="Submit"
                     Click="Submit_Click"  Margin="5"/>
         </StackPanel>
-
-        <TextBlock x:Name="Textblock" DockPanel.Dock="Top" Margin="5" MinWidth="100"
-                   MinHeight="95">
-            .
-        </TextBlock>
+        <Grid x:Name="gridText" DockPanel.Dock="Top" >
+            <TextBlock x:Name="Textblock"  Margin="5" MinWidth="100"
+                   MinHeight="95"
+                   VerticalAlignment="Bottom" TextWrapping="Wrap">
+            
+            </TextBlock>
+        </Grid>
         <TextBlock x:Name="Textblock2" DockPanel.Dock="Top" MinWidth="50"
                    Height="20" Margin="5" Foreground="Gray">
             Type your answer in the box below:

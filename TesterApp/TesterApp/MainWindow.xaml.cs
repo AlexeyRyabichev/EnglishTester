@@ -36,6 +36,10 @@ namespace TesterApp
             {
                 ErrorLabel.Content = "Wrong email or password";
             }
+            catch (DivideByZeroException)
+            {
+                ErrorLabel.Content = "Problems with server";
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());

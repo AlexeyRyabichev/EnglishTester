@@ -10,16 +10,18 @@ namespace TesterApp
     /// </summary>
     public partial class Exit : Window
     {
-        private readonly Student student;
+        private readonly TestAnswers testAnswers;
         private readonly Window parent;
         private bool flag;
+        private string id;
 
-        public Exit(Window parent, Student student, bool areAllAnswersGot)
+        public Exit(Window parent, string id, TestAnswers testAnswers, bool areAllAnswersGot)
         {
             InitializeComponent();
             flag = true;
-            this.student = student;
+            this.testAnswers = testAnswers;
             this.parent = parent;
+            this.id = id;
             Topmost = true;
             if (!areAllAnswersGot) TextBlock.Text = "Are you sure you want to exit?" +
                     "\nYou have not answered all the questions.";
@@ -28,7 +30,7 @@ namespace TesterApp
 
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
-            Server.SendData(student);
+            Server.SendData(id, testAnswers);
             flag = false;
             parent.Close();
             Close();
@@ -37,6 +39,7 @@ namespace TesterApp
         private void Window_Deactivated(object sender, EventArgs e)
         {
             if (flag) Topmost = true;
+            Topmost = false;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
