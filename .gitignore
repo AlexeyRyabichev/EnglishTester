@@ -19,3 +19,6 @@ TesterApp/AppLib/obj/
 TesterApp/TesterApp/bin/
 
 TesterApp/TesterApp/obj/
+.vs
+packages
+/TesterApp/TesterApp.sln.DotSettings.user
