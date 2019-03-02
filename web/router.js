@@ -589,7 +589,8 @@ function sendWritingGradeToDB(request, callback) {
         body += chunk.toString();
     });
     request.on('end', (flag) => {
-        console.log("DATA: " + request.headers.grade);
+        console.log("GRADE: " + request.headers.grade);
+        console.log("STUDENT ID: " + request.headers.studentid);
 
         if (!auth || auth === '' || auth === 'undefined') {
             callback(false);
@@ -604,7 +605,7 @@ function sendWritingGradeToDB(request, callback) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': auth,
-                'StudentId' :request.headers.studentId,
+                'StudentId' :request.headers.studentid.toString(),
                 'Grade' : request.headers.grade
             }
         };
@@ -633,6 +634,7 @@ function sendListeningGradeToDB(request, callback) {
     });
     request.on('end', (flag) => {
         console.log("DATA: " + request.headers.grade);
+        console.log("STUDENT ID: " + request.headers.studentid);
 
         if (!auth || auth === '' || auth === 'undefined') {
             callback(false);
@@ -647,7 +649,7 @@ function sendListeningGradeToDB(request, callback) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': auth,
-                'StudentId' :request.headers.studentId,
+                'StudentId' :request.headers.studentid.toString(),
                 'Grade' : request.headers.grade
             }
         };
@@ -681,14 +683,14 @@ module.exports = {
         } else if (request.url === '/sendWritingGrade') {
             sendWritingGradeToDB(request, callback => {
                 if (callback){
-                    response.setHeader("OK");
+                    response.statusCode = 200;
                     response.end();
                 }
             });
         } else if (request.url === '/sendListeningGrade') {
             sendListeningGradeToDB(request, callback => {
                 if (callback) {
-                    response.setHeader("OK");
+                    response.statusCode = 200;
                     response.end();
                 }
             });
