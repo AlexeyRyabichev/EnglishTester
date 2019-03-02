@@ -361,7 +361,7 @@ function createStudentsList(request, callback) {
         });
 
         res.on("end", function () {
-            String.prototype.replaceAll = function(search, replacement) {
+            String.prototype.replaceAll = function (search, replacement) {
                 var target = this;
                 return target.replace(new RegExp(search, 'g'), replacement);
             };
@@ -372,8 +372,8 @@ function createStudentsList(request, callback) {
                 ans += `<li class="collapsibleStudent">`;
                 ans += `<div class="collapsible-header"><i class="material-icons">person</i>${body[i].name}</div>`;
                 ans += `<div class="collapsible-body"><b>Writing:</b><br/><p>${(body[i].answers.writing).replaceAll("\n", "<br/>")}</p><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline"><input></div><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="listening${body[i].id}" onclick="sendListeningGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set listening grade</a><div class="input-field inline"><input></div>`;
+                ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline" id="writing${body[i].id}Grade"><input></div><br/>`;
+                ans += `<a class="waves-effect waves-light btn" id="listening${body[i].id}" onclick="sendListeningGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set listening grade</a><div class="input-field inline" id="listening${body[i].id}Grade"><input></div>`;
                 ans += `</div>`;
                 ans += `</li>`;
             }
@@ -582,6 +582,49 @@ function sendTest(request, callback) {
     });
 }
 
+function sendWritingGradeToDB(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let body = '';
+    request.on('data', chunk => {
+        body += chunk.toString();
+    });
+    request.on('end', (flag) => {
+        console.log("JSON: " + body);
+
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/send',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': auth
+            }
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.write(body);
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end();
+    });
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -592,6 +635,10 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
+        } else if (request.url === 'sendWritingGrade') {
+            sendWritingGradeToDB(request, callback => {
+
+            });
         } else if (request.url === '/sendTest') {
             sendTest(request, (valid) => {
                 if (valid) {
