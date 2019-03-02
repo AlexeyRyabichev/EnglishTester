@@ -372,8 +372,8 @@ function createStudentsList(request, callback) {
                 ans += `<li class="collapsibleStudent">`;
                 ans += `<div class="collapsible-header"><i class="material-icons">person</i>${body[i].name}</div>`;
                 ans += `<div class="collapsible-body"><b>Writing:</b><br/><p>${(body[i].answers.writing).replaceAll("\n", "<br/>")}</p><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline" id="writing${body[i].id}Grade"><input></div><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="listening${body[i].id}" onclick="sendListeningGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set listening grade</a><div class="input-field inline" id="listening${body[i].id}Grade"><input></div>`;
+                ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline"><input id="writing${body[i].id}Grade"></div><br/>`;
+                ans += `<a class="waves-effect waves-light btn" id="listening${body[i].id}" onclick="sendListeningGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set listening grade</a><div class="input-field inline"><input id="listening${body[i].id}Grade"></div>`;
                 ans += `</div>`;
                 ans += `</li>`;
             }
@@ -589,7 +589,7 @@ function sendWritingGradeToDB(request, callback) {
         body += chunk.toString();
     });
     request.on('end', (flag) => {
-        console.log("JSON: " + body);
+        console.log("DATA: " + request.headers.grade);
 
         if (!auth || auth === '' || auth === 'undefined') {
             callback(false);
@@ -599,11 +599,13 @@ function sendWritingGradeToDB(request, callback) {
         const options = {
             hostname: '127.0.0.1',
             port: 8080,
-            path: '/api/send',
+            path: '/api/sendWritingGrade',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': auth
+                'Authorization': auth,
+                'StudentId' :request.headers.studentId,
+                'Grade' : request.headers.grade
             }
         };
 
@@ -615,7 +617,48 @@ function sendWritingGradeToDB(request, callback) {
                 callback(false);
         });
 
-        req.write(body);
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end();
+    });
+}
+
+function sendListeningGradeToDB(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let body = '';
+    request.on('data', chunk => {
+        body += chunk.toString();
+    });
+    request.on('end', (flag) => {
+        console.log("DATA: " + request.headers.grade);
+
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/sendWritingGrade',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': auth,
+                'StudentId' :request.headers.studentId,
+                'Grade' : request.headers.grade
+            }
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
 
         req.on("error", (e) => {
             console.log(e);
@@ -635,9 +678,19 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
-        } else if (request.url === 'sendWritingGrade') {
+        } else if (request.url === '/sendWritingGrade') {
             sendWritingGradeToDB(request, callback => {
-
+                if (callback){
+                    response.setHeader("OK");
+                    response.end();
+                }
+            });
+        } else if (request.url === '/sendListeningGrade') {
+            sendListeningGradeToDB(request, callback => {
+                if (callback) {
+                    response.setHeader("OK");
+                    response.end();
+                }
             });
         } else if (request.url === '/sendTest') {
             sendTest(request, (valid) => {

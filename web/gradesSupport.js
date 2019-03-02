@@ -1,23 +1,21 @@
 function sendWritingGrade(element){
-    alert(element.id);
-    // let id = element.id.replace("writing", "");
+    // alert(element.id);
+    let id = element.id.replace("writing", "");
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "sendWritingGrade", true);
     xhr.setRequestHeader('grade', document.getElementById(element.id + "Grade").value);
-    // xhr.setRequestHeader('Content-Type', 'application/json');
-    // xhr.send(JSON.stringify({
-    //     value: "Hello"
-    // }));
+    xhr.setRequestHeader('studentId', id);
+    xhr.send();
+    M.toast({html: 'Writing grade sent!'})
 }
 function sendListeningGrade(element){
-    alert(element.id);
-    let id = element.id.replace("writing", "");
+    let id = element.id.replace("listening", "");
 
-    // var xhr = new XMLHttpRequest();
-    // xhr.open("POST", yourUrl, true);
-    // xhr.setRequestHeader('Content-Type', 'application/json');
-    // xhr.send(JSON.stringify({
-    //     value: value
-    // }));
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "sendListeningGrade", true);
+    xhr.setRequestHeader('grade', document.getElementById(element.id + "Grade").value);
+    xhr.setRequestHeader('studentId', id);
+    xhr.send();
+    M.toast({html: 'Listening grade sent!'})
 }
