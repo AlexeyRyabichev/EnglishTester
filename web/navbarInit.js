@@ -8,4 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hover: true,
         constrainWidth: false
     });
+
+    var elemsCollapsible = document.querySelectorAll('.collapsible');
+    var instancesCollapsible = M.Collapsible.init(elemsCollapsible, {});
 });

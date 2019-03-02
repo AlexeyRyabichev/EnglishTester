@@ -55,18 +55,19 @@ function getStudentsTable(request, callback) {
                     for (let i = 0; i < body.length; i++) {
                         ans += '<tr>';
                         ans += '<td>';
+                        ans += body[i].id;
+                        ans += '</td>';
+                        ans += '<td>';
                         ans += body[i].name;
                         ans += '</td>';
                         ans += '<td>';
-                        // noinspection JSUnresolvedVariable
-                        ans += body[i].lastName;
-                        ans += '</td>';
-                        ans += '<td>';
-                        // noinspection JSUnresolvedVariable
-                        ans += body[i].fatherName;
-                        ans += '</td>';
-                        ans += '<td>';
                         ans += body[i].email;
+                        ans += '</td>';
+                        ans += '<td>';
+                        ans += body[i].password;
+                        ans += '</td>';
+                        ans += '<td>';
+                        ans += body[i].testId;
                         ans += '</td>';
                         ans += '</tr>';
                     }
@@ -80,47 +81,101 @@ function getStudentsTable(request, callback) {
 }
 
 function getStudentsResults(request, callback) {
-    checkToken(request, (valid) => {
-        if (valid) {
-            const options = {
-                hostname: '127.0.0.1',
-                port: 8080,
-                path: '/api/students',
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': parseCookies(request)['token']
+    var qs = require("querystring");
+    var http = require("http");
+
+    var options = {
+        "method": "GET",
+        "hostname": "127.0.0.1",
+        "port": "8080",
+        "path": "/api/scores",
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    var req = http.request(options, function (res) {
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            var body = Buffer.concat(chunks);
+            // console.log(body.toString());
+            let rawString = JSON.parse(body.toString());
+
+            let table = "";
+
+
+            for (let i = 0; i < rawString.length; i++) {
+                table += `<tr>`;
+                table += `<td>`;
+                table += `${rawString[i].Name}`;
+                table += `</td>`;
+                table += `<td align="left">`;
+                if (rawString[i].Score.SumAmount === 0)
+                    table += 'Results not available yet';
+                else {
+                    table += `<b>Base:</b> ${rawString[i].Score.Base} \\ ${rawString[i].Score.BaseAmount}<br/>`;
+                    table += `<b>Reading:</b> ${rawString[i].Score.Reading} \\ ${rawString[i].Score.ReadingAmount}<br/>`;
+                    table += `<b>Writing:</b> ${rawString[i].Score.Writing} \\ ${rawString[i].Score.WritingAmount}<br/>`;
+                    table += `<b>Listening:</b> ${rawString[i].Score.Listening} \\ ${rawString[i].Score.ListeningAmount}<br/>`;
+                    table += `<b>Summary:</b> ${rawString[i].Score.Sum} \\ ${rawString[i].Score.SumAmount}<br/>`;
+                    table += `<b>Grade:</b> ${(rawString[i].Score.Sum / rawString[i].Score.SumAmount * 10).toPrecision(3)}<br/>`;
+                    table += `<b>Recommended level:</b> ${rawString[i].Score.RecommendedLevel}`;
                 }
-            };
-
-            const req = http.request(options, function (res) {
-                let chunks = [];
-
-                res.on("data", function (chunk) {
-                    chunks.push(chunk);
-                });
-
-                res.on("end", function () {
-                    let body = Buffer.concat(chunks);
-                    body = JSON.parse(body.toString());
-                    let ans = '';
-                    for (let i = 0; i < body.length; i++) {
-                        ans += '<tr>';
-                        ans += '<td>';
-                        ans += body[i].name;
-                        ans += '</td>';
-                        ans += '<td>';
-                        ans += "10 \\ 10"; //TODO: GET RESULTS FROM SERVER
-                        ans += '</td>';
-                        ans += '</tr>';
-                    }
-                    callback(ans);
-                });
-            });
-            req.end();
-        } else
-            callback('Something is wrong');
+                table += `</td>`;
+                table += `</tr>`;
+            }
+            callback(table);
+        });
     });
+
+    req.write(qs.stringify({undefined: undefined}));
+    req.end();
+    // checkToken(request, (valid) => {
+    //     if (valid) {
+    //         const options = {
+    //             hostname: '127.0.0.1',
+    //             port: 8080,
+    //             path: '/api/students',
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/x-www-form-urlencoded',
+    //                 'Authorization': parseCookies(request)['token']
+    //             }
+    //         };
+    //
+    //         const req = http.request(options, function (res) {
+    //             let chunks = [];
+    //
+    //             res.on("data", function (chunk) {
+    //                 chunks.push(chunk);
+    //             });
+    //
+    //             res.on("end", function () {
+    //                 let body = Buffer.concat(chunks);
+    //                 body = JSON.parse(body.toString());
+    //                 let ans = '';
+    //                 for (let i = 0; i < body.length; i++) {
+    //                     ans += '<tr>';
+    //                     ans += '<td>';
+    //                     ans += body[i].name;
+    //                     ans += '</td>';
+    //                     ans += '<td>';
+    //                     ans += "10 \\ 10"; //TODO: GET RESULTS FROM SERVER
+    //                     ans += '</td>';
+    //                     ans += '</tr>';
+    //                 }
+    //                 callback(ans);
+    //             });
+    //         });
+    //         req.end();
+    //     } else
+    //         callback('Something is wrong');
+    // });
 }
 
 function getUsername(request, callback) {
@@ -241,7 +296,7 @@ function fillTestsView(request, callback) {
                 table += `<div id="test${obj[i].id}" class="col s12" style="margin-top: 3%">`;
                 // Base
                 table += `<h3 align="center">Base questions</h3>`;
-                table += `<table id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
+                table += `<table class="highlight" id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
 
                 for (let j = 0; j < obj[i].baseQuestions.length; j++) {
                     table += '<tr>';
@@ -258,7 +313,7 @@ function fillTestsView(request, callback) {
                 // Reading
                 table += `<h3 align="center" style="margin-top: 5%">Reading</h3>`;
                 table += `<strong>Reading task: </strong>${obj[i].reading.question}`;
-                table += `<table id="readingQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
+                table += `<table class="highlight" id="readingQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
 
                 for (let j = 0; j < obj[i].reading.questions.length; j++) {
                     table += '<tr>';
@@ -286,6 +341,49 @@ function fillTestsView(request, callback) {
     req.end();
 }
 
+function createStudentsList(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/students',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': parseCookies(request)['token']
+        }
+    };
+
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            String.prototype.replaceAll = function(search, replacement) {
+                var target = this;
+                return target.replace(new RegExp(search, 'g'), replacement);
+            };
+            let body = Buffer.concat(chunks);
+            body = JSON.parse(body.toString());
+            let ans = '<ul class="collapsible popout" id="studentsList"">';
+            for (let i = 0; i < body.length; i++) {
+                ans += `<li class="collapsibleStudent">`;
+                ans += `<div class="collapsible-header"><i class="material-icons">person</i>${body[i].name}</div>`;
+                ans += `<div class="collapsible-body"><b>Writing:</b><br/><p>${(body[i].answers.writing).replaceAll("\n", "<br/>")}</p><br/>`;
+                ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline"><input></div><br/>`;
+                ans += `<a class="waves-effect waves-light btn" id="listening${body[i].id}" onclick="sendListeningGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set listening grade</a><div class="input-field inline"><input></div>`;
+                ans += `</div>`;
+                ans += `</li>`;
+            }
+            ans += '</ul>';
+            callback(ans);
+        });
+    });
+    req.end();
+}
+
 function openTemplate(request, response) {
     fs.readFile(request.url, "utf-8", function (error, data) {
         if (error) {
@@ -298,10 +396,11 @@ function openTemplate(request, response) {
                         "    <table class=\"highlight centered\">\n" +
                         "        <thead>\n" +
                         "        <tr>\n" +
+                        "            <th>ID</th>\n" +
                         "            <th>Name</th>\n" +
-                        "            <th>Last Name</th>\n" +
-                        "            <th>Father Name</th>\n" +
                         "            <th>Email</th>\n" +
+                        "            <th>Password</th>\n" +
+                        "            <th>Test №</th>\n" +
                         "        </tr>\n" +
                         "        </thead>\n" +
                         "        <tbody>\n" +
@@ -317,19 +416,6 @@ function openTemplate(request, response) {
                 });
             else if (request.url.indexOf("results.html") > -1)
                 getStudentsResults(request, (table) => {
-                    table = "<div class=\"container\">\n" +
-                        "    <table class=\"highlight centered\">\n" +
-                        "        <thead>\n" +
-                        "        <tr>\n" +
-                        "            <th>Name</th>\n" +
-                        "            <th>Result</th>\n" +
-                        "        </tr>\n" +
-                        "        </thead>\n" +
-                        "        <tbody>\n" +
-                        table +
-                        "        </tbody>\n" +
-                        "    </table>\n" +
-                        "</div>";
                     data = data.replace("{TABLE}", table);
                     getUsername(request, (username) => {
                         data = data.replace("{USERNAME}", username);
@@ -339,6 +425,14 @@ function openTemplate(request, response) {
             else if (request.url.indexOf("viewtests.html") > -1)
                 fillTestsView(request, (table) => {
                     data = data.replace("{TABLE}", table);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("checkwork.html") > -1)
+                createStudentsList(request, (list) => {
+                    data = data.replace("{TABLE}", list);
                     getUsername(request, (username) => {
                         data = data.replace("{USERNAME}", username);
                         response.end(data);
@@ -574,7 +668,7 @@ module.exports = {
                     }
                 else
                     pathToGo = path.join(__dirname, pathToGo);
-                console.log("GONNA CHECK GOT THIS REQUEST" + pathToGo);
+                console.log("GONNA CHECK THIS REQUEST" + pathToGo);
                 if (pathToGo.endsWith(".html") && pathToGo.indexOf("index.html") === -1) {
                     request.url = path.join(__dirname, pathToGo);
                     console.log(request.url);

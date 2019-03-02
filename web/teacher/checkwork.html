@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Record audio</title>
+    <title>Check works</title>
 </head>
 <body>
 <nav>
@@ -14,7 +14,7 @@
             <li class="divider"></li>
             <li><a href="viewtests.html">View<i class="material-icons">remove_red_eye</i></a></li>
             <li class="divider"></li>
-            <li><a href="#">Record audio<i class="material-icons">record_voice_over</i></a></li>
+            <li><a href="#">Check works<i class="material-icons">spellcheck</i></a></li>
         </ul>
 
         <nav>
@@ -41,7 +41,7 @@
         <li><a href="students.html">Students</a></li>
         <li><a href="createtest.html">Create tests</a></li>
         <li><a href="viewtests.html">View tests</a></li>
-        <li><a href="#">Record audio</a></li>
+        <li><a href="#">Check works</a></li>
         <li><a href="results.html">Results</a></li>
         <li><a href="settings.html">Settings</a></li>
         <li><a href="index.html">Logout</a></li>
@@ -49,7 +49,18 @@
 </nav>
 
 <div class="container">
-    <h1 align="center">COMING SOON</h1>
+    <h1 align="center">Students list</h1>
+    <nav id="magicNav">
+        <div class="nav-wrapper" id="magicDiv">
+            <form onsubmit="return false">
+                <div class="input-field">
+                    <input id="search" onkeyup="filterStudents()" required type="search">
+                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                    <i class="material-icons">close</i>
+                </div>
+            </form>
+        </div>
+    </nav>
     {TABLE}
 </div>
 
@@ -57,6 +68,33 @@
 <link href="../sass/materialize.css" media="screen,projection" rel="stylesheet" type="text/css"/>
 <script src="../js/bin/materialize.min.js" type="text/javascript"></script>
 <script src="../navbarInit.js" type="text/javascript"></script>
+<script src="../gradesSupport.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    function filterStudents() {
+        let input = document.getElementById("search");
+        let searchText = input.value.toUpperCase();
+        let ul = document.getElementById("studentsList");
+        let li = document.getElementsByClassName("collapsibleStudent");
+        for (let i = 0; i < li.length; i++) {
+            let name = li[i].innerText;
+            if (name.toUpperCase().indexOf(searchText) > -1)
+                li[i].style.display = "";
+            else
+                li[i].style.display = "none";
+        }
+    }
+</script>
+<style>
+    #magicDiv {
+        background-color: rgba(0, 51, 153, 0.8);
+    }
+
+    #magicNav {
+        background-color: rgba(0, 51, 153, 0.15);
+        margin-bottom: 5%;
+    }
+</style>
 
 </body>
 
