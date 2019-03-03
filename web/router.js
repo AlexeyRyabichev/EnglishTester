@@ -677,7 +677,7 @@ module.exports = {
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         if (request.url === '/' || request.url === '/index.html') {
             open(path.join(__dirname, '/teacher/index.html'), response);
-        } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js') {
+        } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js' || request.url === '/favicon.ico') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
         } else if (request.url === '/sendWritingGrade') {
