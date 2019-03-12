@@ -2,8 +2,10 @@ package apis
 
 import (
 	"../DbWorker"
+	Roles "../Roles"
 	Model "../models"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -12,7 +14,7 @@ import (
 
 func QuestionsGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	////TODO: more questions
+
 	id := r.Header.Get("id")
 	//email:=r.Header.Get("email")
 	//check if this test is belong to this user
@@ -39,6 +41,16 @@ func QuestionsGet(w http.ResponseWriter, r *http.Request) {
 
 func AnswersPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json charset=UTF=8")
+	if r.Header.Get("role") != Roles.RolesText(Roles.Student) {
+		w.WriteHeader(http.StatusForbidden)
+		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Print(http.StatusText(http.StatusForbidden))
+		return
+	}
+
 	id := r.Header.Get("id")
 	var student Model.Student
 	var answers Model.AnswerContainer
@@ -59,15 +71,23 @@ func AnswersPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func SendWritingGrade(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
+		w.WriteHeader(http.StatusForbidden)
+		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Print(http.StatusText(http.StatusForbidden))
+		return
+	}
 
-	var id int;
-	var grade int;
-	id, _= strconv.Atoi(r.Header.Get("studentid"))
+	var id int
+	var grade int
+	id, _ = strconv.Atoi(r.Header.Get("studentid"))
 	grade, _ = strconv.Atoi(r.Header.Get("grade"))
 	var student Model.Student
 	var score Model.Score
-	err1:=DbWorker.Db.Model(&student).Relation("Score").Where("student.id = ?",id).Column("score.id").Select(&score)
+	err1 := DbWorker.Db.Model(&student).Relation("Score").Where("student.id = ?", id).Column("score.id").Select(&score)
 	if err1 != nil {
 		log.Print("Error1:")
 		log.Print(err1)
@@ -75,8 +95,18 @@ func SendWritingGrade(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err1.Error()))
 	}
 
-	score.Writing=grade
-	_,err2:=DbWorker.Db.Model(&score).WherePK().Update()
+	if score.Writing < grade {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("Grade couldn't me more than MaximumGrade \n "+
+			"Your:%v \t Maximum:%v", grade, score.WritingAmount)))
+		log.Print(fmt.Sprintf("Grade couldn't me more than MaximumGrade \n "+
+			"Your:%v \t Maximum:%v", grade, score.WritingAmount))
+		return
+	}
+
+	score.Writing = grade
+
+	_, err2 := DbWorker.Db.Model(&score).WherePK().Update()
 	if err1 != nil {
 		log.Print("Error2:")
 		log.Print(err2)
@@ -88,13 +118,23 @@ func SendWritingGrade(w http.ResponseWriter, r *http.Request) {
 }
 
 func SendListeningGrade(w http.ResponseWriter, r *http.Request) {
-	var id int;
-	var grade int;
-	id, _= strconv.Atoi(r.Header.Get("studentid"))
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
+		w.WriteHeader(http.StatusForbidden)
+		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Print(http.StatusText(http.StatusForbidden))
+		return
+	}
+
+	var id int
+	var grade int
+	id, _ = strconv.Atoi(r.Header.Get("studentid"))
 	grade, _ = strconv.Atoi(r.Header.Get("grade"))
 	var student Model.Student
 	var score Model.Score
-	err1:=DbWorker.Db.Model(&student).Relation("Score").Where("student.id = ?",id).Column("score.id").Select(&score)
+	err1 := DbWorker.Db.Model(&student).Relation("Score").Where("student.id = ?", id).Column("score.id").Select(&score)
 	if err1 != nil {
 		log.Print("Error1:")
 		log.Print(err1)
@@ -102,8 +142,16 @@ func SendListeningGrade(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err1.Error()))
 	}
 
-	score.Listening=grade
-	_,err2:=DbWorker.Db.Model(&score).WherePK().Update()
+	if score.ListeningAmount < grade {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("Grade couldn't me more than MaximumGrade \n "+
+			"Your:%v \t Maximum:%v", grade, score.ListeningAmount)))
+		log.Print(fmt.Sprintf("Grade couldn't me more than MaximumGrade \n "+
+			"Your:%v \t Maximum:%v", grade, score.ListeningAmount))
+		return
+	}
+	score.Listening = grade
+	_, err2 := DbWorker.Db.Model(&score).WherePK().Update()
 	if err1 != nil {
 		log.Print("Error2:")
 		log.Print(err2)
@@ -111,7 +159,5 @@ func SendListeningGrade(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err2.Error()))
 	}
 
-
 	w.WriteHeader(http.StatusOK)
-
 }

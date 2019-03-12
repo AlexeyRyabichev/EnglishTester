@@ -19,39 +19,46 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	var student Model.Student
 	var teacher Model.Teacher
 	var id int64
+
 	err := DbWorker.Db.Model(&student).Where("email = ? and password = ?", email, pass).Select()
-	var role Roles.Role = Roles.Student
+	role := Roles.RolesText(Roles.Student)
 	id = student.Id
 	if err != nil {
 		err = DbWorker.Db.Model(&teacher).Where("email = ? and password = ?", email, pass).Select()
-		role = Roles.Teacher
-		id = teacher.Id
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Wrong login or password"))
 			log.Print(err)
 			return
 		}
+		role = teacher.Role
+		id = teacher.Id
 	}
+
 	token, err := JwtUtils.GetToken(email, role, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Error generating JWT token: " + err.Error()))
+		log.Print("Error generating JWT token: " + err.Error())
 		return
 	}
 
 	switch role {
-	case Roles.Student:
+	case Roles.RolesText(Roles.Student):
 		err = DbWorker.GiveStudentToken(&student, token)
-	case Roles.Teacher:
+	case Roles.RolesText(Roles.Teacher):
+		err = DbWorker.GiveTeacherToken(&teacher, token)
+	case Roles.RolesText(Roles.Admin):
 		err = DbWorker.GiveTeacherToken(&teacher, token)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
+		log.Print(err)
+		return
 	}
 
-	w.Header().Set("Role", role.String())
+	w.Header().Set("Role", role)
 	w.Header().Set("Authorization", token)
 	w.WriteHeader(http.StatusOK)
 }
@@ -66,12 +73,14 @@ func AuthMiddleware(next http.Handler, routeName string) http.Handler {
 		if len(tokenString) == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Missing Authorization Header"))
+			log.Print("Missing Authorization Header")
 			return
 		}
 		claims, err := JwtUtils.VerifyToken(tokenString)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Error verifying JWT token: " + err.Error()))
+			log.Print("Error verifying JWT token: " + err.Error())
 			return
 		}
 		email := claims.(jwt.MapClaims)["email"].(string)

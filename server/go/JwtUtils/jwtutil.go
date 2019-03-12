@@ -2,7 +2,6 @@ package JwtUtils
 
 import (
 	"../DbWorker"
-	"../Roles"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"log"
@@ -25,11 +24,11 @@ type MyCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func GetToken(email string, role Roles.Role, id int64) (string, error) {
+func GetToken(email string, role string, id int64) (string, error) {
 	signingKey := []byte("EngTester")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyCustomClaims{
 		email,
-		role.String(),
+		role,
 		id,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),

@@ -15,7 +15,7 @@ import (
 
 func StudentsGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -39,22 +39,22 @@ func StudentCreateWithExcelPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	output, err := httputil.DumpRequest(r, true)
 	log.Print(string(output))
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
 	}
-	file,fh,err:=r.FormFile("file")
+	file, fh, err := r.FormFile("file")
 	if err != nil {
 		log.Print(err)
 	}
-	size:=fh.Size
-	slice, err := ExcelWorker.ExcelAsSlice(file,size)
+	size := fh.Size
+	slice, err := ExcelWorker.ExcelAsSlice(file, size)
 	students := make([]Model.Student, len(slice[0])-1)
 	for i, _ := range students {
 		students[i].Name = slice[0][i+1][0]
 		students[i].Email = slice[0][i+1][1]
-		pass, _ := PassGenerator.Generate(8, 8, 0, false, false)
+		pass, _ := PassGenerator.Generate(8, 6, 0, false, false)
 		students[i].Password = pass
 	}
 	_, err = DbWorker.Db.Model(&students).Insert()
@@ -66,7 +66,7 @@ func StudentCreateWithExcelPost(w http.ResponseWriter, r *http.Request) {
 
 func StudentPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -90,7 +90,7 @@ func StudentPost(w http.ResponseWriter, r *http.Request) {
 
 func StudentPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -113,7 +113,7 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 
 func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -138,7 +138,11 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 
 func StudentDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
+	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	dec := json.NewDecoder(r.Body)
 	var student Model.Student
 
@@ -157,6 +161,12 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func StudentsExportGet(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
+
 	var students []Model.Student
 
 	DbWorker.Db.Model(&students).Select()
@@ -169,10 +179,15 @@ func StudentsExportGet(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func StudentChangePassword(w http.ResponseWriter,r *http.Request)  {
+func StudentChangePassword(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("У вас нет полномочий для этого действия."))
+		return
+	}
 	studId := r.FormValue("id")
 	var student Model.Student
-	err:=DbWorker.Db.Model(&student).Where("id = ?",studId).Select()
+	err := DbWorker.Db.Model(&student).Where("id = ?", studId).Select()
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -180,7 +195,7 @@ func StudentChangePassword(w http.ResponseWriter,r *http.Request)  {
 		return
 	}
 
-	pass,err:= PassGenerator.Generate(8, 8, 0, false, false)
+	pass, err := PassGenerator.Generate(8, 6, 0, false, false)
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -190,7 +205,7 @@ func StudentChangePassword(w http.ResponseWriter,r *http.Request)  {
 
 	student.Password = pass
 
-	_,err=DbWorker.Db.Model(&student).WherePK().Update()
+	_, err = DbWorker.Db.Model(&student).WherePK().Update()
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
