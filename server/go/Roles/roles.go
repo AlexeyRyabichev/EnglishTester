@@ -1,13 +1,17 @@
 package Roles
 
-type Role int
-
 const (
 	Student = iota
 	Teacher
-	//Admin
+	Admin
 )
 
-func (role Role) String() string {
-	return [...]string{"student", "teacher", "admin"}[role]
+var rolesText = map[int]string{
+	Student: "student",
+	Teacher: "teacher",
+	Admin:   "admin",
+}
+
+func RolesText(role int) string {
+	return rolesText[role]
 }

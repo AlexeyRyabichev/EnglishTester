@@ -16,12 +16,13 @@ import (
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "audio/mpeg")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
 		w.WriteHeader(http.StatusForbidden)
 		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
 		if err != nil {
 			log.Println(err.Error())
 		}
+		log.Print(http.StatusText(http.StatusForbidden))
 		return
 	}
 	studId, err := strconv.ParseInt(mux.Vars(r)["studentId"], 10, 64)
@@ -58,13 +59,13 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 
 func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
 		w.WriteHeader(http.StatusForbidden)
 		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
 		if err != nil {
 			log.Println(err.Error())
 		}
-
+		log.Print(http.StatusText(http.StatusForbidden))
 		return
 	}
 
