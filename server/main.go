@@ -14,9 +14,10 @@ func main() {
 	DbWorker.CreateSchemaStudents()
 	DbWorker.CreateSchemaTest()
 	DbWorker.CreateSchemaAudio()
+	DbWorker.CreateSchemaScore()
 	DbWorker.MockAnswers()
 	router := swagger.NewRouter()
 	//sw.InsertTests()
-
+	//DocParser.GetTextFromDocx()
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

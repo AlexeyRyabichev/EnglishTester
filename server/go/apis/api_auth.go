@@ -6,6 +6,7 @@ import (
 	"../Roles"
 	Model "../models"
 	"github.com/dgrijalva/jwt-go"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -24,9 +25,11 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = DbWorker.Db.Model(&teacher).Where("email = ? and password = ?", email, pass).Select()
 		role = Roles.Teacher
+		id = teacher.Id
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Wrong login or password"))
+			log.Print(err)
 			return
 		}
 	}

@@ -50,6 +50,18 @@
 
 <div class="container">
     <h3 align="center">Students Table</h3>
+    <!--<div class="container">-->
+    <div class="row center-align">
+        <!--<b>Students:</b>-->
+        <form onsubmit="sendRequest(); return false;" style="display: none">
+            <input accept=".xlsx" id="uploadStudentsInput" onchange="sendFile()" style="display: none" type="file"/>
+            <button id="submitButton" style="display: none" type="submit"></button>
+        </form>
+        <a class="waves-effect waves-light btn" onclick="uploadFile()"><i
+                class="material-icons left">cloud_upload</i>Upload</a>
+        <a class="waves-effect waves-light btn" download href="/getStudentsFile"><i class="material-icons left">cloud_download</i>Download</a>
+    </div>
+    <!--</div>-->
     {TABLE}
 </div>
 
@@ -57,6 +69,41 @@
 <link href="../sass/materialize.css" media="screen,projection" rel="stylesheet" type="text/css"/>
 <script src="../js/bin/materialize.min.js" type="text/javascript"></script>
 <script src="../navbarInit.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    function changePassword(studId) {
+        let formData = new FormData();
+        formData.append("id", studId);
+        req = new XMLHttpRequest();
+
+        req.onreadystatechange = function () {
+            if (req.readyState === 4) {
+                if (req.responseText !== '')
+                    document.getElementById(`td${studId}`).innerHTML = `${req.responseText}<a class="btn-flat" onclick="changePassword(${studId})"><i class="material-icons left">refresh</i></a>`;
+            }
+        };
+
+        req.open('post', '/generateNewPassword', true);
+        req.send(formData)
+    }
+
+    function uploadFile() {
+        document.getElementById("uploadStudentsInput").click();
+    }
+
+    function sendFile() {
+        document.getElementById("submitButton").click();
+    }
+
+    function sendRequest() {
+        let formData = new FormData();
+        formData.append("file", document.getElementById("uploadStudentsInput").files[0]);
+        req = new XMLHttpRequest();
+        req.open('post', "/sendStudentsFile", true);
+        req.send(formData);
+        M.toast({html: 'File uploaded!'});
+    }
+</script>
 
 </body>
 

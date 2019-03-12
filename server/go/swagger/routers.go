@@ -51,10 +51,10 @@ var routes = Routes{
 	},
 
 	Route{
-		"StudentCreateWithArrayPost",
+		"StudentCreateWithExcelPost",
 		strings.ToUpper("Post"),
-		"/api/student/createWithArray",
-		api.StudentCreateWithArrayPost,
+		"/api/student/createWithExcel",
+		api.StudentCreateWithExcelPost,
 	},
 
 	Route{
@@ -78,6 +78,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"StudentChangePassword",
+		strings.ToUpper("Post"),
+		"/api/student/changePassword",
+		api.StudentChangePassword,
+		},
+
+	Route{
 		"StudentsDelete",
 		strings.ToUpper("Delete"),
 		"/api/students",
@@ -96,6 +103,12 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/api/test",
 		api.TestPost,
+	},
+	Route{
+		"TestDocPost",
+		strings.ToUpper("Post"),
+		"/api/testDoc",
+		api.TestDocPost,
 	},
 
 	Route{
@@ -148,6 +161,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"TeacherChangePassword",
+		strings.ToUpper("Post"),
+		"/api/teacher/password",
+		api.TeacherChangePassword,
+	},
+
+	Route{
 		"CheckCredentialsTeacherPost",
 		strings.ToUpper("Post"),
 		"/api/checkCredentialsTeacher",
@@ -171,5 +191,44 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/api/answer",
 		api.AnswersPost,
+	},
+
+	Route{
+		"ScoreGet",
+		strings.ToUpper("Get"),
+		"/api/score",
+		api.ScoreGet,
+	},
+
+	Route{"ScoreExcelGet",
+		strings.ToUpper("Get"),
+		"/api/scoreExcel",
+		api.ScoreExcelGet,},
+	Route{
+		"ScoreGet",
+		strings.ToUpper("Get"),
+		"/api/scores",
+		api.ScoresGet,
+	},
+
+	Route{
+		"sendWritingGrade",
+		strings.ToUpper("Post"),
+		"/api/sendWritingGrade",
+		api.SendWritingGrade,
+	},
+
+	Route{
+		"sendListeningGrade",
+		strings.ToUpper("Post"),
+		"/api/sendListeningGrade",
+		api.SendListeningGrade,
+	},
+
+	Route{
+		"StudentsExportGet",
+		strings.ToUpper("Get"),
+		"/api/studentsExport",
+		api.StudentsExportGet,
 	},
 }

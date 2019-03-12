@@ -54,21 +54,11 @@ function getStudentsTable(request, callback) {
                     let ans = '';
                     for (let i = 0; i < body.length; i++) {
                         ans += '<tr>';
-                        ans += '<td>';
-                        ans += body[i].id;
-                        ans += '</td>';
-                        ans += '<td>';
-                        ans += body[i].name;
-                        ans += '</td>';
-                        ans += '<td>';
-                        ans += body[i].email;
-                        ans += '</td>';
-                        ans += '<td>';
-                        ans += body[i].password;
-                        ans += '</td>';
-                        ans += '<td>';
-                        ans += body[i].testId;
-                        ans += '</td>';
+                        ans += `<td>${body[i].id}</td>`;
+                        ans += `<td>${body[i].name}</td>`;
+                        ans += `<td>${body[i].email}</td>`;
+                        ans += `<td id="td${body[i].id}">${body[i].password}<a class="btn-flat" onclick="changePassword(${body[i].id})"><i class="material-icons left">refresh</i></a></td>`;
+                        ans += `<td>${body[i].testId}</td>`;
                         ans += '</tr>';
                     }
                     callback(ans);
@@ -121,7 +111,7 @@ function getStudentsResults(request, callback) {
                     table += `<b>Base:</b> ${rawString[i].Score.Base} \\ ${rawString[i].Score.BaseAmount}<br/>`;
                     table += `<b>Reading:</b> ${rawString[i].Score.Reading} \\ ${rawString[i].Score.ReadingAmount}<br/>`;
                     table += `<b>Writing:</b> ${rawString[i].Score.Writing} \\ ${rawString[i].Score.WritingAmount}<br/>`;
-                    table += `<b>Listening:</b> ${rawString[i].Score.Listening} \\ ${rawString[i].Score.ListeningAmount}<br/>`;
+                    table += `<b>Speaking:</b> ${rawString[i].Score.Listening} \\ ${rawString[i].Score.ListeningAmount}<br/>`;
                     table += `<b>Summary:</b> ${rawString[i].Score.Sum} \\ ${rawString[i].Score.SumAmount}<br/>`;
                     table += `<b>Grade:</b> ${(rawString[i].Score.Sum / rawString[i].Score.SumAmount * 10).toPrecision(3)}<br/>`;
                     table += `<b>Recommended level:</b> ${rawString[i].Score.RecommendedLevel}`;
@@ -373,7 +363,7 @@ function createStudentsList(request, callback) {
                 ans += `<div class="collapsible-header"><i class="material-icons">person</i>${body[i].name}</div>`;
                 ans += `<div class="collapsible-body"><b>Writing:</b><br/><p>${(body[i].answers.writing).replaceAll("\n", "<br/>")}</p><br/>`;
                 ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline"><input id="writing${body[i].id}Grade"></div><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="listening${body[i].id}" onclick="sendListeningGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set listening grade</a><div class="input-field inline"><input id="listening${body[i].id}Grade"></div>`;
+                ans += `<a class="waves-effect waves-light btn" id="speaking${body[i].id}" onclick="sendSpeakingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set speaking grade</a><div class="input-field inline"><input id="speaking${body[i].id}Grade"></div>`;
                 ans += `</div>`;
                 ans += `</li>`;
             }
@@ -605,8 +595,8 @@ function sendWritingGradeToDB(request, callback) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': auth,
-                'StudentId' :request.headers.studentid.toString(),
-                'Grade' : request.headers.grade
+                'StudentId': request.headers.studentid.toString(),
+                'Grade': request.headers.grade
             }
         };
 
@@ -626,7 +616,7 @@ function sendWritingGradeToDB(request, callback) {
     });
 }
 
-function sendListeningGradeToDB(request, callback) {
+function sendSpeakingGradeToDB(request, callback) {
     let auth = parseCookies(request)['token'];
     let body = '';
     request.on('data', chunk => {
@@ -644,13 +634,13 @@ function sendListeningGradeToDB(request, callback) {
         const options = {
             hostname: '127.0.0.1',
             port: 8080,
-            path: '/api/sendWritingGrade',
+            path: '/api/sendListeningGrade',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': auth,
-                'StudentId' :request.headers.studentid.toString(),
-                'Grade' : request.headers.grade
+                'StudentId': request.headers.studentid.toString(),
+                'Grade': request.headers.grade
             }
         };
 
@@ -670,6 +660,238 @@ function sendListeningGradeToDB(request, callback) {
     });
 }
 
+function getStudentsFile(request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/studentsExport",
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function sendStudentsFile(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let chunks = [];
+    let tmpHeader = request.headers;
+    request.on('data', chunk => {
+        chunks.push(chunk);
+    });
+    request.on('end', (flag) => {
+        // console.log("BODY" + body);
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/student/createWithExcel',
+            method: 'POST',
+            headers: tmpHeader
+            // headers: {
+            //     // 'Content-Type': tmpHeader,
+            //     'Authorization': auth,
+            //     // 'Accept-Encoding': 'gzip, deflate'
+            //     // 'Content-Length' : body.length
+            // }
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.setHeader('Authorization', auth);
+        // req.setHeader('Content-Length', "");
+        // req.setHeader('cache-control', "no-control");
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end(Buffer.concat(chunks));
+    });
+}
+
+function getTestsFiles(request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/testsZip",
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function sendTestFile(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let chunks = [];
+    let tmpHeader = request.headers;
+    request.on('data', chunk => {
+        chunks.push(chunk);
+    });
+    request.on('end', (flag) => {
+        // console.log("BODY" + body);
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/testDoc',
+            method: 'POST',
+            headers: tmpHeader
+            // headers: {
+            //     // 'Content-Type': tmpHeader,
+            //     'Authorization': auth,
+            //     // 'Accept-Encoding': 'gzip, deflate'
+            //     // 'Content-Length' : body.length
+            // }
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.setHeader('Authorization', auth);
+        // req.setHeader('Content-Length', "");
+        // req.setHeader('cache-control', "no-control");
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end(Buffer.concat(chunks));
+    });
+}
+
+function sendNewPassword(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let chunks = [];
+    let tmpHeader = request.headers;
+    request.on('data', chunk => {
+        chunks.push(chunk)
+    });
+    request.on('end', (flag) => {
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/teacher/password',
+            method: 'POST',
+            headers : tmpHeader
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.setHeader('Authorization', auth);
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end(Buffer.concat(chunks));
+    });
+}
+
+function generateNewPassword(request, callback) {
+    let auth = parseCookies(request)['token'];
+    let chunks = [];
+    let tmpHeader = request.headers;
+    request.on('data', chunk => {
+        chunks.push(chunk)
+    });
+    request.on('end', (flag) => {
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/student/changePassword',
+            method: 'POST',
+            headers : tmpHeader
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            let body = '';
+            res.on('data', chunk => body += chunk.toString());
+            res.on('end', (flag) => {
+                if (res.statusCode === 200)
+                    callback(body);
+                else
+                    callback(false);
+            })
+        });
+
+        req.setHeader('Authorization', auth);
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end(Buffer.concat(chunks));
+    });
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -682,13 +904,13 @@ module.exports = {
             open(request.url, response);
         } else if (request.url === '/sendWritingGrade') {
             sendWritingGradeToDB(request, callback => {
-                if (callback){
+                if (callback) {
                     response.statusCode = 200;
                     response.end();
                 }
             });
-        } else if (request.url === '/sendListeningGrade') {
-            sendListeningGradeToDB(request, callback => {
+        } else if (request.url === '/sendSpeakingGrade') {
+            sendSpeakingGradeToDB(request, callback => {
                 if (callback) {
                     response.statusCode = 200;
                     response.end();
@@ -713,7 +935,44 @@ module.exports = {
                 }
 
             });
-        } else if (request.url === '/auth') {
+        } else if (request.url === '/getStudentsFile') {
+            getStudentsFile(request, (valid) => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Disposition': 'attachment; filename=StudentsList.xlsx'
+                    });
+                    response.end(valid);
+                }
+            })
+        } else if (request.url === '/sendStudentsFile') {
+            sendStudentsFile(request, (valid) => {
+                response.end()
+            })
+        } else if (request.url === '/getTestsFiles') {
+            getTestsFiles(request, (valid) => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/zip',
+                        'Content-Disposition': 'attachment; filename=Test.zip'
+                    });
+                    response.end(valid);
+                }
+            })
+        } else if (request.url === '/sendTestFile') {
+            sendTestFile(request, (valid) => {
+                response.end()
+            })
+        } else if (request.url === '/sendNewPassword'){
+            sendNewPassword(request, (valid) => {
+                response.end();
+            })
+        }else if (request.url === '/generateNewPassword'){
+            generateNewPassword(request, (valid) => {
+                response.end(valid);
+            })
+        }
+        else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
                     request.url = "/teacher/students.html";

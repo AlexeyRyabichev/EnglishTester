@@ -160,7 +160,7 @@ function createTestJSON() {
         }
     }
     ReadingQuestionsTableData += "]},";
-    answers += `],"writing" : ""}`;
+    answers += "]}";
 
     let writingTask = `"writing": "${document.getElementById("writingText").value}",`;
 

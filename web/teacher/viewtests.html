@@ -43,6 +43,7 @@
         <li><a href="#">View tests</a></li>
         <li><a href="checkwork.html">Check works</a></li>
         <li><a href="results.html">Results</a></li>
+
         <li><a href="settings.html">Settings</a></li>
         <li><a href="index.html">Logout</a></li>
     </ul>
@@ -50,6 +51,29 @@
 
 <div class="container" style="margin-bottom: 10%">
     <h1 align="center">Tests</h1>
+    <div class="row center-align">
+        <!-- Dropdown Trigger -->
+        <a class="dropdown-trigger waves-effect waves-light btn" data-target='dropdown1'><i
+                class="material-icons left">cloud_upload</i>Upload</a>
+        <a class="waves-effect waves-light btn disabled" download href="/getTestsFiles"><i class="material-icons left">cloud_download</i>Download</a>
+
+        <!-- Dropdown Structure -->
+        <ul class='dropdown-content' id='dropdown1'>
+            <li><a onclick="uploadQuestionsFile()">Upload questions<i class="material-icons" id="questionsIcon"
+                                                                      style="display:none">done</i></a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li><a onclick="uploadAnswersFile()">Upload answers<i class="material-icons" id="answersIcon"
+                                                                  style="display: none">done</i></a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li><a class="btn-flat disabled" id="submitButton" onclick="sendFile()">Submit<i class="material-icons">done_all</i></a>
+            </li>
+        </ul>
+
+        <input accept=".docx" id="uploadTestQuestionsInput" onchange="addDoneMarkQuestions()" style="display: none"
+               type="file"/>
+        <input accept=".docx" id="uploadTestAnswersInput" onchange="addDoneMarkAnswers()" style="display: none"
+               type="file"/>
+    </div>
     {TABLE}
 </div>
 
@@ -60,6 +84,48 @@
 <script type="text/javascript">
     var elems = document.querySelectorAll('.tabs');
     var instance = M.Tabs.init(elems, {});
+
+    let questionsFlag = false;
+    let answersFlag = false;
+
+    function uploadQuestionsFile() {
+        document.getElementById("uploadTestQuestionsInput").click();
+    }
+
+    function addDoneMarkQuestions() {
+        document.getElementById("questionsIcon").style.display = "block";
+        questionsFlag = true;
+        if (questionsFlag && answersFlag) {
+            document.getElementById("submitButton").classList.remove("disabled");
+        }
+    }
+
+    function uploadAnswersFile() {
+        document.getElementById("uploadTestAnswersInput").click();
+    }
+
+    function addDoneMarkAnswers() {
+        document.getElementById("answersIcon").style.display = "block";
+        answersFlag = true;
+        if (questionsFlag && answersFlag) {
+            document.getElementById("submitButton").classList.remove("disabled");
+        }
+    }
+
+    function sendFile() {
+        let formData = new FormData();
+        formData.append("questions", document.getElementById("uploadTestQuestionsInput").files[0]);
+        formData.append("answers", document.getElementById("uploadTestAnswersInput").files[0]);
+        req = new XMLHttpRequest();
+        req.open('post', "/sendTestFile", true);
+        req.send(formData);
+        M.toast({html: 'Files uploaded!'});
+    }
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var elems = document.querySelectorAll('.dropdown-trigger');
+    //     var instances = M.Dropdown.init(elems, options);
+    // });
 </script>
 
 </body>

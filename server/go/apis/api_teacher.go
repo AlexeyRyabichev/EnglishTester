@@ -18,7 +18,7 @@ func TeachersGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var teachers []Model.Teacher
-	err := DbWorker.Db.Model(&teachers).Select()
+	err := DbWorker.Db.Model(&teachers).Order("id ASC").Select()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -77,6 +77,30 @@ func TeacherDelete(w http.ResponseWriter, r *http.Request) {
 	_, err := DbWorker.Db.Model(&teacher).WherePK().Delete()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func TeacherChangePassword(w http.ResponseWriter, r *http.Request)  {
+	pass:=r.FormValue("password")
+	id:=r.Header.Get("id")
+	var teacher Model.Teacher
+
+	err:=DbWorker.Db.Model(&teacher).Where("id = ?", id).Select()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	teacher.Password=pass
+	_,err=DbWorker.Db.Model(&teacher).WherePK().Update()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)

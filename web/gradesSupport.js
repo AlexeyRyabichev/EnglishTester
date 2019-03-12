@@ -10,13 +10,13 @@ function sendWritingGrade(element) {
     M.toast({html: `Writing grade sent!`})
 }
 
-function sendListeningGrade(element) {
-    let id = element.id.replace("listening", "");
+function sendSpeakingGrade(element) {
+    let id = element.id.replace("speaking", "");
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "sendListeningGrade", true);
+    xhr.open("POST", "sendSpeakingGrade", true);
     xhr.setRequestHeader('grade', document.getElementById(element.id + "Grade").value);
     xhr.setRequestHeader('studentid', id);
     xhr.send();
-    M.toast({html: `Listening grade sent!`})
+    M.toast({html: `Speaking grade sent!`})
 }

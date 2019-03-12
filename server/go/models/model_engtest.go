@@ -1,11 +1,11 @@
 package models
 
 type Test struct {
-	Id               int             `json:"id,omitempty"`
-	BaseQuestions    []Question      `json:"baseQuestions" sql:",notnull"`
-	ReadingQuestions *Reading        `json:"reading"`
-	Writing          string          `json:"writing"`
-	Answers          AnswerContainer `json:"answers"`
+	Id               int              `json:"id,omitempty"`
+	BaseQuestions    []Question       `json:"baseQuestions" sql:",notnull"`
+	ReadingQuestions *Reading         `json:"reading"`
+	Writing          string           `json:"writing"`
+	Answers          *AnswerContainer `json:"answers"`
 }
 
 type Question struct {

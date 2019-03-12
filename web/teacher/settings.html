@@ -49,14 +49,36 @@
 </nav>
 
 <div class="container">
-    <h1 align="center">COMING SOON</h1>
+    <h3 align="center">Settings</h3>
+    <div class="row">
+        <form onsubmit="saveNewPassword();return false;">
+            <b>Enter new password:</b>
+            <div class="input-field inline"  style="margin-left: 2%">
+                <input class="validate" id="password_inline" type="password" required>
+                <label for="password_inline">Password</label>
+            </div>
+            <button class="btn inline" type="submit" style="margin-left: 2%">Save<i class="material-icons left">save</i></button>
+        </form>
+    </div>
 </div>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="../sass/materialize.css" media="screen,projection" rel="stylesheet" type="text/css"/>
 <script src="../js/bin/materialize.min.js" type="text/javascript"></script>
 <script src="../navbarInit.js" type="text/javascript"></script>
-
+<script type="text/javascript">
+    function saveNewPassword() {
+        if (document.getElementById("password_inline").value === ""){
+            M.toast({html: '!'});
+        }
+        let formData = new FormData();
+        formData.append("password", document.getElementById("password_inline").value);
+        req = new XMLHttpRequest();
+        req.open('post', "/sendNewPassword", true);
+        req.send(formData);
+        M.toast({html: 'Password saved!'});
+    }
+</script>
 </body>
 
 </html>

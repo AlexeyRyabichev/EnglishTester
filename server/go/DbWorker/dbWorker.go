@@ -24,12 +24,17 @@ func InitDB() {
 }
 
 func TokenExists(token string) (bool, error) {
-	//var student Student
+	var student Model.Student
 	var teacher Model.Teacher
-
-	exists, err := Db.Model(&teacher).Where("access_token = ?", token).Exists()
-	if err == nil {
-		return exists, err
+	exists, err := Db.Model(&student).Where("access_token = ?", token).Exists()
+	if exists {
+		return exists, nil
+	} else {
+		exists, err = Db.Model(&teacher).Where("access_token = ?", token).Exists()
+		if err != nil {
+			log.Print(err)
+		}
+		return exists, nil
 	}
 	return false, nil
 }
@@ -84,6 +89,18 @@ func CreateSchemaTeachers() error {
 
 func CreateSchemaTest() error {
 	for _, model := range []interface{}{(*Model.Test)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
+			Temp: false,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func CreateSchemaScore() error {
+	for _, model := range []interface{}{(*Model.Score)(nil)} {
 		err := Db.CreateTable(model, &orm.CreateTableOptions{
 			Temp: false,
 		})
