@@ -208,3 +208,26 @@ func CheckCredentialsPost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 }
+
+func TestExportGet(w http.ResponseWriter, r *http.Request) {
+	testId,err := strconv.ParseInt(mux.Vars(r)["testId"], 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		log.Print(err)
+		return
+	}
+	var test Model.Test
+	err=DbWorker.Db.Model(&test).Where("id = ?",testId).Select()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		log.Print(err)
+		return
+	}
+	bytes,err:=DocParser.CreateTestDocx(&test)
+	log.Print(bytes)
+	w.Header().Set("Content-Type","application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+	w.Write(bytes)
+
+}

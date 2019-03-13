@@ -231,4 +231,11 @@ var routes = Routes{
 		"/api/studentsExport",
 		api.StudentsExportGet,
 	},
+
+	Route{
+		"TestExportGet",
+		strings.ToUpper("Get"),
+		"/api/testExport/{testId}",
+		api.TestExportGet,
+	},
 }

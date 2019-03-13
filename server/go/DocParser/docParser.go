@@ -2,6 +2,8 @@ package DocParser
 
 import (
 	Model "../models"
+	"github.com/aymerick/raymond"
+	"io/ioutil"
 	"log"
 	"os/exec"
 	"regexp"
@@ -114,5 +116,79 @@ func CreateTest(questions []Model.Question,answers []Model.Answer, readingText s
 	return &test
 
 }
+//TODO: NEED FIX!!!! be carfull but ok
+const templ  = `PLACEMENT TEST
+
+Choose the best word or phrase (a, b, c or d) to fill each blank. 
+{{#each BaseQuestions}}
+{{#ifReadingId @index}}
+{{#avec this.ReadingQuestions}}
+{{Question}}
+{{#each BaseQuestion}}
+
+{{Question}}
+   {{OptionA}}
+   {{OptionB}}
+   {{OptionC}}
+   {{OptionD}}
+{{/each}}
+{{/avec}}
+{{/ifReadingId}}
+{{Question}}
+   {{OptionA}}
+   {{OptionB}}
+   {{OptionC}}
+   {{OptionD}}
+
+{{/each}}`
+func CreateTestDocx(test *Model.Test) (bytes []byte,err error){
+
+	template,err:=raymond.Parse(templ)
+	if err!=nil{
+		return nil,err
+	}
+
+
+	raymond.RegisterHelper("ifReadingId", func(idx int, options *raymond.Options) string {
+		log.Print(idx)
+		if idx==20 {
+			return options.Fn()
+		}
+		return options.Inverse()
+	})
+
+	raymond.RegisterHelper("avec", func(context interface{}, options *raymond.Options) string {
+		log.Print(context)
+		return options.FnWith(context)
+	})
+
+	output,err:=template.Exec(test)
+	if err!=nil{
+		return nil,err
+	}
+	path:="test.txt"
+	err=ioutil.WriteFile(path,[]byte(output) ,0666 )
+	if err!=nil{
+		return nil,err
+	}
+	bt,err:=ioutil.ReadFile(path)
+	log.Print(string(bt))
+	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "docx", path)
+	log.Print(cmd)
+	err=cmd.Run()
+	if err!=nil{
+		log.Print(err)
+		return nil,err
+	}
+	path="test.docx"
+	if err!=nil{
+		return nil,err
+	}
+	bytes,err=ioutil.ReadFile(path)
+	log.Print(bytes)
+
+	return bytes,nil
+}
+
 
 
