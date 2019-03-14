@@ -72,7 +72,7 @@ func ScoresToExcel(res []Model.Result) *xlsx.File {
 	for _, res := range res {
 		row = sheet.AddRow()
 		row.SetHeight(60)
-		row.WriteSlice(GetScoreSlice(res), 3)
+		row.WriteSlice(GetScoreSlice(res), 8)
 	}
 
 	return file
