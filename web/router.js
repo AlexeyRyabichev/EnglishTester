@@ -71,10 +71,7 @@ function getStudentsTable(request, callback) {
 }
 
 function getStudentsResults(request, callback) {
-    var qs = require("querystring");
-    var http = require("http");
-
-    var options = {
+    let options = {
         "method": "GET",
         "hostname": "127.0.0.1",
         "port": "8080",
@@ -84,8 +81,8 @@ function getStudentsResults(request, callback) {
         }
     };
 
-    var req = http.request(options, function (res) {
-        var chunks = [];
+    let req = http.request(options, function (res) {
+        let chunks = [];
 
         res.on("data", function (chunk) {
             chunks.push(chunk);
@@ -125,47 +122,6 @@ function getStudentsResults(request, callback) {
 
     req.write(qs.stringify({undefined: undefined}));
     req.end();
-    // checkToken(request, (valid) => {
-    //     if (valid) {
-    //         const options = {
-    //             hostname: '127.0.0.1',
-    //             port: 8080,
-    //             path: '/api/students',
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/x-www-form-urlencoded',
-    //                 'Authorization': parseCookies(request)['token']
-    //             }
-    //         };
-    //
-    //         const req = http.request(options, function (res) {
-    //             let chunks = [];
-    //
-    //             res.on("data", function (chunk) {
-    //                 chunks.push(chunk);
-    //             });
-    //
-    //             res.on("end", function () {
-    //                 let body = Buffer.concat(chunks);
-    //                 body = JSON.parse(body.toString());
-    //                 let ans = '';
-    //                 for (let i = 0; i < body.length; i++) {
-    //                     ans += '<tr>';
-    //                     ans += '<td>';
-    //                     ans += body[i].name;
-    //                     ans += '</td>';
-    //                     ans += '<td>';
-    //                     ans += "10 \\ 10"; //TODO: GET RESULTS FROM SERVER
-    //                     ans += '</td>';
-    //                     ans += '</tr>';
-    //                 }
-    //                 callback(ans);
-    //             });
-    //         });
-    //         req.end();
-    //     } else
-    //         callback('Something is wrong');
-    // });
 }
 
 function getUsername(request, callback) {
