@@ -319,7 +319,9 @@ function createStudentsList(request, callback) {
                 ans += `<div class="collapsible-header"><i class="material-icons">person</i>${body[i].name}</div>`;
                 ans += `<div class="collapsible-body"><b>Writing:</b><br/><p>${(body[i].answers.writing).replaceAll("\n", "<br/>")}</p><br/>`;
                 ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline"><input id="writing${body[i].id}Grade"></div><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="speaking${body[i].id}" onclick="sendSpeakingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set speaking grade</a><div class="input-field inline"><input id="speaking${body[i].id}Grade"></div>`;
+                ans += `<a class="waves-effect waves-light btn" id="speaking${body[i].id}" onclick="sendSpeakingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set speaking grade</a><div class="input-field inline"><input id="speaking${body[i].id}Grade"></div><br/><br/>`;
+                ans += `<a class="waves-effect waves-light btn" id="recording${body[i].id}" onclick="record(${body[i].id})" style="margin-right: 2%"><i class="material-icons left">record_voice_over</i>Start recording</a>`;
+                ans += `<a class="waves-effect waves-light btn" download href="/getAudio/?id=${body[i].id}"><i class="material-icons left">cloud_download</i>Download audio</a>`;
                 ans += `</div>`;
                 ans += `</li>`;
             }
@@ -848,6 +850,74 @@ function generateNewPassword(request, callback) {
     });
 }
 
+function sendAudio(request, callback) {
+
+    let auth = parseCookies(request)['token'];
+    let chunks = [];
+    let tmpHeader = request.headers;
+    request.on('data', chunk => {
+        chunks.push(chunk);
+    });
+    request.on('end', (flag) => {
+        // console.log("BODY" + body);
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/audio/' + request.headers.id,
+            method: 'POST',
+            headers: tmpHeader
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.setHeader('Authorization', auth);
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end(Buffer.concat(chunks));
+    });
+}
+
+function getAudio(tmp, request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/audio/" + tmp,
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -858,7 +928,27 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js' || request.url === '/favicon.ico') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
-        } else if (request.url === '/sendWritingGrade') {
+        } else if (request.url === '/sendAudio'){
+            sendAudio(request, valid => {
+                if (valid){
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        }else if (request.url.startsWith('/getAudio')){
+            let t = (request.url.split('/'))[2];
+            let tmp = t.slice(4, t.length);
+            getAudio(tmp, request, valid => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'audio/mpeg',
+                        'Content-Disposition': `attachment; filename=student${tmp}.mp3`
+                    });
+                    response.end(valid);
+                }
+            })
+        }
+        else if (request.url === '/sendWritingGrade') {
             sendWritingGradeToDB(request, callback => {
                 if (callback) {
                     response.statusCode = 200;
