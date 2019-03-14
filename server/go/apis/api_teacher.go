@@ -12,7 +12,7 @@ import (
 
 func TeachersGet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student)  {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -35,7 +35,7 @@ func TeachersGet(w http.ResponseWriter, r *http.Request) {
 
 func TeacherPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
@@ -59,7 +59,7 @@ func TeacherPost(w http.ResponseWriter, r *http.Request) {
 
 func TeacherDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("role") == Roles.Role(Roles.Student).String() {
+	if r.Header.Get("role") == Roles.RolesText(Roles.Student)  {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
 		return
