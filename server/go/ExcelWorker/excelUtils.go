@@ -94,8 +94,8 @@ func GetScoreSlice(res Model.Result) *[]string {
 		grade = fmt.Sprintf("%v", 0)
 		recLvl = GetLvl(0)
 	} else {
-		grade = fmt.Sprintf("%v", sumReal/sumAmount)
-		recLvl = GetLvl(float64(sumReal / sumAmount))
+		grade = fmt.Sprintf("%.2f",float64(sumReal) / float64(sumAmount))
+		recLvl = GetLvl(float64(sumReal) / float64(sumAmount))
 	}
 	sum := fmt.Sprintf("%v\\%v", sumReal, sumAmount)
 	slice := []string{name, base, reading, writing, listening, sum, grade, recLvl}
