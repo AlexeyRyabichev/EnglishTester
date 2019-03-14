@@ -964,9 +964,13 @@ module.exports = {
             });
         } else if (request.url === '/getResultsFile') {
             getResultsFile(request, (valid) => {
-                if (valid !== false)
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Disposition': 'attachment; filename=ResultsList.xlsx'
+                    });
                     response.end(valid);
-                response.end()
+                }
             })
         } else if (request.url === '/getStudentsFile') {
             getStudentsFile(request, (valid) => {
