@@ -30,7 +30,12 @@ namespace TesterApp
 
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
-            Server.SendData(id, testAnswers);
+            if (!(Server.SendData(id, testAnswers)))
+            {
+                MessageBox.Show("Lost connection to server. " +
+                "\nAsk your teacher for help");
+                MessageBox.Show("Testing was interrupted");
+            }
             flag = false;
             parent.Close();
             Close();

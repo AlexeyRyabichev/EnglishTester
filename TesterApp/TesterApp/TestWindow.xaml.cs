@@ -52,6 +52,7 @@ namespace TesterApp
         private void ShowQuestion(int number)
         {
             AnswerPanel.Children.Clear();
+            TextBox = null;
             actualNumber = number;
             if (actualNumber < Test.BaseQuestions.Length)
             {
@@ -88,9 +89,9 @@ namespace TesterApp
 
         private void ShowQuestion_Reading()
         {
-            Textblock.Text = "Reading. Excersize " + (actualNumber - Test.BaseQuestions.Length + 1) + ".\n\n";
+            Textblock.Text = "Reading. Excercize " + (actualNumber - Test.BaseQuestions.Length + 1) + ".\n\n";
             Textblock.Text += Test.Reading.Question;
-            Textblock.Text += "\n" + 
+            Textblock.Text += "\n\n" + 
                 Test.Reading.Questions[actualNumber - Test.BaseQuestions.Length].Question;
             gridText.Height = (Height - 20) / 5 * 4;
             Textblock2.Text = "Choose the correct answer:";
@@ -135,7 +136,7 @@ namespace TesterApp
 
         private void ShowQuestion_Base()
         {
-            Textblock.Text = "Excersize " + (actualNumber + 1) + ".\n\n";
+            Textblock.Text = "Excercize " + (actualNumber + 1) + ".\n\n";
             Textblock.Text += Test.BaseQuestions[actualNumber].Question;           
             gridText.Height = (Height - 20) / 5 * 4;          
             Textblock2.Text = "Choose the correct answer:";
@@ -215,7 +216,7 @@ namespace TesterApp
         private void Window_Deactivated(object sender, EventArgs e)
         {
             if (flag) Topmost = true;
-            Topmost = false;
+            //Topmost = false;
         }
 
 
@@ -250,8 +251,9 @@ namespace TesterApp
                     QuestionButtons[i] = new Button
                     {
                         Name = "q" + i,
-                        Content = "  " + (i + 1) + "  ",
+                        Content = "" + (i + 1) + "",
                         Margin = new Thickness(5),
+                        MinWidth = 25,
                         MaxWidth = Height
                     };
                     QuestionButtons[i].Click += ButtonOnClick;
@@ -263,8 +265,9 @@ namespace TesterApp
                 QuestionButtons[i] = new Button
                 {
                     Name = "q" + i,
-                    Content = "  " + (i - Test.BaseQuestions.Length + 1) + "  ",
+                    Content = "" + (i - Test.BaseQuestions.Length + 1) + "",
                     Margin = new Thickness(5),
+                    MinWidth = 25,
                     MaxWidth = Height
                 };
                 QuestionButtons[i].Click += ButtonOnClick;
@@ -275,9 +278,10 @@ namespace TesterApp
             QuestionButtons[question_count - 1] = new Button
             {
                 Name = "q" + (question_count - 1),
-                Content = "  1  ",
+                Content = "1",
                 Margin = new Thickness(5),
-                MaxWidth = Height
+                MinWidth = 35,
+                MaxWidth = 45
             };
             QuestionButtons[question_count - 1].Click += ButtonOnClick;
             WritingPanel.Children.Add(QuestionButtons[question_count - 1]);
