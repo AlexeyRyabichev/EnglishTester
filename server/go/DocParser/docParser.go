@@ -149,7 +149,7 @@ func CreateTestDocx(test *Model.Test) (bytes []byte,err error){
 	}
 
 
-	raymond.RegisterHelper("ifReadingId", func(idx int, options *raymond.Options) string {
+	template.RegisterHelper("ifReadingId", func(idx int, options *raymond.Options) string {
 		log.Print(idx)
 		if idx==20 {
 			return options.Fn()
@@ -157,7 +157,7 @@ func CreateTestDocx(test *Model.Test) (bytes []byte,err error){
 		return options.Inverse()
 	})
 
-	raymond.RegisterHelper("avec", func(context interface{}, options *raymond.Options) string {
+	template.RegisterHelper("avec", func(context interface{}, options *raymond.Options) string {
 		log.Print(context)
 		return options.FnWith(context)
 	})
