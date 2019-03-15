@@ -90,7 +90,8 @@ func CountScore(correctAnswers *Model.AnswerContainer, studAnswers Model.AnswerC
 		}
 	}
 	score.ReadingAmount = len(correctAnswers.Reading)
-
+	score.ListeningAmount=20
+	score.WritingAmount=10
 	score.Sum = score.Reading + score.Base
 	return score, nil
 }

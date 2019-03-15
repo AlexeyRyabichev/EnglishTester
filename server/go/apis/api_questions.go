@@ -67,6 +67,31 @@ func AnswersPost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	newscore,err:=CountScore(student.Test.Answers,answers)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	var score  Model.Score
+	err = DbWorker.Db.Model(&student).Relation("Score").Where("student.id = ?", id).Column("score.id").Select(&score)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	newscore.Id=score.Id
+	_, err = DbWorker.Db.Model(&newscore).WherePK().Update()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
