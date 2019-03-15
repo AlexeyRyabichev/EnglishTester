@@ -950,7 +950,7 @@ function getResultsFile(request, callback) {
     req.end();
 }
 
-function getTest(tmp, request, callback){
+function getTest(tmp, request, callback) {
     let options = {
         "method": "GET",
         "hostname": '127.0.0.1',
@@ -958,6 +958,34 @@ function getTest(tmp, request, callback){
         "path": "/api/testExport/" + tmp,
         "headers": {
             "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function deleteTest(request, callback){
+    let options = {
+        "method": "DELETE",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/test",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "testId" : request.headers.id
         }
     };
 
@@ -1000,7 +1028,14 @@ module.exports = {
                     response.end(valid);
                 }
             })
-        }else if (request.url === '/sendAudio') {
+        } else if (request.url === '/deleteTest') {
+            deleteTest(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url === '/sendAudio') {
             sendAudio(request, valid => {
                 if (valid) {
                     response.statusCode = 200;

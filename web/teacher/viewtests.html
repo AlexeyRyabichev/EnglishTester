@@ -56,7 +56,7 @@
         <a class="dropdown-trigger waves-effect waves-light btn" data-target='dropdown1'><i
                 class="material-icons left">cloud_upload</i>Upload</a>
         <a class="waves-effect waves-light btn" download onclick="getTest()" id="downloadTestButton"><i class="material-icons left">cloud_download</i>Download</a>
-        <a class="waves-effect waves-light btn"><i class="material-icons left">delete</i>Delete</a>
+        <a class="waves-effect waves-light btn" onclick="deleteTest()"><i class="material-icons left">delete</i>Delete</a>
 
         <!-- Dropdown Structure -->
         <ul class='dropdown-content' id='dropdown1'>
@@ -86,16 +86,26 @@
     let elems = document.querySelectorAll('.tabs');
     let instance = M.Tabs.init(elems, {});
 
+    function deleteTest() {
+        let tmp = document.getElementsByClassName("tab");
+        let button = document.getElementById("downloadTestButton");
+        for (let i = 0; i < tmp.length; ++i) {
+            if (tmp[i].children[0].classList.contains("active")){
+                let req = new XMLHttpRequest();
+                req.open('delete', "/deleteTest", true);
+                req.setRequestHeader("id", tmp[i].children[0].id);
+                req.send();
+                window.location.reload(true);
+            }
+        }
+    }
+
     function getTest() {
         let tmp = document.getElementsByClassName("tab");
         let button = document.getElementById("downloadTestButton");
         for (let i = 0; i < tmp.length; ++i) {
             if (tmp[i].children[0].classList.contains("active")){
                 button.href = "/getTest/?id=" + tmp[i].children[0].id;
-                // button.click();
-                // let req = new XMLHttpRequest();
-                // req.open('get', "/getTest/?id=" + tmp[i].children[0].id, true);
-                // req.send();
             }
         }
     }

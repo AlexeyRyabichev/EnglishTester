@@ -102,6 +102,7 @@
         req.open('post', "/sendStudentsFile", true);
         req.send(formData);
         M.toast({html: 'File uploaded!'});
+        window.location.reload(true);
     }
 </script>
 
