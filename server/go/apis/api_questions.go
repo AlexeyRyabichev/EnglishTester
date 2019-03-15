@@ -120,7 +120,7 @@ func SendWritingGrade(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err1.Error()))
 	}
 
-	if score.Writing < grade {
+	if score.WritingAmount < grade {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(fmt.Sprintf("Grade couldn't me more than MaximumGrade \n "+
 			"Your:%v \t Maximum:%v", grade, score.WritingAmount)))
