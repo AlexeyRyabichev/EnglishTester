@@ -25,6 +25,7 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -32,6 +33,7 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -43,6 +45,7 @@ func TestDocPost(w http.ResponseWriter,r *http.Request)  {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
+		return
 	}
 	fileAnswers,_,err :=r.FormFile("answers")
 	if err != nil {
@@ -56,41 +59,61 @@ func TestDocPost(w http.ResponseWriter,r *http.Request)  {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
+		return
 	}
 	answerBytes,err:=ioutil.ReadAll(fileAnswers)
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
+		return
 	}
 
 	tmpfileQuestions, err := ioutil.TempFile("", "questions")
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	tmpfileAnswers, err := ioutil.TempFile("", "answers")
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	defer os.Remove(tmpfileQuestions.Name()) // clean up
 	defer os.Remove(tmpfileAnswers.Name())
 	if _, err := tmpfileQuestions.Write(questionBytes); err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	if _, err := tmpfileAnswers.Write(answerBytes); err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	test:= DocParser.GetTestFromDocx(tmpfileQuestions.Name(),tmpfileAnswers.Name())
 
 	if err := tmpfileQuestions.Close(); err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 	if err := tmpfileAnswers.Close(); err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	_,err=DbWorker.Db.Model(test).Insert()
@@ -98,6 +121,7 @@ func TestDocPost(w http.ResponseWriter,r *http.Request)  {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -226,7 +250,6 @@ func TestExportGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	bytes,err:=DocParser.CreateTestDocx(&test)
-	log.Print(bytes)
 	w.Header().Set("Content-Type","application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 	w.Write(bytes)
 

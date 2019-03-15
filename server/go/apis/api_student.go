@@ -10,7 +10,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/http/httputil"
 )
 
 func StudentsGet(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +36,6 @@ func StudentsGet(w http.ResponseWriter, r *http.Request) {
 
 func StudentCreateWithExcelPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	output, err := httputil.DumpRequest(r, true)
-	log.Print(string(output))
 	if r.Header.Get("role") != Roles.RolesText(Roles.Admin) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("У вас нет полномочий для этого действия."))
@@ -100,7 +97,10 @@ func StudentPut(w http.ResponseWriter, r *http.Request) {
 	if err := dec.Decode(&student); err == io.EOF {
 		//OK
 	} else if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	_, err := DbWorker.Db.Model(&student).WherePK().Update()
@@ -121,16 +121,25 @@ func StudentsDelete(w http.ResponseWriter, r *http.Request) {
 	var students []Model.Student
 	err := DbWorker.Db.Model(&students).Select()
 	if err != nil {
+		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 	res, err := DbWorker.Db.Model(&students).Delete()
 	if err != nil {
+		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 	log.Println("deleted: ", res.RowsAffected())
 	count, err := DbWorker.Db.Model((*Model.Student)(nil)).Count()
 	if err != nil {
-		panic(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 	log.Println("left", count)
 	w.WriteHeader(http.StatusOK)
@@ -149,12 +158,18 @@ func StudentDelete(w http.ResponseWriter, r *http.Request) {
 	if err := dec.Decode(&student); err == io.EOF {
 		//OK
 	} else if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	_, err := DbWorker.Db.Model(&student).WherePK().Delete()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
