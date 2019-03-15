@@ -238,4 +238,11 @@ var routes = Routes{
 		"/api/testExport/{testId}",
 		api.TestExportGet,
 	},
+
+	Route{
+		"TestDelete",
+		strings.ToUpper("Delete"),
+		"/api/test",
+		api.TestDelete,
+	},
 }
