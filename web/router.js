@@ -52,16 +52,20 @@ function getStudentsTable(request, callback) {
                     let body = Buffer.concat(chunks);
                     body = JSON.parse(body.toString());
                     let ans = '';
-                    for (let i = 0; i < body.length; i++) {
-                        ans += '<tr>';
-                        ans += `<td>${body[i].id}</td>`;
-                        ans += `<td>${body[i].name}</td>`;
-                        ans += `<td>${body[i].email}</td>`;
-                        ans += `<td id="td${body[i].id}">${body[i].password}<a class="btn-flat" onclick="changePassword(${body[i].id})"><i class="material-icons left">refresh</i></a></td>`;
-                        ans += `<td>${body[i].testId}</td>`;
-                        ans += '</tr>';
+                    if (body === null) {
+                        callback(ans);
+                    } else {
+                        for (let i = 0; i < body.length; i++) {
+                            ans += '<tr>';
+                            ans += `<td>${body[i].id}</td>`;
+                            ans += `<td>${body[i].name}</td>`;
+                            ans += `<td>${body[i].email}</td>`;
+                            ans += `<td id="td${body[i].id}">${body[i].password}<a class="btn-flat" onclick="changePassword(${body[i].id})"><i class="material-icons left">refresh</i></a></td>`;
+                            ans += `<td>${body[i].testId}</td>`;
+                            ans += '</tr>';
+                        }
+                        callback(ans);
                     }
-                    callback(ans);
                 });
             });
             req.end();
@@ -207,33 +211,33 @@ function fillTestsView(request, callback) {
                 case 6:
                     size = "col s2";
                     break;
-                case 7:
-                    size = "col s1";
-                    break;
-                case 8:
-                    size = "col s1";
-                    break;
-                case 9:
-                    size = "col s1";
-                    break;
-                case 10:
-                    size = "col s1";
-                    break;
-                case 11:
-                    size = "col s1";
-                    break;
-                case 12:
-                    size = "col s1";
-                    break;
+                // case 7:
+                //     size = "col s1";
+                //     break;
+                // case 8:
+                //     size = "col s1";
+                //     break;
+                // case 9:
+                //     size = "col s1";
+                //     break;
+                // case 10:
+                //     size = "col s1";
+                //     break;
+                // case 11:
+                //     size = "col s1";
+                //     break;
+                // case 12:
+                //     size = "col s1";
+                //     break;
                 default:
-                    size = "";
+                    size = "col s2";
                     break;
             }
             for (let i = 0; i < obj.length; i++) {
                 if (i === 0)
-                    table += `<li class="tab ${size}"><a class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+                    table += `<li class="tab ${size}"><a id="${obj[i].id}" class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
                 else
-                    table += `<li class="tab ${size}"><a href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+                    table += `<li class="tab ${size}"><a id="${obj[i].id}" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
             }
 
             table += '</ul>' + '</div>';
@@ -241,7 +245,8 @@ function fillTestsView(request, callback) {
             for (let i = 0; i < obj.length; i++) {
                 table += `<div id="test${obj[i].id}" class="col s12" style="margin-top: 3%">`;
                 // Base
-                table += `<h3 align="center">Base questions</h3>`;
+                table += `<h4 align="center">Test ${obj[i].id}</h4>`;
+                table += `<h3 align="center">Multiply-choice questions</h3>`;
                 table += `<table class="highlight" id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
 
                 for (let j = 0; j < obj[i].baseQuestions.length; j++) {
@@ -945,6 +950,62 @@ function getResultsFile(request, callback) {
     req.end();
 }
 
+function getTest(tmp, request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/testExport/" + tmp,
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function deleteTest(request, callback){
+    let options = {
+        "method": "DELETE",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/test",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "testId" : request.headers.id
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -955,14 +1016,33 @@ module.exports = {
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js' || request.url === '/favicon.ico') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
-        } else if (request.url === '/sendAudio'){
-            sendAudio(request, valid => {
-                if (valid){
+        } else if (request.url.startsWith('/getTest')) {
+            let t = (request.url.split('/'))[2];
+            let tmp = t.slice(4, t.length);
+            getTest(tmp, request, valid => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'Content-Disposition': `attachment; filename=test${tmp}.docx`
+                    });
+                    response.end(valid);
+                }
+            })
+        } else if (request.url === '/deleteTest') {
+            deleteTest(request, valid => {
+                if (valid) {
                     response.statusCode = 200;
                     response.end()
                 }
             })
-        }else if (request.url.startsWith('/getAudio')){
+        } else if (request.url === '/sendAudio') {
+            sendAudio(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url.startsWith('/getAudio')) {
             let t = (request.url.split('/'))[2];
             let tmp = t.slice(4, t.length);
             getAudio(tmp, request, valid => {
@@ -974,8 +1054,7 @@ module.exports = {
                     response.end(valid);
                 }
             })
-        }
-        else if (request.url === '/sendWritingGrade') {
+        } else if (request.url === '/sendWritingGrade') {
             sendWritingGradeToDB(request, callback => {
                 if (callback) {
                     response.statusCode = 200;
