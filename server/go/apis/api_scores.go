@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func ScoreGet(w http.ResponseWriter, r *http.Request) {
@@ -78,14 +79,14 @@ func ScoreExcelGet(w http.ResponseWriter, r *http.Request) {
 func CountScore(correctAnswers *Model.AnswerContainer, studAnswers Model.AnswerContainer) (score Model.Score, err error) {
 
 	for i := range correctAnswers.Base {
-		if correctAnswers.Base[i] == studAnswers.Base[i] {
+		if strings.EqualFold(correctAnswers.Base[i].Answer, studAnswers.Base[i].Answer) {
 			score.Base++
 		}
 	}
 	score.BaseAmount = len(correctAnswers.Base)
 
 	for i := range correctAnswers.Reading {
-		if correctAnswers.Reading[i] == studAnswers.Reading[i] {
+		if strings.EqualFold(correctAnswers.Reading[i].Answer, studAnswers.Reading[i].Answer) {
 			score.Reading++
 		}
 	}
