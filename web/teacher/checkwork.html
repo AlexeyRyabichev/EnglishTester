@@ -98,17 +98,18 @@
         margin-bottom: 5%;
     }
 </style>
-<script type="text/javascript" src="/recorder.js"></script>
-<script type="text/javascript" src="/recordSupport.js"></script>
+<script src="/recorder.js" type="text/javascript"></script>
+<script src="/recordSupport.js" type="text/javascript"></script>
 <script type="text/javascript">
     let flag = false;
+
     function record(id) {
-        if (flag === false){
+        if (flag === false) {
             flag = true;
             document.getElementById("recording" + id).classList.add("pulse");
             document.getElementById("recording" + id).innerHTML = `<i class="material-icons left">voice_over_off</i>Stop recording`;
             startRecording();
-        } else{
+        } else {
             flag = false;
             document.getElementById("recording" + id).classList.remove("pulse");
             document.getElementById("recording" + id).innerHTML = `<i class="material-icons left">record_voice_over</i>Start recording`;
@@ -117,7 +118,7 @@
             // You can use mp3 to using the correct mimetype
             let _AudioFormat = "audio/mpeg";
 
-            stopRecording(id, function(AudioBLOB){
+            stopRecording(id, function (AudioBLOB) {
                 let formData = new FormData();
                 formData.append("file", AudioBLOB, "student" + id + ".mp3");
                 let req = new XMLHttpRequest();
