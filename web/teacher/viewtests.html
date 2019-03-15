@@ -55,7 +55,8 @@
         <!-- Dropdown Trigger -->
         <a class="dropdown-trigger waves-effect waves-light btn" data-target='dropdown1'><i
                 class="material-icons left">cloud_upload</i>Upload</a>
-        <a class="waves-effect waves-light btn disabled" download href="/getTestsFiles"><i class="material-icons left">cloud_download</i>Download</a>
+        <a class="waves-effect waves-light btn" download onclick="getTest()" id="downloadTestButton"><i class="material-icons left">cloud_download</i>Download</a>
+        <a class="waves-effect waves-light btn"><i class="material-icons left">delete</i>Delete</a>
 
         <!-- Dropdown Structure -->
         <ul class='dropdown-content' id='dropdown1'>
@@ -82,9 +83,24 @@
 <script src="../js/bin/materialize.min.js" type="text/javascript"></script>
 <script src="../navbarInit.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var elems = document.querySelectorAll('.tabs');
-    var instance = M.Tabs.init(elems, {});
+    let elems = document.querySelectorAll('.tabs');
+    let instance = M.Tabs.init(elems, {});
 
+    function getTest() {
+        let tmp = document.getElementsByClassName("tab");
+        let button = document.getElementById("downloadTestButton");
+        for (let i = 0; i < tmp.length; ++i) {
+            if (tmp[i].children[0].classList.contains("active")){
+                button.href = "/getTest/?id=" + tmp[i].children[0].id;
+                // button.click();
+                // let req = new XMLHttpRequest();
+                // req.open('get', "/getTest/?id=" + tmp[i].children[0].id, true);
+                // req.send();
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
     let questionsFlag = false;
     let answersFlag = false;
 
@@ -121,11 +137,6 @@
         req.send(formData);
         M.toast({html: 'Files uploaded!'});
     }
-
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     var elems = document.querySelectorAll('.dropdown-trigger');
-    //     var instances = M.Dropdown.init(elems, options);
-    // });
 </script>
 
 </body>
