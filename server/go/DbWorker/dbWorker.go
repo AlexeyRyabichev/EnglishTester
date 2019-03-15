@@ -99,6 +99,19 @@ func CreateSchemaTest() error {
 	return nil
 }
 
+func CreateSchemaAuditory() error {
+	for _, model := range []interface{}{(*Model.Auditory)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
+			Temp: false,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+
 func CreateSchemaScore() error {
 	for _, model := range []interface{}{(*Model.Score)(nil)} {
 		err := Db.CreateTable(model, &orm.CreateTableOptions{
