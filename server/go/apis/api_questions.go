@@ -44,9 +44,7 @@ func AnswersPost(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("role") != Roles.RolesText(Roles.Student) {
 		w.WriteHeader(http.StatusForbidden)
 		_, err := w.Write([]byte("У вас нет полномочий для этого действия."))
-		if err != nil {
-			log.Println(err.Error())
-		}
+		log.Println(err.Error())
 		log.Print(http.StatusText(http.StatusForbidden))
 		return
 	}
@@ -54,17 +52,30 @@ func AnswersPost(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("id")
 	var student Model.Student
 	var answers Model.AnswerContainer
+	err:=DbWorker.Db.Model(&student).Relation("Test").Where("student.id = ?",id).Column("student.*","test.id").Select(&student)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&answers); err == io.EOF {
 		//OK
 	} else if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
-	_, err := DbWorker.Db.Model(&student).Column("answers").Where("id = ?", id).Update()
+	student.Answers=answers
+
+	_, err = DbWorker.Db.Model(&student).Column("answers").Where("id = ?", id).Update()
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 

@@ -86,12 +86,13 @@ func CountScore(correctAnswers *Model.AnswerContainer, studAnswers Model.AnswerC
 
 	for i := range correctAnswers.Reading {
 		if correctAnswers.Reading[i] == studAnswers.Reading[i] {
-			score.Base++
+			score.Reading++
 		}
 	}
 	score.ReadingAmount = len(correctAnswers.Reading)
 	score.ListeningAmount=20
 	score.WritingAmount=10
 	score.Sum = score.Reading + score.Base
+	score.SumAmount = score.BaseAmount+score.ListeningAmount+score.ReadingAmount+score.WritingAmount
 	return score, nil
 }
