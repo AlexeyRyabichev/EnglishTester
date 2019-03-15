@@ -238,4 +238,25 @@ var routes = Routes{
 		"/api/testExport/{testId}",
 		api.TestExportGet,
 	},
+
+	Route{
+		"AuditoryPost",
+		strings.ToUpper("Post"),
+		"/api/auditory",
+		api.AuditoryPost,
+	},
+
+	Route{
+		"AuditoryDelete",
+		strings.ToUpper("Delete"),
+		"/api/auditory",
+		api.AuditoryDelete,
+	},
+
+	Route{
+		"AddToQueuePost",
+		strings.ToUpper("Post"),
+		"/api/queue",
+		api.AddToQueuePost,
+	},
 }
