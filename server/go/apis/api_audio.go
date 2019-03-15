@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
@@ -35,9 +37,7 @@ func AudioStudentIdGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err := w.Write([]byte(err.Error()))
-		if err != nil {
 			log.Println(err.Error())
-		}
 		return
 	}
 	audioFile, err := ioutil.ReadFile(path)
@@ -93,8 +93,8 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	fp, err := filepath.Abs("./audios/" + strconv.FormatInt(studId, 10) + ".mp3")
+	filename:=strings.Join([]string{strconv.FormatInt(studId, 10),time.Now().Format("02_01_2006_15_04_05")}, "_")
+	fp, err := filepath.Abs("./audios/" +filename  + ".mp3")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -112,9 +112,12 @@ func AudioStudentIdPost(w http.ResponseWriter, r *http.Request) {
 	var audio = Model.Audio{StudentId: studId,
 		Path: fp,
 	}
-	_, err = DbWorker.Db.Model(&audio).Insert()
+
+	_, err = DbWorker.Db.Model(&audio).OnConflict("(student_id) DO UPDATE").Set("path = ?",audio.Path).Insert()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		log.Print(err)
 		return
 	}
 

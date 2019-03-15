@@ -786,7 +786,7 @@ function sendNewPassword(request, callback) {
             port: 8080,
             path: '/api/teacher/password',
             method: 'POST',
-            headers : tmpHeader
+            headers: tmpHeader
         };
 
         const req = http.request(options, (res) => {
@@ -825,7 +825,7 @@ function generateNewPassword(request, callback) {
             port: 8080,
             path: '/api/student/changePassword',
             method: 'POST',
-            headers : tmpHeader
+            headers: tmpHeader
         };
 
         const req = http.request(options, (res) => {
@@ -918,6 +918,33 @@ function getAudio(tmp, request, callback) {
     req.end();
 }
 
+function getResultsFile(request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/scoreExcel",
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
@@ -981,6 +1008,16 @@ module.exports = {
                 }
 
             });
+        } else if (request.url === '/getResultsFile') {
+            getResultsFile(request, (valid) => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Disposition': 'attachment; filename=ResultsList.xlsx'
+                    });
+                    response.end(valid);
+                }
+            })
         } else if (request.url === '/getStudentsFile') {
             getStudentsFile(request, (valid) => {
                 if (valid) {
@@ -1009,16 +1046,15 @@ module.exports = {
             sendTestFile(request, (valid) => {
                 response.end()
             })
-        } else if (request.url === '/sendNewPassword'){
+        } else if (request.url === '/sendNewPassword') {
             sendNewPassword(request, (valid) => {
                 response.end();
             })
-        }else if (request.url === '/generateNewPassword'){
+        } else if (request.url === '/generateNewPassword') {
             generateNewPassword(request, (valid) => {
                 response.end(valid);
             })
-        }
-        else if (request.url === '/auth') {
+        } else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
                     request.url = "/teacher/students.html";
