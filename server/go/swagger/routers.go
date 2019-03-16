@@ -82,7 +82,7 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/api/student/changePassword",
 		api.StudentChangePassword,
-		},
+	},
 
 	Route{
 		"StudentsDelete",
@@ -203,7 +203,7 @@ var routes = Routes{
 	Route{"ScoreExcelGet",
 		strings.ToUpper("Get"),
 		"/api/scoreExcel",
-		api.ScoreExcelGet,},
+		api.ScoreExcelGet},
 	Route{
 		"ScoreGet",
 		strings.ToUpper("Get"),
@@ -240,9 +240,30 @@ var routes = Routes{
 	},
 
 	Route{
-		"TestDelete",
+		"AuditoryPost",
+		strings.ToUpper("Post"),
+		"/api/auditory",
+		api.AuditoryPost,
+	},
+
+	Route{
+		"AuditoryDelete",
 		strings.ToUpper("Delete"),
-		"/api/test",
-		api.TestDelete,
+		"/api/auditory",
+		api.AuditoryDelete,
+	},
+
+	Route{
+		"AddToQueuePost",
+		strings.ToUpper("Post"),
+		"/api/queue",
+		api.AddToQueuePost,
+	},
+
+	Route{
+		"AuditoriesGet",
+		strings.ToUpper("Get"),
+		"/api/auditories",
+		api.AuditoriesGet,
 	},
 }

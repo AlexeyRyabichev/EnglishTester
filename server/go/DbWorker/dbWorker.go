@@ -6,6 +6,7 @@ import (
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
 	"log"
+	"math"
 )
 
 var Db *pg.DB
@@ -99,6 +100,19 @@ func CreateSchemaTest() error {
 	return nil
 }
 
+func CreateSchemaAuditory() error {
+	for _, model := range []interface{}{(*Model.Auditory)(nil)} {
+		err := Db.CreateTable(model, &orm.CreateTableOptions{
+			Temp: false,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+
 func CreateSchemaScore() error {
 	for _, model := range []interface{}{(*Model.Score)(nil)} {
 		err := Db.CreateTable(model, &orm.CreateTableOptions{
@@ -134,6 +148,52 @@ func MockAnswers() error {
 	log.Print(string(str))
 	return nil
 }
+
+func AddToQueuePost()   {
+
+	studentId := 164;
+	var student Model.Student
+	Db.Model(&student).Where("id = ?",studentId).Select()
+
+	var auditories []Model.Auditory
+
+	err:=Db.Model(&auditories).Select()
+	if err != nil {
+
+	}
+	queueId:=findMinimalQueue(auditories)
+	if(queueId==-1){
+		log.Print("ERRORRRRRRRRR")
+		return
+	}
+
+	var auditory Model.Auditory
+	auditory.Id=queueId
+	Db.Model(&auditory).WherePK().Select()
+	if err != nil {
+
+	}
+	auditory.Queue=append(auditory.Queue, student)
+	_,err=Db.Model(&auditory).WherePK().Update()
+	if err != nil {
+		log.Print(err)
+	}
+
+}
+
+
+func findMinimalQueue(auditories []Model.Auditory) int64 {
+	var minId int64 = -1
+	minLen:=math.MaxInt32
+	for _,v:= range auditories{
+		if(len(v.Queue)<=minLen){
+			minId=v.Id;
+			minLen=len(v.Queue)
+		}
+	}
+	return minId
+}
+
 
 //
 //func InsertTests() error {
