@@ -47,12 +47,17 @@ func StudentCreateWithExcelPost(w http.ResponseWriter, r *http.Request) {
 	}
 	size := fh.Size
 	slice, err := ExcelWorker.ExcelAsSlice(file, size)
-	students := make([]Model.Student, len(slice[0])-1)
-	for i, _ := range students {
-		students[i].Name = slice[0][i+1][0]
-		students[i].Email = slice[0][i+1][1]
-		pass, _ := PassGenerator.Generate(8, 6, 0, false, false)
-		students[i].Password = pass
+	var students []Model.Student
+	for _, v := range slice[0][1:] {
+		if(len(v)==0 || v ==nil){
+			continue
+		}
+		var tmpStudent Model.Student
+		tmpStudent.Name = v[0]
+		tmpStudent.Email = v[1]
+		pass, _ := PassGenerator.Generate(8, 8, 0, false, false)
+		tmpStudent.Password = pass
+		students = append(students, tmpStudent)
 	}
 	_, err = DbWorker.Db.Model(&students).Insert()
 	if err != nil {
@@ -210,7 +215,7 @@ func StudentChangePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pass, err := PassGenerator.Generate(8, 6, 0, false, false)
+	pass, err := PassGenerator.Generate(8, 8, 0, false, false)
 	if err != nil {
 		log.Print(err)
 		w.WriteHeader(http.StatusBadRequest)

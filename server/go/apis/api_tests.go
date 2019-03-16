@@ -5,6 +5,7 @@ import (
 	Model "../models"
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -38,6 +39,28 @@ func TestPost(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
+
+func TestDelete(w http.ResponseWriter, r *http.Request){
+	//Todo: Run as transaction
+	id:=r.Header.Get("testId")
+	_, err := DbWorker.Db.Model((*Model.Test)(nil)).Where("id = ?",id).Delete()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	query:=	fmt.Sprintf("Select update_student_bytestId(%v)",id)
+	_,err=DbWorker.Db.Exec(query)
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+}
+
 
 func TestDocPost(w http.ResponseWriter,r *http.Request)  {
 	fileQuestions,_,err := r.FormFile("questions")

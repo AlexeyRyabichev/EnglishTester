@@ -50,6 +50,9 @@
 
 <div class="container">
     <h1 align="center">Students list</h1>
+    <!--<button id="start-btn">Start recording</button>-->
+    <!--<button id="stop-btn" disabled>Stop recording</button>-->
+    <!--<ul id="recordingslist"></ul>-->
     <nav id="magicNav">
         <div class="nav-wrapper" id="magicDiv">
             <form onsubmit="return false">
@@ -95,6 +98,37 @@
         margin-bottom: 5%;
     }
 </style>
+<script src="/recorder.js" type="text/javascript"></script>
+<script src="/recordSupport.js" type="text/javascript"></script>
+<script type="text/javascript">
+    let flag = false;
+
+    function record(id) {
+        if (flag === false) {
+            flag = true;
+            document.getElementById("recording" + id).classList.add("pulse");
+            document.getElementById("recording" + id).innerHTML = `<i class="material-icons left">voice_over_off</i>Stop recording`;
+            startRecording();
+        } else {
+            flag = false;
+            document.getElementById("recording" + id).classList.remove("pulse");
+            document.getElementById("recording" + id).innerHTML = `<i class="material-icons left">record_voice_over</i>Start recording`;
+            //TODO: add hint "This student already have recording. It will be overwritten, if you start new recording"
+            // let _AudioFormat = "audio/wav";
+            // You can use mp3 to using the correct mimetype
+            let _AudioFormat = "audio/mpeg";
+
+            stopRecording(id, function (AudioBLOB) {
+                let formData = new FormData();
+                formData.append("file", AudioBLOB, "student" + id + ".mp3");
+                let req = new XMLHttpRequest();
+                req.open('post', '/sendAudio', true);
+                req.setRequestHeader('id', id);
+                req.send(formData);
+            }, _AudioFormat);
+        }
+    }
+</script>
 
 </body>
 

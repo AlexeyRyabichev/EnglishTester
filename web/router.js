@@ -52,16 +52,20 @@ function getStudentsTable(request, callback) {
                     let body = Buffer.concat(chunks);
                     body = JSON.parse(body.toString());
                     let ans = '';
-                    for (let i = 0; i < body.length; i++) {
-                        ans += '<tr>';
-                        ans += `<td>${body[i].id}</td>`;
-                        ans += `<td>${body[i].name}</td>`;
-                        ans += `<td>${body[i].email}</td>`;
-                        ans += `<td id="td${body[i].id}">${body[i].password}<a class="btn-flat" onclick="changePassword(${body[i].id})"><i class="material-icons left">refresh</i></a></td>`;
-                        ans += `<td>${body[i].testId}</td>`;
-                        ans += '</tr>';
+                    if (body === null) {
+                        callback(ans);
+                    } else {
+                        for (let i = 0; i < body.length; i++) {
+                            ans += '<tr>';
+                            ans += `<td>${body[i].id}</td>`;
+                            ans += `<td>${body[i].name}</td>`;
+                            ans += `<td>${body[i].email}</td>`;
+                            ans += `<td id="td${body[i].id}">${body[i].password}<a class="btn-flat" onclick="changePassword(${body[i].id})"><i class="material-icons left">refresh</i></a></td>`;
+                            ans += `<td>${body[i].testId}</td>`;
+                            ans += '</tr>';
+                        }
+                        callback(ans);
                     }
-                    callback(ans);
                 });
             });
             req.end();
@@ -71,10 +75,7 @@ function getStudentsTable(request, callback) {
 }
 
 function getStudentsResults(request, callback) {
-    var qs = require("querystring");
-    var http = require("http");
-
-    var options = {
+    let options = {
         "method": "GET",
         "hostname": "127.0.0.1",
         "port": "8080",
@@ -84,8 +85,8 @@ function getStudentsResults(request, callback) {
         }
     };
 
-    var req = http.request(options, function (res) {
-        var chunks = [];
+    let req = http.request(options, function (res) {
+        let chunks = [];
 
         res.on("data", function (chunk) {
             chunks.push(chunk);
@@ -125,47 +126,6 @@ function getStudentsResults(request, callback) {
 
     req.write(qs.stringify({undefined: undefined}));
     req.end();
-    // checkToken(request, (valid) => {
-    //     if (valid) {
-    //         const options = {
-    //             hostname: '127.0.0.1',
-    //             port: 8080,
-    //             path: '/api/students',
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/x-www-form-urlencoded',
-    //                 'Authorization': parseCookies(request)['token']
-    //             }
-    //         };
-    //
-    //         const req = http.request(options, function (res) {
-    //             let chunks = [];
-    //
-    //             res.on("data", function (chunk) {
-    //                 chunks.push(chunk);
-    //             });
-    //
-    //             res.on("end", function () {
-    //                 let body = Buffer.concat(chunks);
-    //                 body = JSON.parse(body.toString());
-    //                 let ans = '';
-    //                 for (let i = 0; i < body.length; i++) {
-    //                     ans += '<tr>';
-    //                     ans += '<td>';
-    //                     ans += body[i].name;
-    //                     ans += '</td>';
-    //                     ans += '<td>';
-    //                     ans += "10 \\ 10"; //TODO: GET RESULTS FROM SERVER
-    //                     ans += '</td>';
-    //                     ans += '</tr>';
-    //                 }
-    //                 callback(ans);
-    //             });
-    //         });
-    //         req.end();
-    //     } else
-    //         callback('Something is wrong');
-    // });
 }
 
 function getUsername(request, callback) {
@@ -251,33 +211,33 @@ function fillTestsView(request, callback) {
                 case 6:
                     size = "col s2";
                     break;
-                case 7:
-                    size = "col s1";
-                    break;
-                case 8:
-                    size = "col s1";
-                    break;
-                case 9:
-                    size = "col s1";
-                    break;
-                case 10:
-                    size = "col s1";
-                    break;
-                case 11:
-                    size = "col s1";
-                    break;
-                case 12:
-                    size = "col s1";
-                    break;
+                // case 7:
+                //     size = "col s1";
+                //     break;
+                // case 8:
+                //     size = "col s1";
+                //     break;
+                // case 9:
+                //     size = "col s1";
+                //     break;
+                // case 10:
+                //     size = "col s1";
+                //     break;
+                // case 11:
+                //     size = "col s1";
+                //     break;
+                // case 12:
+                //     size = "col s1";
+                //     break;
                 default:
-                    size = "";
+                    size = "col s2";
                     break;
             }
             for (let i = 0; i < obj.length; i++) {
                 if (i === 0)
-                    table += `<li class="tab ${size}"><a class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+                    table += `<li class="tab ${size}"><a id="${obj[i].id}" class="active" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
                 else
-                    table += `<li class="tab ${size}"><a href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
+                    table += `<li class="tab ${size}"><a id="${obj[i].id}" href="#test${obj[i].id}">Test ${obj[i].id}</a></li>`;
             }
 
             table += '</ul>' + '</div>';
@@ -285,7 +245,8 @@ function fillTestsView(request, callback) {
             for (let i = 0; i < obj.length; i++) {
                 table += `<div id="test${obj[i].id}" class="col s12" style="margin-top: 3%">`;
                 // Base
-                table += `<h3 align="center">Base questions</h3>`;
+                table += `<h4 align="center">Test ${obj[i].id}</h4>`;
+                table += `<h3 align="center">Multiply-choice questions</h3>`;
                 table += `<table class="highlight" id="baseQuestionsTable${obj[i].id}"><thead><tr><th style="width: 2%">№</th><th style="width: 32%">Question</th><th style="width: 32%">Options</th><th>Correct answer</th></tr></thead><tbody>`;
 
                 for (let j = 0; j < obj[i].baseQuestions.length; j++) {
@@ -363,12 +324,104 @@ function createStudentsList(request, callback) {
                 ans += `<div class="collapsible-header"><i class="material-icons">person</i>${body[i].name}</div>`;
                 ans += `<div class="collapsible-body"><b>Writing:</b><br/><p>${(body[i].answers.writing).replaceAll("\n", "<br/>")}</p><br/>`;
                 ans += `<a class="waves-effect waves-light btn" id="writing${body[i].id}" onclick="sendWritingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set writing grade</a><div class="input-field inline"><input id="writing${body[i].id}Grade"></div><br/>`;
-                ans += `<a class="waves-effect waves-light btn" id="speaking${body[i].id}" onclick="sendSpeakingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set speaking grade</a><div class="input-field inline"><input id="speaking${body[i].id}Grade"></div>`;
+                ans += `<a class="waves-effect waves-light btn" id="speaking${body[i].id}" onclick="sendSpeakingGrade(this)" style="margin-right: 2%"><i class="material-icons left">done</i>Set speaking grade</a><div class="input-field inline"><input id="speaking${body[i].id}Grade"></div><br/><br/>`;
+                ans += `<a class="waves-effect waves-light btn" id="recording${body[i].id}" onclick="record(${body[i].id})" style="margin-right: 2%"><i class="material-icons left">record_voice_over</i>Start recording</a>`;
+                ans += `<a class="waves-effect waves-light btn" download href="/getAudio/?id=${body[i].id}"><i class="material-icons left">cloud_download</i>Download audio</a>`;
                 ans += `</div>`;
                 ans += `</li>`;
             }
             ans += '</ul>';
             callback(ans);
+        });
+    });
+    req.end();
+}
+
+function fillSettings(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/auditories',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': parseCookies(request)['token']
+        }
+    };
+
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            body = JSON.parse(body.toString());
+            let ans = '';
+            if (body === null) {
+                callback(ans);
+            } else {
+                for (let i = 0; i < body.length; i++) {
+                    ans += `<tr>`;
+                    ans += `<td>`;
+                    ans += `${body[i].Number}`;
+                    ans += `</td>`;
+                    ans += `<td>`;
+                    ans += `<a class="waves-effect waves-light btn" onclick="deleteAuditory(${body[i].Number})"><i class="material-icons left">delete</i>Delete</a>`;
+                    ans += `</td>`;
+                    ans += `</tr>`;
+                }
+                callback(ans);
+            }
+        });
+    });
+    req.end();
+}
+
+function fillQueue(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/auditories',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            body = JSON.parse(body.toString());
+            let ans = '';
+            if (body === null) {
+                callback(ans);
+            } else {
+                for (let i = 0; i < body.length; i++) {
+                    ans += `<tr>`;
+                    ans += `<td>`;
+                    ans += `${body[i].Number}`;
+                    ans += `</td>`;
+                    ans += `<td>`;
+                    for (let j = 0; j < body[i].Queue.length; j++) {
+                        ans += `${body[i].Queue[j].name}`;
+                        if (j !== body[i].Queue.length) {
+                            ans += `<br/>`
+                        }
+                    }
+                    ans += `</td>`;
+                    ans += `</tr>`;
+                }
+                callback(ans);
+            }
         });
     });
     req.end();
@@ -422,6 +475,22 @@ function openTemplate(request, response) {
                 });
             else if (request.url.indexOf("checkwork.html") > -1)
                 createStudentsList(request, (list) => {
+                    data = data.replace("{TABLE}", list);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("settings.html") > -1)
+                fillSettings(request, (list) => {
+                    data = data.replace("{TABLE}", list);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("onlinequeue.html") > -1)
+                fillQueue(request, (list) => {
                     data = data.replace("{TABLE}", list);
                     getUsername(request, (username) => {
                         data = data.replace("{USERNAME}", username);
@@ -828,7 +897,7 @@ function sendNewPassword(request, callback) {
             port: 8080,
             path: '/api/teacher/password',
             method: 'POST',
-            headers : tmpHeader
+            headers: tmpHeader
         };
 
         const req = http.request(options, (res) => {
@@ -867,7 +936,7 @@ function generateNewPassword(request, callback) {
             port: 8080,
             path: '/api/student/changePassword',
             method: 'POST',
-            headers : tmpHeader
+            headers: tmpHeader
         };
 
         const req = http.request(options, (res) => {
@@ -892,16 +961,277 @@ function generateNewPassword(request, callback) {
     });
 }
 
+function sendAudio(request, callback) {
+
+    let auth = parseCookies(request)['token'];
+    let chunks = [];
+    let tmpHeader = request.headers;
+    request.on('data', chunk => {
+        chunks.push(chunk);
+    });
+    request.on('end', (flag) => {
+        // console.log("BODY" + body);
+        if (!auth || auth === '' || auth === 'undefined') {
+            callback(false);
+            return;
+        }
+
+        const options = {
+            hostname: '127.0.0.1',
+            port: 8080,
+            path: '/api/audio/' + request.headers.id,
+            method: 'POST',
+            headers: tmpHeader
+        };
+
+        const req = http.request(options, (res) => {
+            console.log(`status: ${res.statusCode}`);
+            if (res.statusCode === 200)
+                callback(true);
+            else
+                callback(false);
+        });
+
+        req.setHeader('Authorization', auth);
+
+        req.on("error", (e) => {
+            console.log(e);
+        });
+
+        req.end(Buffer.concat(chunks));
+    });
+}
+
+function getAudio(tmp, request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/audio/" + tmp,
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function getResultsFile(request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/scoreExcel",
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function getTest(tmp, request, callback) {
+    let options = {
+        "method": "GET",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/testExport/" + tmp,
+        "headers": {
+            "Authorization": parseCookies(request)['token']
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function deleteTest(request, callback) {
+    let options = {
+        "method": "DELETE",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/test",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "testId": request.headers.id
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function deleteAuditory(request, callback) {
+    let options = {
+        "method": "DELETE",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/auditory",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "number": request.headers.id
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function addAuditory(request, callback) {
+    let options = {
+        "method": "POST",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/auditory",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "number": request.headers.id
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
         const date = new Date();
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
-        if (request.url === '/' || request.url === '/index.html') {
+        if (request.url === '/onlinequeue.html') {
+            request.url = path.join(__dirname, '/teacher' +request.url);
+            openTemplate(request, response);
+        } else if (request.url === '/' || request.url === '/index.html') {
             open(path.join(__dirname, '/teacher/index.html'), response);
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js' || request.url === '/favicon.ico') {
             request.url = path.join(__dirname, request.url);
             open(request.url, response);
+        } else if (request.url.startsWith('/getTest')) {
+            let t = (request.url.split('/'))[2];
+            let tmp = t.slice(4, t.length);
+            getTest(tmp, request, valid => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'Content-Disposition': `attachment; filename=test${tmp}.docx`
+                    });
+                    response.end(valid);
+                }
+            })
+        } else if (request.url === '/deleteTest') {
+            deleteTest(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url === '/addAuditory') {
+            addAuditory(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url === '/deleteAuditory') {
+            deleteAuditory(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url === '/sendAudio') {
+            sendAudio(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url.startsWith('/getAudio')) {
+            let t = (request.url.split('/'))[2];
+            let tmp = t.slice(4, t.length);
+            getAudio(tmp, request, valid => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'audio/mpeg',
+                        'Content-Disposition': `attachment; filename=student${tmp}.mp3`
+                    });
+                    response.end(valid);
+                }
+            })
         } else if (request.url === '/sendWritingGrade') {
             sendWritingGradeToDB(request, callback => {
                 if (callback) {
@@ -935,6 +1265,16 @@ module.exports = {
                 }
 
             });
+        } else if (request.url === '/getResultsFile') {
+            getResultsFile(request, (valid) => {
+                if (valid) {
+                    response.writeHead(200, {
+                        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'Content-Disposition': 'attachment; filename=ResultsList.xlsx'
+                    });
+                    response.end(valid);
+                }
+            })
         } else if (request.url === '/getStudentsFile') {
             getStudentsFile(request, (valid) => {
                 if (valid) {
@@ -963,16 +1303,15 @@ module.exports = {
             sendTestFile(request, (valid) => {
                 response.end()
             })
-        } else if (request.url === '/sendNewPassword'){
+        } else if (request.url === '/sendNewPassword') {
             sendNewPassword(request, (valid) => {
                 response.end();
             })
-        }else if (request.url === '/generateNewPassword'){
+        } else if (request.url === '/generateNewPassword') {
             generateNewPassword(request, (valid) => {
                 response.end(valid);
             })
-        }
-        else if (request.url === '/auth') {
+        } else if (request.url === '/auth') {
             handleAuth(request, (token, email) => {
                 if (token) {
                     request.url = "/teacher/students.html";
