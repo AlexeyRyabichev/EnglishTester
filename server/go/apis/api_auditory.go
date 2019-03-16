@@ -102,13 +102,15 @@ func AuditoriesGet(w http.ResponseWriter, r *http.Request)  {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	var prxAuds []Model.Auditory
+	var prxAuds []Model.ProxyAuditory
 	for _,v:=range aud{
 		prxAud :=Model.ProxyAuditory{Id:v.Id}
+		prxAud.Number= v.Number
 		prxAud.Queue=make([]Model.Queue,len(v.Queue))
 		for j:=0;j<len(v.Queue);j++  {
-			prxAud.Queue=append(prxAud.Queue,Model.Queue{v.Queue[j].Id,v.Queue[j].Name})
+			prxAud.Queue[j]=Model.Queue{StudentId:v.Queue[j].Id,Name:v.Queue[j].Name}
 		}
+		prxAuds=append(prxAuds, prxAud)
 	}
 
 	jsoned,err :=json.Marshal(prxAuds)

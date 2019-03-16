@@ -14,5 +14,5 @@ type ProxyAuditory struct {
 }
 type Queue struct{
 	StudentId int64 `json:"id"`
-	Name string `json:"id"`
+	Name string `json:"name"`
 }
