@@ -51,14 +51,44 @@
 <div class="container">
     <h3 align="center">Settings</h3>
     <div class="row">
-        <form onsubmit="saveNewPassword();return false;">
-            <b>Enter new password:</b>
-            <div class="input-field inline"  style="margin-left: 2%">
-                <input class="validate" id="password_inline" type="password" required>
-                <label for="password_inline">Password</label>
-            </div>
-            <button class="btn inline" type="submit" style="margin-left: 2%">Save<i class="material-icons left">save</i></button>
-        </form>
+        <div class="container center-align">
+            <form onsubmit="saveNewPassword();return false;">
+                <b>Enter new password:</b>
+                <div class="input-field inline" style="margin-left: 2%">
+                    <input class="validate" id="password_inline" required type="password">
+                    <label for="password_inline">Password</label>
+                </div>
+                <button class="btn inline" style="margin-left: 2%" type="submit">Save<i
+                        class="material-icons left">save</i>
+                </button>
+            </form>
+        </div>
+        <h3 align="center">Auditoriums</h3>
+        <div class="container center-align">
+            <form onsubmit="addAuditory();return false;">
+                <b>Enter new auditory number:</b>
+                <div class="input-field inline" style="margin-left: 2%">
+                    <input class="validate" id="auditory_inline" required type="number">
+                    <label for="auditory_inline">Auditory number</label>
+                </div>
+                <button class="btn inline" style="margin-left: 2%" type="submit">Add<i
+                        class="material-icons left">add</i>
+                </button>
+            </form>
+        </div>
+        <div class="container">
+            <table class="highlight centered">
+                <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                {TABLE}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -67,10 +97,25 @@
 <script src="../js/bin/materialize.min.js" type="text/javascript"></script>
 <script src="../navbarInit.js" type="text/javascript"></script>
 <script type="text/javascript">
+    function addAuditory() {
+        req = new XMLHttpRequest();
+        req.open('post', "/addAuditory", true);
+        req.setRequestHeader("id", document.getElementById("auditory_inline").value);
+        req.send();
+        M.toast({html: 'Auditory added!'});
+        window.location.reload(true);
+    }
+
+    function deleteAuditory(id) {
+        req = new XMLHttpRequest();
+        req.open('delete', "/deleteAuditory", true);
+        req.setRequestHeader("id", id);
+        req.send();
+        M.toast({html: 'Auditory deleted!'});
+        window.location.reload(true);
+    }
+
     function saveNewPassword() {
-        if (document.getElementById("password_inline").value === ""){
-            M.toast({html: '!'});
-        }
         let formData = new FormData();
         formData.append("password", document.getElementById("password_inline").value);
         req = new XMLHttpRequest();

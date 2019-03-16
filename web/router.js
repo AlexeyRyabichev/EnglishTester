@@ -337,6 +337,96 @@ function createStudentsList(request, callback) {
     req.end();
 }
 
+function fillSettings(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/auditories',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': parseCookies(request)['token']
+        }
+    };
+
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            body = JSON.parse(body.toString());
+            let ans = '';
+            if (body === null) {
+                callback(ans);
+            } else {
+                for (let i = 0; i < body.length; i++) {
+                    ans += `<tr>`;
+                    ans += `<td>`;
+                    ans += `${body[i].Number}`;
+                    ans += `</td>`;
+                    ans += `<td>`;
+                    ans += `<a class="waves-effect waves-light btn" onclick="deleteAuditory(${body[i].Number})"><i class="material-icons left">delete</i>Delete</a>`;
+                    ans += `</td>`;
+                    ans += `</tr>`;
+                }
+                callback(ans);
+            }
+        });
+    });
+    req.end();
+}
+
+function fillQueue(request, callback) {
+    const options = {
+        hostname: '127.0.0.1',
+        port: 8080,
+        path: '/api/auditories',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+
+    const req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            body = JSON.parse(body.toString());
+            let ans = '';
+            if (body === null) {
+                callback(ans);
+            } else {
+                for (let i = 0; i < body.length; i++) {
+                    ans += `<tr>`;
+                    ans += `<td>`;
+                    ans += `${body[i].Number}`;
+                    ans += `</td>`;
+                    ans += `<td>`;
+                    for (let j = 0; j < body[i].Queue.length; j++) {
+                        ans += `${body[i].Queue[j].name}`;
+                        if (j !== body[i].Queue.length) {
+                            ans += `<br/>`
+                        }
+                    }
+                    ans += `</td>`;
+                    ans += `</tr>`;
+                }
+                callback(ans);
+            }
+        });
+    });
+    req.end();
+}
+
 function openTemplate(request, response) {
     fs.readFile(request.url, "utf-8", function (error, data) {
         if (error) {
@@ -385,6 +475,22 @@ function openTemplate(request, response) {
                 });
             else if (request.url.indexOf("checkwork.html") > -1)
                 createStudentsList(request, (list) => {
+                    data = data.replace("{TABLE}", list);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("settings.html") > -1)
+                fillSettings(request, (list) => {
+                    data = data.replace("{TABLE}", list);
+                    getUsername(request, (username) => {
+                        data = data.replace("{USERNAME}", username);
+                        response.end(data);
+                    });
+                });
+            else if (request.url.indexOf("onlinequeue.html") > -1)
+                fillQueue(request, (list) => {
                     data = data.replace("{TABLE}", list);
                     getUsername(request, (username) => {
                         data = data.replace("{USERNAME}", username);
@@ -977,7 +1083,7 @@ function getTest(tmp, request, callback) {
     req.end();
 }
 
-function deleteTest(request, callback){
+function deleteTest(request, callback) {
     let options = {
         "method": "DELETE",
         "hostname": '127.0.0.1',
@@ -985,7 +1091,7 @@ function deleteTest(request, callback){
         "path": "/api/test",
         "headers": {
             "Authorization": parseCookies(request)['token'],
-            "testId" : request.headers.id
+            "testId": request.headers.id
         }
     };
 
@@ -1005,13 +1111,71 @@ function deleteTest(request, callback){
     req.end();
 }
 
+function deleteAuditory(request, callback) {
+    let options = {
+        "method": "DELETE",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/auditory",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "number": request.headers.id
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
+
+function addAuditory(request, callback) {
+    let options = {
+        "method": "POST",
+        "hostname": '127.0.0.1',
+        "port": "8080",
+        "path": "/api/auditory",
+        "headers": {
+            "Authorization": parseCookies(request)['token'],
+            "number": request.headers.id
+        }
+    };
+
+    let req = http.request(options, function (res) {
+        let chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            let body = Buffer.concat(chunks);
+            callback(body);
+        });
+    });
+
+    req.end();
+}
 
 module.exports = {
     init: function (request, response) {
         console.log("---------------------------------------------------");
         const date = new Date();
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
-        if (request.url === '/' || request.url === '/index.html') {
+        if (request.url === '/onlinequeue.html') {
+            request.url = path.join(__dirname, '/teacher' +request.url);
+            openTemplate(request, response);
+        } else if (request.url === '/' || request.url === '/index.html') {
             open(path.join(__dirname, '/teacher/index.html'), response);
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js' || request.url === '/favicon.ico') {
             request.url = path.join(__dirname, request.url);
@@ -1030,6 +1194,20 @@ module.exports = {
             })
         } else if (request.url === '/deleteTest') {
             deleteTest(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url === '/addAuditory') {
+            addAuditory(request, valid => {
+                if (valid) {
+                    response.statusCode = 200;
+                    response.end()
+                }
+            })
+        } else if (request.url === '/deleteAuditory') {
+            deleteAuditory(request, valid => {
                 if (valid) {
                     response.statusCode = 200;
                     response.end()
