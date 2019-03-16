@@ -5,5 +5,14 @@ type Auditory struct {
 	Id int64
 	Number int
 	Queue []Student
-	QueueId int64
+}
+
+type ProxyAuditory struct {
+	Id int64
+	Number int
+	Queue []Queue
+}
+type Queue struct{
+	StudentId int64 `json:"id"`
+	Name string `json:"id"`
 }

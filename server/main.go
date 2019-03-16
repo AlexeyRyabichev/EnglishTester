@@ -17,6 +17,7 @@ func main() {
 	DbWorker.CreateSchemaScore()
 	DbWorker.MockAnswers()
 	DbWorker.CreateSchemaAuditory()
+	DbWorker.AddToQueuePost()
 	router := swagger.NewRouter()
 	//sw.InsertTests()
 	//DocParser.GetTextFromDocx()

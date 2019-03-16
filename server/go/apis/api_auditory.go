@@ -1,7 +1,9 @@
 package apis
 
 import (
+	"encoding/json"
 	"log"
+	"math"
 	"net/http"
 		"../DbWorker"
 		Model "../models"
@@ -46,35 +48,72 @@ func AuditoryDelete(w http.ResponseWriter, r *http.Request) {
 
 func AddToQueuePost(w http.ResponseWriter, r *http.Request)   {
 	w.WriteHeader(http.StatusOK)
+	studentId := 157;
+	var student Model.Student
+	DbWorker.Db.Model(&student).Where("id = ?",studentId).Select()
+
+	var auditories []Model.Auditory
+
+	err:=DbWorker.Db.Model(&auditories).Select()
+	if err != nil {
+
+	}
+	queueId:=findMinimalQueue(auditories)
+	if(queueId==-1){
+		log.Print("ERRORRRRRRRRR")
+		return
+	}
+
+	var auditory Model.Auditory
+	auditory.Id=queueId
+	DbWorker.Db.Model(&auditory).WherePK().Select()
+	if err != nil {
+
+	}
+	auditory.Queue=append(auditory.Queue, student)
+	_,err=DbWorker.Db.Model(&auditory).Update()
+	if err != nil {
+		log.Print(err)
+	}
+
+
+
+
+}
+
+func findMinimalQueue(auditories []Model.Auditory) int64 {
+	var minId int64 = -1
+	minLen:=math.MaxInt32
+	for _,v:= range auditories{
+		if(len(v.Queue)<=minLen){
+			minId=v.Id;
+			minLen=len(v.Queue)
+		}
+	}
+	return minId
 }
 
 func AuditoriesGet(w http.ResponseWriter, r *http.Request)  {
-	w.Write([]byte(`[
-		{
-			"number" : 123,
-			"queue" : [
-			{
-				"name" : "Vasiliy",
-				"id" : 2
-			},
-			{
-				"name" : "AN",
-				"id" : 3
-			}
-		]
-		},
-	{
-		"number" : 234,
-		"queue" : [
-	{
-		"name" : "AN",
-		"id" : 4
-	},
-		{
-			"name" : "Vasiliy",
-			"id" : 10
+	var aud []Model.Auditory
+	err:=DbWorker.Db.Model(&aud).Select()
+	if err != nil {
+		log.Print(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	var prxAuds []Model.Auditory
+	for _,v:=range aud{
+		prxAud :=Model.ProxyAuditory{Id:v.Id}
+		prxAud.Queue=make([]Model.Queue,len(v.Queue))
+		for j:=0;j<len(v.Queue);j++  {
+			prxAud.Queue=append(prxAud.Queue,Model.Queue{v.Queue[j].Id,v.Queue[j].Name})
 		}
-]
-}
-]`))
-}
+	}
+
+	jsoned,err :=json.Marshal(prxAuds)
+
+	w.Write(jsoned)
+	}
+
+
