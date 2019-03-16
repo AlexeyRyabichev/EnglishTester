@@ -47,3 +47,34 @@ func AuditoryDelete(w http.ResponseWriter, r *http.Request) {
 func AddToQueuePost(w http.ResponseWriter, r *http.Request)   {
 	w.WriteHeader(http.StatusOK)
 }
+
+func AuditoriesGet(w http.ResponseWriter, r *http.Request)  {
+	w.Write([]byte(`[
+		{
+			"number" : 123,
+			"queue" : [
+			{
+				"name" : "Vasiliy",
+				"id" : 2
+			},
+			{
+				"name" : "AN",
+				"id" : 3
+			}
+		]
+		},
+	{
+		"number" : 234,
+		"queue" : [
+	{
+		"name" : "AN",
+		"id" : 4
+	},
+		{
+			"name" : "Vasiliy",
+			"id" : 10
+		}
+]
+}
+]`))
+}
