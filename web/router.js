@@ -366,10 +366,10 @@ function fillSettings(request, callback) {
                 for (let i = 0; i < body.length; i++) {
                     ans += `<tr>`;
                     ans += `<td>`;
-                    ans += `${body[i].number}`;
+                    ans += `${body[i].Number}`;
                     ans += `</td>`;
                     ans += `<td>`;
-                    ans += `<a class="waves-effect waves-light btn" onclick="deleteAuditory(${body[i].number})"><i class="material-icons left">delete</i>Delete</a>`;
+                    ans += `<a class="waves-effect waves-light btn" onclick="deleteAuditory(${body[i].Number})"><i class="material-icons left">delete</i>Delete</a>`;
                     ans += `</td>`;
                     ans += `</tr>`;
                 }
@@ -387,8 +387,7 @@ function fillQueue(request, callback) {
         path: '/api/auditories',
         method: 'GET',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': parseCookies(request)['token']
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
 
@@ -409,12 +408,12 @@ function fillQueue(request, callback) {
                 for (let i = 0; i < body.length; i++) {
                     ans += `<tr>`;
                     ans += `<td>`;
-                    ans += `${body[i].number}`;
+                    ans += `${body[i].Number}`;
                     ans += `</td>`;
                     ans += `<td>`;
-                    for (let j = 0; j < body[i].queue.length; j++) {
-                        ans += `${body[i].queue[j].name}`;
-                        if (j !== body[i].queue.length){
+                    for (let j = 0; j < body[i].Queue.length; j++) {
+                        ans += `${body[i].Queue[j].name}`;
+                        if (j !== body[i].Queue.length) {
                             ans += `<br/>`
                         }
                     }
@@ -1173,11 +1172,10 @@ module.exports = {
         console.log("---------------------------------------------------");
         const date = new Date();
         console.log(`Requested: ${request.url} at ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
-        if (request.url === 'onlinequeue.html' ){
-            request.url = path.join(__dirname, request.url);
+        if (request.url === '/onlinequeue.html') {
+            request.url = path.join(__dirname, '/teacher' +request.url);
             openTemplate(request, response);
-        }
-        else if (request.url === '/' || request.url === '/index.html') {
+        } else if (request.url === '/' || request.url === '/index.html') {
             open(path.join(__dirname, '/teacher/index.html'), response);
         } else if (request.url === '/res/logo.png' || request.url === '/sass/materialize.css' || request.url === '/js/bin/materialize.min.js' || request.url === '/favicon.ico') {
             request.url = path.join(__dirname, request.url);
