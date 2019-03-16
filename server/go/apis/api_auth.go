@@ -69,6 +69,10 @@ func AuthMiddleware(next http.Handler, routeName string) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		if(routeName == "AuditoriesGet"){
+			next.ServeHTTP(w, r)
+			return
+		}
 		tokenString := r.Header.Get("Authorization")
 		if len(tokenString) == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
